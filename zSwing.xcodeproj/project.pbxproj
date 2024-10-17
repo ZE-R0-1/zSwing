@@ -9,19 +9,29 @@
 /* Begin PBXBuildFile section */
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
-		CE2B97A72CC0913300FF532F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* ViewController.swift */; };
+		CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* LoginViewController.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
 		CE2B97AF2CC0913500FF532F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AE2CC0913500FF532F /* Base */; };
+		CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97B72CC0F5BA00FF532F /* FirebaseAuth */; };
+		CE2B97BA2CC0F5BA00FF532F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97B92CC0F5BA00FF532F /* FirebaseFirestore */; };
+		CE2B97BC2CC0F5BA00FF532F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97BB2CC0F5BA00FF532F /* FirebaseStorage */; };
+		CE2B97C12CC0F9EB00FF532F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97C02CC0F9EB00FF532F /* GoogleSignIn */; };
+		CE2B97C32CC0F9EB00FF532F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97C22CC0F9EB00FF532F /* GoogleSignInSwift */; };
+		CE2B97C72CC0FADF00FF532F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */; };
+		CE2B97CA2CC0FF7900FF532F /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97C92CC0FF7900FF532F /* KakaoSDK */; };
+		CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */; };
+		CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		CE2B97A62CC0913300FF532F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		CE2B97A62CC0913300FF532F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		CE2B97AB2CC0913500FF532F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE2B97AE2CC0913500FF532F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +39,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */,
+				CE2B97C32CC0F9EB00FF532F /* GoogleSignInSwift in Frameworks */,
+				CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */,
+				CE2B97C12CC0F9EB00FF532F /* GoogleSignIn in Frameworks */,
+				CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */,
+				CE2B97BA2CC0F5BA00FF532F /* FirebaseFirestore in Frameworks */,
+				CE2B97BC2CC0F5BA00FF532F /* FirebaseStorage in Frameworks */,
+				CE2B97CA2CC0FF7900FF532F /* KakaoSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,10 +74,11 @@
 			children = (
 				CE2B97A22CC0913300FF532F /* AppDelegate.swift */,
 				CE2B97A42CC0913300FF532F /* SceneDelegate.swift */,
-				CE2B97A62CC0913300FF532F /* ViewController.swift */,
+				CE2B97A62CC0913300FF532F /* LoginViewController.swift */,
 				CE2B97AB2CC0913500FF532F /* Assets.xcassets */,
 				CE2B97AD2CC0913500FF532F /* LaunchScreen.storyboard */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
+				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -80,6 +99,16 @@
 			dependencies = (
 			);
 			name = zSwing;
+			packageProductDependencies = (
+				CE2B97B72CC0F5BA00FF532F /* FirebaseAuth */,
+				CE2B97B92CC0F5BA00FF532F /* FirebaseFirestore */,
+				CE2B97BB2CC0F5BA00FF532F /* FirebaseStorage */,
+				CE2B97C02CC0F9EB00FF532F /* GoogleSignIn */,
+				CE2B97C22CC0F9EB00FF532F /* GoogleSignInSwift */,
+				CE2B97C92CC0FF7900FF532F /* KakaoSDK */,
+				CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */,
+				CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */,
+			);
 			productName = zSwing;
 			productReference = CE2B979F2CC0913300FF532F /* zSwing.app */;
 			productType = "com.apple.product-type.application";
@@ -108,6 +137,11 @@
 				Base,
 			);
 			mainGroup = CE2B97962CC0913300FF532F;
+			packageReferences = (
+				CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			productRefGroup = CE2B97A02CC0913300FF532F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -124,6 +158,7 @@
 			files = (
 				CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */,
 				CE2B97AF2CC0913500FF532F /* Base in Resources */,
+				CE2B97C72CC0FADF00FF532F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE2B97A72CC0913300FF532F /* ViewController.swift in Sources */,
+				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
@@ -355,6 +390,76 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.3.0;
+			};
+		};
+		CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.23.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE2B97B72CC0F5BA00FF532F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		CE2B97B92CC0F5BA00FF532F /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		CE2B97BB2CC0F5BA00FF532F /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		CE2B97C02CC0F9EB00FF532F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		CE2B97C22CC0F9EB00FF532F /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		CE2B97C92CC0FF7900FF532F /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+		CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CE2B97972CC0913300FF532F /* Project object */;
 }
