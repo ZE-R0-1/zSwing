@@ -93,23 +93,64 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func kakaoLoginTapped() {
-        if UserApi.isKakaoTalkLoginAvailable() {
-            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+        if (UserApi.isKakaoTalkLoginAvailable()) {
+            UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
                 if let error = error {
                     print(error)
                 } else {
                     print("카카오톡 로그인 성공")
-                    // 추가 처리
+                    self?.loadKakaoUserInfo()
                 }
             }
         } else {
-            UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+            UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
                 if let error = error {
                     print(error)
                 } else {
                     print("카카오 계정 로그인 성공")
-                    // 추가 처리
+                    self?.loadKakaoUserInfo()
                 }
+            }
+        }
+    }
+
+    private func loadKakaoUserInfo() {
+        UserApi.shared.me() { [weak self] (user, error) in
+            if let error = error {
+                print(error)
+            } else {
+                guard let email = user?.kakaoAccount?.email,
+                      let id = user?.id else {
+                    print("Failed to get Kakao user info")
+                    return
+                }
+                let password = "KAKAO_\(id)" // 고유한 비밀번호 생성
+                self?.signInToFirebase(email: email, password: password)
+            }
+        }
+    }
+
+    private func signInToFirebase(email: String, password: String) {
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] (authResult, error) in
+            if let error = error {
+                // 로그인 실패 시 새 계정 생성
+                if (error as NSError).code == AuthErrorCode.invalidCredential.rawValue {
+                    self?.createFirebaseAccount(email: email, password: password)
+                } else {
+                    print("Firebase sign-in error: \(error.localizedDescription)")
+                }
+            } else {
+                print("Firebase 로그인 성공")
+            }
+        }
+    }
+
+    private func createFirebaseAccount(email: String, password: String) {
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] (authResult, error) in
+            if let error = error {
+                print("Firebase account creation error: \(error.localizedDescription)")
+            } else {
+                print("Firebase 계정 생성 및 로그인 성공")
             }
         }
     }

@@ -6,14 +6,16 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseCore
 import GoogleSignIn
+import KakaoSDKCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
+        KakaoSDK.initSDK(appKey: "96bebf3c072c2e393d427de37f6b39e8")
         return true
     }
     
