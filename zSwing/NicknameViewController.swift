@@ -86,8 +86,7 @@ class NicknameViewController: UIViewController {
                 self.showAlert(message: "데이터 저장 중 오류가 발생했습니다: \(error.localizedDescription)")
             } else {
                 self.showAlert(message: "사용자 정보가 저장되었습니다.", completion: {
-                    // 여기서 메인 화면으로 이동하는 로직을 구현합니다.
-                    // 예: self.navigateToMainScreen()
+                    self.navigateToMainScreen()
                 })
             }
         }
@@ -101,8 +100,9 @@ class NicknameViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    // 메인 화면으로 이동하는 메소드 (구현 필요)
     private func navigateToMainScreen() {
-        // 메인 화면으로 이동하는 로직을 구현합니다.
+        let mainTabBarController = MainTabBarController()
+        mainTabBarController.modalPresentationStyle = .fullScreen
+        self.present(mainTabBarController, animated: true, completion: nil)
     }
 }

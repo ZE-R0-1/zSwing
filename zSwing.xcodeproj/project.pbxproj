@@ -22,6 +22,10 @@
 		CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */; };
 		CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */; };
 		CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */; };
+		CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */; };
+		CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D42CC623A100FF532F /* MapViewController.swift */; };
+		CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */; };
+		CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D82CC623C700FF532F /* ProfileViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +39,10 @@
 		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zSwing.entitlements; sourceTree = "<group>"; };
 		CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
+		CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		CE2B97D42CC623A100FF532F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadViewController.swift; sourceTree = "<group>"; };
+		CE2B97D82CC623C700FF532F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +92,10 @@
 				CE2B97B02CC0913500FF532F /* Info.plist */,
 				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
 				CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */,
+				CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */,
+				CE2B97D42CC623A100FF532F /* MapViewController.swift */,
+				CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */,
+				CE2B97D82CC623C700FF532F /* ProfileViewController.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -175,8 +187,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
+				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
+				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
+				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
+				CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
