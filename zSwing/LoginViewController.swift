@@ -92,6 +92,13 @@ class LoginViewController: UIViewController {
         appleLoginButton.addTarget(self, action: #selector(appleLoginTapped), for: .touchUpInside)
     }
     
+    private func navigateToNicknameViewController(loginMethod: String) {
+        let nicknameVC = NicknameViewController()
+        nicknameVC.loginMethod = loginMethod
+        nicknameVC.modalPresentationStyle = .fullScreen
+        present(nicknameVC, animated: true, completion: nil)
+    }
+    
     @objc private func kakaoLoginTapped() {
         if (UserApi.isKakaoTalkLoginAvailable()) {
             UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
@@ -141,10 +148,11 @@ class LoginViewController: UIViewController {
                 }
             } else {
                 print("Firebase 로그인 성공")
+                self?.navigateToNicknameViewController(loginMethod: "Kakao")
             }
         }
     }
-
+    
     private func createFirebaseAccount(email: String, password: String) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (authResult, error) in
             if let error = error {
@@ -179,12 +187,12 @@ class LoginViewController: UIViewController {
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: user.accessToken.tokenString)
             
-            Auth.auth().signIn(with: credential) { authResult, error in
+            Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                 if let error = error {
                     print("Firebase sign-in error: \(error.localizedDescription)")
                 } else {
                     print("Google 로그인 성공")
-                    // 추가 처리
+                    self?.navigateToNicknameViewController(loginMethod: "Google")
                 }
             }
         }
@@ -258,13 +266,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
                                                               rawNonce: nonce,
                                                               fullName: appleIDCredential.fullName)
             
-            Auth.auth().signIn(with: credential) { authResult, error in
+            Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                 if let error = error {
                     print("Firebase sign-in error: \(error.localizedDescription)")
                     return
                 }
                 print("Apple 로그인 성공")
-                // 추가 처리 (예: 사용자 정보 저장, 메인 화면으로 이동 등)
+                self?.navigateToNicknameViewController(loginMethod: "Apple")
             }
         }
     }

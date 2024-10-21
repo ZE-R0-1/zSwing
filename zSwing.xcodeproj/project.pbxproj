@@ -21,6 +21,7 @@
 		CE2B97CA2CC0FF7900FF532F /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97C92CC0FF7900FF532F /* KakaoSDK */; };
 		CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */; };
 		CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */; };
+		CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zSwing.entitlements; sourceTree = "<group>"; };
+		CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 				CE2B97AD2CC0913500FF532F /* LaunchScreen.storyboard */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
 				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
+				CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
