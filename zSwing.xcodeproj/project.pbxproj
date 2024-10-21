@@ -32,6 +32,7 @@
 		CE2B97AE2CC0913500FF532F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zSwing.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +73,7 @@
 		CE2B97A12CC0913300FF532F /* zSwing */ = {
 			isa = PBXGroup;
 			children = (
+				CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */,
 				CE2B97A22CC0913300FF532F /* AppDelegate.swift */,
 				CE2B97A42CC0913300FF532F /* SceneDelegate.swift */,
 				CE2B97A62CC0913300FF532F /* LoginViewController.swift */,
@@ -313,6 +315,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = zSwing/zSwing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XV38VT3FG5;
@@ -343,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = zSwing/zSwing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XV38VT3FG5;

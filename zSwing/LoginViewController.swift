@@ -12,6 +12,7 @@ import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKUser
 import AuthenticationServices
+import CryptoKit
 
 class LoginViewController: UIViewController {
     
@@ -45,6 +46,8 @@ class LoginViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    fileprivate var currentNonce: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +89,7 @@ class LoginViewController: UIViewController {
     private func setupActions() {
         kakaoLoginButton.addTarget(self, action: #selector(kakaoLoginTapped), for: .touchUpInside)
         googleLoginButton.addTarget(self, action: #selector(googleLoginTapped), for: .touchUpInside)
-//        appleLoginButton.addTarget(self, action: #selector(appleLoginTapped), for: .touchUpInside)
+        appleLoginButton.addTarget(self, action: #selector(appleLoginTapped), for: .touchUpInside)
     }
     
     @objc private func kakaoLoginTapped() {
@@ -145,53 +148,87 @@ class LoginViewController: UIViewController {
             }
         }
     }
-//    @objc private func appleLoginTapped() {
-//        let appleIDProvider = ASAuthorizationAppleIDProvider()
-//        let request = appleIDProvider.createRequest()
-//        request.requestedScopes = [.fullName, .email]
-//        
-//        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-//        authorizationController.delegate = self
-//        authorizationController.presentationContextProvider = self
-//        authorizationController.performRequests()
-//    }
+    
+    @objc private func appleLoginTapped() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+    
+    private func randomNonceString(length: Int = 32) -> String {
+      precondition(length > 0)
+      var randomBytes = [UInt8](repeating: 0, count: length)
+      let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+      if errorCode != errSecSuccess {
+        fatalError(
+            "nonce 생성 불가. SecRandomCopyBytes 실행 실패. OSStatus: \(errorCode)"
+        )
+      }
+
+      let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+
+      let nonce = randomBytes.map { byte in
+        charset[Int(byte) % charset.count]
+      }
+
+      return String(nonce)
+    }
+
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+
+        return hashString
+    }
 }
 
-//extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-//    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-//        return self.view.window!
-//    }
-//    
-//    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-//        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-//            guard let nonce = currentNonce else {
-//                fatalError("Invalid state: A login callback was received, but no login request was sent.")
-//            }
-//            guard let appleIDToken = appleIDCredential.identityToken else {
-//                print("Unable to fetch identity token")
-//                return
-//            }
-//            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-//                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-//                return
-//            }
-//            
-//            let credential = OAuthProvider.credential(withProviderID: "apple.com",
-//                                                      idToken: idTokenString,
-//                                                      rawNonce: nonce)
-//            
-//            Auth.auth().signIn(with: credential) { authResult, error in
-//                if let error = error {
-//                    print("Firebase sign-in error: \(error.localizedDescription)")
-//                    return
-//                }
-//                print("Apple 로그인 성공")
-//                // 추가 처리
-//            }
-//        }
-//    }
-//    
-//    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-//        print("Apple Sign-In error: \(error.localizedDescription)")
-//    }
-//}
+extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            guard let nonce = currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                print("Unable to fetch identity token")
+                return
+            }
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                return
+            }
+            
+            let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
+                                                              rawNonce: nonce,
+                                                              fullName: appleIDCredential.fullName)
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("Firebase sign-in error: \(error.localizedDescription)")
+                    return
+                }
+                print("Apple 로그인 성공")
+                // 추가 처리 (예: 사용자 정보 저장, 메인 화면으로 이동 등)
+            }
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Apple Sign-In error: \(error.localizedDescription)")
+    }
+}
