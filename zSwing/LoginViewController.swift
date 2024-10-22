@@ -48,12 +48,37 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let loadingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
+    private let loadingLabel: UILabel = {
+        let label = UILabel()
+        label.text = "로그인 중..."
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     fileprivate var currentNonce: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupActions()
+        setupLoadingView()
     }
     
     private func setupUI() {
@@ -93,13 +118,44 @@ class LoginViewController: UIViewController {
         appleLoginButton.addTarget(self, action: #selector(appleLoginTapped), for: .touchUpInside)
     }
     
+    private func setupLoadingView() {
+        view.addSubview(loadingView)
+        loadingView.addSubview(activityIndicator)
+        loadingView.addSubview(loadingLabel)
+        
+        NSLayoutConstraint.activate([
+            loadingView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: loadingView.centerYAnchor, constant: -20),
+            
+            loadingLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 16),
+            loadingLabel.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor)
+        ])
+    }
+    
+    private func showLoading() {
+        loadingView.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    private func hideLoading() {
+        loadingView.isHidden = true
+        activityIndicator.stopAnimating()
+    }
+    
     private func navigateToMainScreen() {
+        hideLoading()
         let mainTabBarController = MainTabBarController()
         mainTabBarController.modalPresentationStyle = .fullScreen
         present(mainTabBarController, animated: true)
     }
     
     private func navigateToNicknameViewController(loginMethod: String) {
+        hideLoading()
         let nicknameVC = NicknameViewController()
         nicknameVC.loginMethod = loginMethod
         nicknameVC.modalPresentationStyle = .fullScreen
@@ -112,20 +168,20 @@ class LoginViewController: UIViewController {
         let db = Firestore.firestore()
         db.collection("users").document(uid).getDocument { [weak self] document, error in
             if let document = document, document.exists {
-                // 이미 가입된 사용자는 바로 메인 화면으로 이동
                 self?.navigateToMainScreen()
             } else {
-                // 새로운 사용자는 닉네임 설정 화면으로 이동
                 self?.navigateToNicknameViewController(loginMethod: loginMethod)
             }
         }
     }
     
     @objc private func kakaoLoginTapped() {
+        showLoading()
         if (UserApi.isKakaoTalkLoginAvailable()) {
             UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
                 if let error = error {
                     print(error)
+                    self?.hideLoading()
                 } else {
                     print("카카오톡 로그인 성공")
                     self?.loadKakaoUserInfo()
@@ -135,6 +191,7 @@ class LoginViewController: UIViewController {
             UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
                 if let error = error {
                     print(error)
+                    self?.hideLoading()
                 } else {
                     print("카카오 계정 로그인 성공")
                     self?.loadKakaoUserInfo()
@@ -191,32 +248,33 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func googleLoginTapped() {
+        showLoading()
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
-        // Create Google Sign In configuration object.
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
         
-        // Start the sign in flow!
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] result, error in
-            guard error == nil else {
-                print("Google Sign-In error: \(error!.localizedDescription)")
+            if let error = error {
+                print("Google Sign-In error: \(error.localizedDescription)")
+                self.hideLoading()
                 return
             }
             
             guard let user = result?.user,
-                  let idToken = user.idToken?.tokenString
-            else {
+                  let idToken = user.idToken?.tokenString else {
                 print("Failed to get user or ID token")
+                self.hideLoading()
                 return
             }
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                           accessToken: user.accessToken.tokenString)
+                                                         accessToken: user.accessToken.tokenString)
             
             Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                 if let error = error {
                     print("Firebase sign-in error: \(error.localizedDescription)")
+                    self?.hideLoading()
                 } else {
                     print("Google 로그인 성공")
                     self?.checkUserExists(loginMethod: "Google")
@@ -226,6 +284,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func appleLoginTapped() {
+        showLoading()
         let nonce = randomNonceString()
         currentNonce = nonce
         let appleIDProvider = ASAuthorizationAppleIDProvider()
@@ -306,5 +365,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Apple Sign-In error: \(error.localizedDescription)")
+        hideLoading()
     }
 }
