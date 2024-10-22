@@ -7,18 +7,41 @@
 
 import UIKit
 import KakaoSDKAuth
+import FirebaseFirestore
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let viewController = LoginViewController()
-        window?.rootViewController = viewController
+        
+        // 현재 로그인된 사용자가 있는지 확인
+        if let currentUser = Auth.auth().currentUser {
+            // Firestore에서 사용자 정보 확인
+            let db = Firestore.firestore()
+            db.collection("users").document(currentUser.uid).getDocument { [weak self] document, error in
+                if let document = document, document.exists {
+                    // 사용자 정보가 있으면 메인 화면으로 이동
+                    DispatchQueue.main.async {
+                        self?.window?.rootViewController = MainTabBarController()
+                    }
+                } else {
+                    // 사용자 정보가 없으면 닉네임 설정 화면으로 이동
+                    DispatchQueue.main.async {
+                        let nicknameVC = NicknameViewController()
+                        self?.window?.rootViewController = nicknameVC
+                    }
+                }
+            }
+        } else {
+            // 로그인된 사용자가 없으면 로그인 화면으로 이동
+            window?.rootViewController = LoginViewController()
+        }
+        
         window?.makeKeyAndVisible()
     }
     

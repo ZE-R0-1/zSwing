@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseCore
 import FirebaseAuth
+import FirebaseFirestore
 import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKUser
@@ -92,11 +93,32 @@ class LoginViewController: UIViewController {
         appleLoginButton.addTarget(self, action: #selector(appleLoginTapped), for: .touchUpInside)
     }
     
+    private func navigateToMainScreen() {
+        let mainTabBarController = MainTabBarController()
+        mainTabBarController.modalPresentationStyle = .fullScreen
+        present(mainTabBarController, animated: true)
+    }
+    
     private func navigateToNicknameViewController(loginMethod: String) {
         let nicknameVC = NicknameViewController()
         nicknameVC.loginMethod = loginMethod
         nicknameVC.modalPresentationStyle = .fullScreen
         present(nicknameVC, animated: true, completion: nil)
+    }
+    
+    private func checkUserExists(loginMethod: String) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let db = Firestore.firestore()
+        db.collection("users").document(uid).getDocument { [weak self] document, error in
+            if let document = document, document.exists {
+                // 이미 가입된 사용자는 바로 메인 화면으로 이동
+                self?.navigateToMainScreen()
+            } else {
+                // 새로운 사용자는 닉네임 설정 화면으로 이동
+                self?.navigateToNicknameViewController(loginMethod: loginMethod)
+            }
+        }
     }
     
     @objc private func kakaoLoginTapped() {
@@ -140,12 +162,10 @@ class LoginViewController: UIViewController {
     private func signInToFirebase(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] (authResult, error) in
             if let error = error {
-                // 로그인 실패 시 새 계정 생성
                 if (error as NSError).code == AuthErrorCode.invalidCredential.rawValue {
                     self?.createFirebaseAccount(email: email, password: password) { success in
                         if success {
-                            // 계정 생성 후 자동으로 로그인하고 화면 전환
-                            self?.navigateToNicknameViewController(loginMethod: "Kakao")
+                            self?.checkUserExists(loginMethod: "Kakao")
                         }
                     }
                 } else {
@@ -153,7 +173,7 @@ class LoginViewController: UIViewController {
                 }
             } else {
                 print("Firebase 로그인 성공")
-                self?.navigateToNicknameViewController(loginMethod: "Kakao")
+                self?.checkUserExists(loginMethod: "Kakao")
             }
         }
     }
@@ -199,7 +219,7 @@ class LoginViewController: UIViewController {
                     print("Firebase sign-in error: \(error.localizedDescription)")
                 } else {
                     print("Google 로그인 성공")
-                    self?.navigateToNicknameViewController(loginMethod: "Google")
+                    self?.checkUserExists(loginMethod: "Google")
                 }
             }
         }
@@ -279,7 +299,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
                     return
                 }
                 print("Apple 로그인 성공")
-                self?.navigateToNicknameViewController(loginMethod: "Apple")
+                self?.checkUserExists(loginMethod: "Apple")
             }
         }
     }
