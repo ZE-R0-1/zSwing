@@ -142,7 +142,12 @@ class LoginViewController: UIViewController {
             if let error = error {
                 // 로그인 실패 시 새 계정 생성
                 if (error as NSError).code == AuthErrorCode.invalidCredential.rawValue {
-                    self?.createFirebaseAccount(email: email, password: password)
+                    self?.createFirebaseAccount(email: email, password: password) { success in
+                        if success {
+                            // 계정 생성 후 자동으로 로그인하고 화면 전환
+                            self?.navigateToNicknameViewController(loginMethod: "Kakao")
+                        }
+                    }
                 } else {
                     print("Firebase sign-in error: \(error.localizedDescription)")
                 }
@@ -152,13 +157,15 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    
-    private func createFirebaseAccount(email: String, password: String) {
+
+    private func createFirebaseAccount(email: String, password: String, completion: @escaping (Bool) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (authResult, error) in
             if let error = error {
                 print("Firebase account creation error: \(error.localizedDescription)")
+                completion(false)
             } else {
                 print("Firebase 계정 생성 및 로그인 성공")
+                completion(true)
             }
         }
     }
