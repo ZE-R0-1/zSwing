@@ -14,37 +14,47 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
         
-        // 현재 로그인된 사용자가 있는지 확인
+        // 사용자 인증 상태 확인을 위해 약간의 지연 추가
+        DispatchQueue.main.async { [weak self] in
+            self?.checkAuthenticationAndSetupInitialScreen()
+        }
+        
+        window?.makeKeyAndVisible()
+    }
+    
+    private func checkAuthenticationAndSetupInitialScreen() {
         if let currentUser = Auth.auth().currentUser {
+            print("Current user found: \(currentUser.uid)")
             // Firestore에서 사용자 정보 확인
             let db = Firestore.firestore()
             db.collection("users").document(currentUser.uid).getDocument { [weak self] document, error in
-                if let document = document, document.exists {
-                    // 사용자 정보가 있으면 메인 화면으로 이동
-                    DispatchQueue.main.async {
+                if let error = error {
+                    print("Error fetching user document: \(error)")
+                }
+                
+                DispatchQueue.main.async {
+                    if let document = document, document.exists {
+                        print("User document exists, navigating to main screen")
                         self?.window?.rootViewController = MainTabBarController()
-                    }
-                } else {
-                    // 사용자 정보가 없으면 닉네임 설정 화면으로 이동
-                    DispatchQueue.main.async {
+                    } else {
+                        print("No user document found, navigating to nickname screen")
                         let nicknameVC = NicknameViewController()
                         self?.window?.rootViewController = nicknameVC
                     }
                 }
             }
         } else {
-            // 로그인된 사용자가 없으면 로그인 화면으로 이동
+            print("No current user, navigating to login screen")
             window?.rootViewController = LoginViewController()
         }
-        
-        window?.makeKeyAndVisible()
     }
-    
+
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
             if (AuthApi.isKakaoTalkLoginUrl(url)) {
