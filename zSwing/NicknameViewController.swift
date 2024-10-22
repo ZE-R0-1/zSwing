@@ -102,7 +102,10 @@ class NicknameViewController: UIViewController {
     
     private func navigateToMainScreen() {
         let mainTabBarController = MainTabBarController()
-        mainTabBarController.modalPresentationStyle = .fullScreen
-        self.present(mainTabBarController, animated: true, completion: nil)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = mainTabBarController
+            window.makeKeyAndVisible()
+        }
     }
 }
