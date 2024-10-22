@@ -80,18 +80,18 @@ class NicknameViewController: UIViewController {
             "nickname": nickname,
             "email": email,
             "loginMethod": loginMethod ?? "unknown",
-            "createdAt": FieldValue.serverTimestamp()
+            "createdAt": FieldValue.serverTimestamp(),
+            "lastAccessDate": FieldValue.serverTimestamp() // 초기 접속 시간 추가
         ]) { error in
             if let error = error {
                 self.showAlert(message: "데이터 저장 중 오류가 발생했습니다: \(error.localizedDescription)")
             } else {
-                self.showAlert(message: "사용자 정보가 저장되었습니다.", completion: {
+                self.showAlert(message: "사용자 정보가 저장되었습니다.") {
                     self.navigateToMainScreen()
-                })
+                }
             }
         }
     }
-    
     private func showAlert(message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in
