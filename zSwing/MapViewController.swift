@@ -273,8 +273,8 @@ class MapViewController: UIViewController {
                     
                     // 검색 결과 알림
                     let message = allRides.isEmpty ?
-                    "이 지역에 놀이기구가 없습니다." :
-                    "이 지역에서 \(allRides.count)개의 놀이기구를 찾았습니다."
+                    "이 지역에 놀이기구가 없습니다" :
+                    "이 지역에서 \(allRides.count)개의 놀이기구를 찾았습니다"
                     self.showToast(message: message)
                 }
             }
@@ -290,40 +290,55 @@ class MapViewController: UIViewController {
     }
     
     private func showToast(message: String) {
+        let padding: CGFloat = 8
+
+        // 패딩용 UIView 생성
+        let containerView = UIView()
+        containerView.backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        containerView.layer.cornerRadius = 10
+        containerView.clipsToBounds = true
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+
         let toast = UILabel()
-        toast.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         toast.textColor = .white
         toast.text = message
         toast.textAlignment = .center
-        toast.alpha = 0
-        toast.layer.cornerRadius = 20
-        toast.clipsToBounds = true
         toast.numberOfLines = 0
-        toast.font = .systemFont(ofSize: 14)
+        toast.font = .systemFont(ofSize: 15, weight: .medium)
         toast.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(toast)
+
+        containerView.addSubview(toast)
+        view.addSubview(containerView)
+
+        // 컨테이너 내부 패딩을 위한 제약
         NSLayoutConstraint.activate([
-            toast.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            toast.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
-            toast.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
-            toast.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+            toast.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
+            toast.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
+            toast.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
+            toast.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
         ])
-        
-        toast.layoutIfNeeded()
-        let padding: CGFloat = 15
-        toast.bounds = CGRect(x: 0, y: 0, width: toast.bounds.width + padding * 2, height: toast.bounds.height + padding)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            toast.alpha = 1
+
+        // 컨테이너의 위치 제약
+        NSLayoutConstraint.activate([
+            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
+            containerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+        ])
+
+        // 애니메이션 처리
+        containerView.alpha = 0
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
+            containerView.alpha = 1
         }) { _ in
-            UIView.animate(withDuration: 0.3, delay: 2, options: [], animations: {
-                toast.alpha = 0
+            UIView.animate(withDuration: 0.3, delay: 2, options: .curveEaseInOut, animations: {
+                containerView.alpha = 0
             }) { _ in
-                toast.removeFromSuperview()
+                containerView.removeFromSuperview()
             }
         }
     }
+
     
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
