@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE12800B2CCB9006007A71FB /* RideDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE12800A2CCB9006007A71FB /* RideDetailViewController.swift */; };
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
 		CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* LoginViewController.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE12800A2CCB9006007A71FB /* RideDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailViewController.swift; sourceTree = "<group>"; };
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				CE2B97D42CC623A100FF532F /* MapViewController.swift */,
 				CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */,
 				CE2B97D82CC623C700FF532F /* ProfileViewController.swift */,
+				CE12800A2CCB9006007A71FB /* RideDetailViewController.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
+				CE12800B2CCB9006007A71FB /* RideDetailViewController.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
 				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,

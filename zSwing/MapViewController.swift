@@ -97,7 +97,7 @@ class MapViewController: UIViewController {
             minCenterCoordinateDistance: 1000,     // 최소 1km
             maxCenterCoordinateDistance: 50000    // 최대 50km
         )
-
+        
         // Add Buttons Stack
         let buttonsStack = UIStackView(arrangedSubviews: [searchButton, currentLocationButton])
         buttonsStack.axis = .horizontal
@@ -291,14 +291,14 @@ class MapViewController: UIViewController {
     
     private func showToast(message: String) {
         let padding: CGFloat = 8
-
+        
         // 패딩용 UIView 생성
         let containerView = UIView()
         containerView.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         containerView.layer.cornerRadius = 10
         containerView.clipsToBounds = true
         containerView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         let toast = UILabel()
         toast.textColor = .white
         toast.text = message
@@ -306,10 +306,10 @@ class MapViewController: UIViewController {
         toast.numberOfLines = 0
         toast.font = .systemFont(ofSize: 15, weight: .medium)
         toast.translatesAutoresizingMaskIntoConstraints = false
-
+        
         containerView.addSubview(toast)
         view.addSubview(containerView)
-
+        
         // 컨테이너 내부 패딩을 위한 제약
         NSLayoutConstraint.activate([
             toast.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
@@ -317,7 +317,7 @@ class MapViewController: UIViewController {
             toast.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
             toast.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
         ])
-
+        
         // 컨테이너의 위치 제약
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -325,7 +325,7 @@ class MapViewController: UIViewController {
             containerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             containerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
         ])
-
+        
         // 애니메이션 처리
         containerView.alpha = 0
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
@@ -338,23 +338,26 @@ class MapViewController: UIViewController {
             }
         }
     }
-
     
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
     }
-}
-
-// MARK: - Models
-struct RideInfo {
-    let rideSn: String
-    let installDate: String
-    let facilityName: String
-    let rideName: String
-    let rideType: String
-    let address: String
+    
+    private func showRideDetail(for rideInfo: RideInfo) {
+        let detailVC = RideDetailViewController(rideInfo: rideInfo)
+        
+        if let sheet = detailVC.sheetPresentationController {
+            // medium과 large 모두 지원하도록 수정
+            sheet.detents = [.medium(), .large()]
+            // 선호하는 초기 크기를 medium으로 설정
+            sheet.selectedDetentIdentifier = .medium
+            sheet.prefersGrabberVisible = true
+        }
+        
+        present(detailVC, animated: true)
+    }
 }
 
 class RideAnnotation: MKPointAnnotation {
@@ -424,99 +427,5 @@ extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치 업데이트 실패: \(error.localizedDescription)")
-    }
-}
-
-// MARK: - RideDetailViewController
-class RideDetailViewController: UIViewController {
-    private let rideInfo: RideInfo
-    
-    private let stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 16
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-    
-    init(rideInfo: RideInfo) {
-        self.rideInfo = rideInfo
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-    }
-    
-    private func setupUI() {
-        view.backgroundColor = .white
-        
-        view.addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-        ])
-        
-        // 놀이기구 이름
-        let nameLabel = createLabel(text: rideInfo.rideName, font: .boldSystemFont(ofSize: 24))
-        stackView.addArrangedSubview(nameLabel)
-        
-        // 시설 이름
-        let facilityLabel = createLabel(text: rideInfo.facilityName, font: .systemFont(ofSize: 18), textColor: .gray)
-        stackView.addArrangedSubview(facilityLabel)
-        
-        // 주소
-        let addressLabel = createLabel(text: rideInfo.address, font: .systemFont(ofSize: 16), textColor: .darkGray)
-        addressLabel.numberOfLines = 0
-        stackView.addArrangedSubview(addressLabel)
-        
-        // 구분선
-        let separator = UIView()
-        separator.backgroundColor = .systemGray4
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        stackView.addArrangedSubview(separator)
-        
-        // 상세 정보
-        let detailsStack = UIStackView()
-        detailsStack.axis = .vertical
-        detailsStack.spacing = 8
-        
-        // 놀이기구 유형
-        let typeLabel = createLabel(text: "놀이기구 유형: \(rideInfo.rideType)", font: .systemFont(ofSize: 16))
-        detailsStack.addArrangedSubview(typeLabel)
-        
-        // 설치일
-        let dateLabel = createLabel(text: "설치일: \(rideInfo.installDate)", font: .systemFont(ofSize: 16))
-        detailsStack.addArrangedSubview(dateLabel)
-        
-        stackView.addArrangedSubview(detailsStack)
-    }
-    
-    private func createLabel(text: String, font: UIFont, textColor: UIColor = .black) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.font = font
-        label.textColor = textColor
-        return label
-    }
-}
-
-// MapViewController에 추가할 메서드
-extension MapViewController {
-    private func showRideDetail(for rideInfo: RideInfo) {
-        let detailVC = RideDetailViewController(rideInfo: rideInfo)
-        
-        if let sheet = detailVC.sheetPresentationController {
-            sheet.detents = [.medium()]
-            sheet.prefersGrabberVisible = true
-        }
-        
-        present(detailVC, animated: true)
     }
 }
