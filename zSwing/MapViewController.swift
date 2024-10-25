@@ -360,10 +360,9 @@ extension MapViewController: MKMapViewDelegate {
         
         if annotationView == nil {
             annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView?.canShowCallout = true
+            annotationView?.canShowCallout = false  // 콜아웃 비활성화
             annotationView?.glyphImage = UIImage(systemName: "figure.play")
             annotationView?.markerTintColor = .systemGreen
-            annotationView?.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
         } else {
             annotationView?.annotation = annotation
         }
@@ -371,9 +370,12 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
     
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        guard let annotation = view.annotation as? RideAnnotation else { return }
-        showRideDetail(for: annotation.rideInfo)
+    // 어노테이션을 탭했을 때 바로 시트 표시
+    func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        if let rideAnnotation = annotation as? RideAnnotation {
+            mapView.deselectAnnotation(annotation, animated: true)
+            showRideDetail(for: rideAnnotation.rideInfo)
+        }
     }
 }
 
