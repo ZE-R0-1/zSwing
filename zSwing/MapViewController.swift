@@ -92,6 +92,12 @@ class MapViewController: UIViewController {
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
+        // 최소 줌 레벨 설정 (숫자가 클수록 더 넓은 영역이 보임)
+        mapView.cameraZoomRange = MKMapView.CameraZoomRange(
+            minCenterCoordinateDistance: 1000,     // 최소 1km
+            maxCenterCoordinateDistance: 50000    // 최대 50km
+        )
+
         // Add Buttons Stack
         let buttonsStack = UIStackView(arrangedSubviews: [searchButton, currentLocationButton])
         buttonsStack.axis = .horizontal
