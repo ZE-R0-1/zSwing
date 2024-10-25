@@ -68,6 +68,14 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupLocationManager()
+        
+        // 초기 맵 영역 설정 (서울 중심)
+        let initialRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
+            latitudinalMeters: 5000,  // 5km
+            longitudinalMeters: 5000   // 5km
+        )
+        mapView.setRegion(initialRegion, animated: false)
     }
     
     // MARK: - Setup
@@ -117,7 +125,24 @@ class MapViewController: UIViewController {
     
     private func setupLocationManager() {
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
+        
+        // 현재 권한 상태 확인
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            // 이미 권한이 있으면 바로 위치 업데이트 시작
+            locationManager.startUpdatingLocation()
+        case .notDetermined:
+            // 권한이 없으면 요청
+            locationManager.requestWhenInUseAuthorization()
+        default:
+            // 권한이 거부된 경우 서울 중심으로 설정
+            let seoulRegion = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
+                latitudinalMeters: 5000,
+                longitudinalMeters: 5000
+            )
+            mapView.setRegion(seoulRegion, animated: false)
+        }
     }
     
     // MARK: - Actions
@@ -354,6 +379,15 @@ extension MapViewController: MKMapViewDelegate {
 
 // MARK: - CLLocationManagerDelegate
 extension MapViewController: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        default:
+            break
+        }
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         let region = MKCoordinateRegion(
