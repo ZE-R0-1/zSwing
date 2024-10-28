@@ -27,6 +27,7 @@
 		CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D42CC623A100FF532F /* MapViewController.swift */; };
 		CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */; };
 		CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D82CC623C700FF532F /* ProfileViewController.swift */; };
+		CE90B6202CCF5D7100B5FB7F /* CustomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B61F2CCF5D7100B5FB7F /* CustomSheetViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		CE2B97D42CC623A100FF532F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadViewController.swift; sourceTree = "<group>"; };
 		CE2B97D82CC623C700FF532F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		CE90B61F2CCF5D7100B5FB7F /* CustomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */,
 				CE2B97D82CC623C700FF532F /* ProfileViewController.swift */,
 				CE12800A2CCB9006007A71FB /* RideDetailViewController.swift */,
+				CE90B61F2CCF5D7100B5FB7F /* CustomSheetViewController.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
+				CE90B6202CCF5D7100B5FB7F /* CustomSheetViewController.swift in Sources */,
 				CE12800B2CCB9006007A71FB /* RideDetailViewController.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,

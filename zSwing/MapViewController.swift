@@ -347,16 +347,8 @@ class MapViewController: UIViewController {
     
     private func showRideDetail(for rideInfo: RideInfo) {
         let detailVC = RideDetailViewController(rideInfo: rideInfo)
-        
-        if let sheet = detailVC.sheetPresentationController {
-            // medium과 large 모두 지원하도록 수정
-            sheet.detents = [.medium(), .large()]
-            // 선호하는 초기 크기를 medium으로 설정
-            sheet.selectedDetentIdentifier = .medium
-            sheet.prefersGrabberVisible = true
-        }
-        
-        present(detailVC, animated: true)
+        let sheetVC = CustomSheetViewController(contentViewController: detailVC)
+        present(sheetVC, animated: true)
     }
 }
 

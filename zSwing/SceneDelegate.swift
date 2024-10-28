@@ -68,16 +68,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                             self?.window?.rootViewController = mainTabBarController
                         }, completion: nil)
                     } else {
-                        print("사용자 정보 없음: 닉네임 설정 화면으로 이동합니다")
-                        let nicknameVC = NicknameViewController()
-                        nicknameVC.modalPresentationStyle = .fullScreen
-                        nicknameVC.modalTransitionStyle = .crossDissolve
+                        print("사용자 정보 없음: 로그인 화면으로 이동합니다")
+                        let loginVC = LoginViewController()
+                        loginVC.modalPresentationStyle = .fullScreen
+                        loginVC.modalTransitionStyle = .crossDissolve
                         
                         UIView.transition(with: self?.window ?? UIWindow(),
                                           duration: 0.3,
                                           options: .transitionCrossDissolve,
                                           animations: {
-                            self?.window?.rootViewController = nicknameVC
+                            self?.window?.rootViewController = loginVC
                         }, completion: nil)
                     }
                 }

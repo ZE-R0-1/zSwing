@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 import CoreLocation
 
 // MARK: - Models
@@ -42,6 +43,7 @@ class RideDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        isModalInPresentation = false  // 이 부분 추가 (드래그로 dismiss 허용)
     }
     
     private func setupUI() {
