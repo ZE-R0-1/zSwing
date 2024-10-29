@@ -19,42 +19,9 @@ class MapViewController: UIViewController {
         return map
     }()
     
-    private let bottomSheetView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 20
-        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 0, height: -3)
-        view.layer.shadowRadius = 3
-        view.layer.shadowOpacity = 0.1
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = true
+    private let bottomSheetView: RideDetailBottomSheetView = {
+        let view = RideDetailBottomSheetView()
         return view
-    }()
-    
-    private let dragIndicator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemGray3
-        view.layer.cornerRadius = 2.5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let infoStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 16
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-    
-    private let dismissButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
     }()
     
     private let currentLocationButton: UIButton = {
@@ -142,32 +109,6 @@ class MapViewController: UIViewController {
             bottomSheetHeightConstraint!
         ])
         
-        // Add Drag Indicator
-        bottomSheetView.addSubview(dragIndicator)
-        NSLayoutConstraint.activate([
-            dragIndicator.widthAnchor.constraint(equalToConstant: 40),
-            dragIndicator.heightAnchor.constraint(equalToConstant: 5),
-            dragIndicator.centerXAnchor.constraint(equalTo: bottomSheetView.centerXAnchor),
-            dragIndicator.topAnchor.constraint(equalTo: bottomSheetView.topAnchor, constant: 12)
-        ])
-        
-        // Add Info Stack View
-        bottomSheetView.addSubview(infoStackView)
-        NSLayoutConstraint.activate([
-            infoStackView.topAnchor.constraint(equalTo: dragIndicator.bottomAnchor, constant: 20),
-            infoStackView.leadingAnchor.constraint(equalTo: bottomSheetView.leadingAnchor, constant: 20),
-            infoStackView.trailingAnchor.constraint(equalTo: bottomSheetView.trailingAnchor, constant: -20)
-        ])
-        
-        // Add Dismiss Button
-        bottomSheetView.addSubview(dismissButton)
-        NSLayoutConstraint.activate([
-            dismissButton.topAnchor.constraint(equalTo: bottomSheetView.topAnchor, constant: 16),
-            dismissButton.trailingAnchor.constraint(equalTo: bottomSheetView.trailingAnchor, constant: -16),
-            dismissButton.widthAnchor.constraint(equalToConstant: 24),
-            dismissButton.heightAnchor.constraint(equalToConstant: 24)
-        ])
-        
         // Add Buttons Stack
         let buttonsStack = UIStackView(arrangedSubviews: [searchButton, currentLocationButton])
         buttonsStack.axis = .horizontal
@@ -194,90 +135,21 @@ class MapViewController: UIViewController {
         // Add Button Targets
         currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
         searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
-        dismissButton.addTarget(self, action: #selector(dismissButtonTapped), for: .touchUpInside)
         
         mapView.delegate = self
         mapView.showsUserLocation = true
-    }
-    
-    // MARK: - Bottom Sheet Properties
-    private enum BottomSheetPosition {
-        case bottom
-        case middle
-        case top
-    }
-
-    private var bottomSheetBottomConstraint: NSLayoutConstraint!
-    private var currentBottomSheetPosition: BottomSheetPosition = .bottom
-    
-    // MARK: - Bottom Sheet Methods
-    private func showRideDetail(for rideInfo: RideInfo) {
-        // Clear previous info
-        infoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // Add new info
-        let nameLabel = createLabel(text: rideInfo.rideName, font: .boldSystemFont(ofSize: 24))
-        let facilityLabel = createLabel(text: rideInfo.facilityName, font: .systemFont(ofSize: 18), textColor: .gray)
-        let addressLabel = createLabel(text: rideInfo.address, font: .systemFont(ofSize: 16))
-        addressLabel.numberOfLines = 0
-        
-        let separator = createSeparator()
-        
-        let typeLabel = createLabel(text: "놀이기구 유형: \(rideInfo.rideType)", font: .systemFont(ofSize: 16))
-        let dateLabel = createLabel(text: "설치일: \(rideInfo.installDate)", font: .systemFont(ofSize: 16))
-        
-        [nameLabel, facilityLabel, separator, addressLabel, typeLabel, dateLabel].forEach {
-            infoStackView.addArrangedSubview($0)
-        }
-        
-        // Show bottom sheet with animation
-        bottomSheetView.isHidden = false
-        UIView.animate(withDuration: 0.3) {
-            self.bottomSheetView.alpha = 1
-        }
-    }
-    
-    private func hideBottomSheet() {
-        UIView.animate(withDuration: 0.3) {
-            self.bottomSheetView.alpha = 0
-        } completion: { _ in
-            self.bottomSheetView.isHidden = true
-        }
-    }
-    
-    private func createLabel(text: String, font: UIFont, textColor: UIColor = .black) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.font = font
-        label.textColor = textColor
-        return label
-    }
-    
-    private func createSeparator() -> UIView {
-        let separator = UIView()
-        separator.backgroundColor = .systemGray4
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        return separator
-    }
-    
-    @objc private func dismissButtonTapped() {
-        hideBottomSheet()
     }
     
     // MARK: - Setup Location Manager
     private func setupLocationManager() {
         locationManager.delegate = self
         
-        // 현재 권한 상태 확인
         switch locationManager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
-            // 이미 권한이 있으면 바로 위치 업데이트 시작
             locationManager.startUpdatingLocation()
         case .notDetermined:
-            // 권한이 없으면 요청
             locationManager.requestWhenInUseAuthorization()
         default:
-            // 권한이 거부된 경우 서울 중심으로 설정
             let seoulRegion = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
                 latitudinalMeters: 5000,
@@ -316,13 +188,11 @@ class MapViewController: UIViewController {
         let center = region.center
         let span = region.span
         
-        // 현재 보이는 영역의 좌표 범위 계산
         let minLat = center.latitude - (span.latitudeDelta / 2.0)
         let maxLat = center.latitude + (span.latitudeDelta / 2.0)
         let minLon = center.longitude - (span.longitudeDelta / 2.0)
         let maxLon = center.longitude + (span.longitudeDelta / 2.0)
         
-        // Firestore 쿼리
         db.collection("playgrounds")
             .getDocuments { [weak self] (snapshot, error) in
                 guard let self = self else { return }
@@ -336,10 +206,8 @@ class MapViewController: UIViewController {
                 
                 guard let documents = snapshot?.documents else { return }
                 
-                // 보이는 영역 내의 documents 필터링
                 let filteredDocs = documents.filter { document in
                     let data = document.data()
-                    // String을 Double로 변환
                     guard let latStr = data["latCrtsVl"] as? String,
                           let lonStr = data["lotCrtsVl"] as? String,
                           let latitude = Double(latStr),
@@ -347,12 +215,10 @@ class MapViewController: UIViewController {
                         return false
                     }
                     
-                    // 현재 보이는 영역의 좌표 범위 내에 있는지 확인
                     return latitude >= minLat && latitude <= maxLat &&
                     longitude >= minLon && longitude <= maxLon
                 }
                 
-                // 필터링된 playground들의 rides 가져오기
                 let group = DispatchGroup()
                 var allRides: [RideAnnotation] = []
                 
@@ -361,7 +227,6 @@ class MapViewController: UIViewController {
                     let data = document.data()
                     let pfctSn = data["pfctSn"] as? String ?? ""
                     
-                    // String을 Double로 변환
                     guard let latStr = data["latCrtsVl"] as? String,
                           let lonStr = data["lotCrtsVl"] as? String,
                           let latitude = Double(latStr),
@@ -406,7 +271,6 @@ class MapViewController: UIViewController {
                     self.updateAnnotations(with: allRides)
                     self.loadingIndicator.stopAnimating()
                     
-                    // 검색 결과 알림
                     let message = allRides.isEmpty ?
                     "이 지역에 놀이기구가 없습니다" :
                     "이 지역에서 \(allRides.count)개의 놀이기구를 찾았습니다"
@@ -416,18 +280,14 @@ class MapViewController: UIViewController {
     }
     
     private func updateAnnotations(with newAnnotations: [MKAnnotation]) {
-        // 기존 어노테이션 제거
         mapView.removeAnnotations(currentAnnotations)
         currentAnnotations = newAnnotations
-        
-        // 새로운 어노테이션 추가
         mapView.addAnnotations(newAnnotations)
     }
     
     private func showToast(message: String) {
         let padding: CGFloat = 8
         
-        // 패딩용 UIView 생성
         let containerView = UIView()
         containerView.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         containerView.layer.cornerRadius = 10
@@ -445,7 +305,6 @@ class MapViewController: UIViewController {
         containerView.addSubview(toast)
         view.addSubview(containerView)
         
-        // 컨테이너 내부 패딩을 위한 제약
         NSLayoutConstraint.activate([
             toast.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
             toast.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
@@ -453,7 +312,6 @@ class MapViewController: UIViewController {
             toast.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
         ])
         
-        // 컨테이너의 위치 제약
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
@@ -461,7 +319,6 @@ class MapViewController: UIViewController {
             containerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
         ])
         
-        // 애니메이션 처리
         containerView.alpha = 0
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
             containerView.alpha = 1
@@ -506,7 +363,7 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
         if let rideAnnotation = annotation as? RideAnnotation {
             mapView.deselectAnnotation(annotation, animated: true)
-            showRideDetail(for: rideAnnotation.rideInfo)
+            bottomSheetView.showRideDetail(for: rideAnnotation.rideInfo)
         }
     }
 }
@@ -536,27 +393,4 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치 업데이트 실패: \(error.localizedDescription)")
     }
-}
-
-// MARK: - RideAnnotation
-class RideAnnotation: MKPointAnnotation {
-    let rideInfo: RideInfo
-    
-    init(coordinate: CLLocationCoordinate2D, title: String?, subtitle: String?, rideInfo: RideInfo) {
-        self.rideInfo = rideInfo
-        super.init()
-        self.coordinate = coordinate
-        self.title = title
-        self.subtitle = subtitle
-    }
-}
-
-// MARK: - Models
-struct RideInfo {
-    let rideSn: String
-    let installDate: String
-    let facilityName: String
-    let rideName: String
-    let rideType: String
-    let address: String
 }

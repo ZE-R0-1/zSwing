@@ -26,6 +26,9 @@
 		CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D42CC623A100FF532F /* MapViewController.swift */; };
 		CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */; };
 		CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D82CC623C700FF532F /* ProfileViewController.swift */; };
+		CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */; };
+		CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */; };
+		CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +46,9 @@
 		CE2B97D42CC623A100FF532F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadViewController.swift; sourceTree = "<group>"; };
 		CE2B97D82CC623C700FF532F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
+		CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAnnotation.swift; sourceTree = "<group>"; };
+		CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailBottomSheetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,9 @@
 				CE2B97D42CC623A100FF532F /* MapViewController.swift */,
 				CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */,
 				CE2B97D82CC623C700FF532F /* ProfileViewController.swift */,
+				CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */,
+				CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */,
+				CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -186,13 +195,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */,
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
+				CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
 				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */,
+				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
