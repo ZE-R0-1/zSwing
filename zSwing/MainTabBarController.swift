@@ -34,22 +34,35 @@ class MainTabBarController: UITabBarController {
     }
     
     private func configureTabBar() {
-        // iOS 15 이상에서 탭바 배경을 불투명하게 설정
-        if #available(iOS 15.0, *) {
-            let appearance = UITabBarAppearance()
-            appearance.configureWithOpaqueBackground()  // 불투명 배경 설정
-            
-            // 탭바 그림자 효과 제거 (선택사항)
-            appearance.shadowColor = nil
-            
-            tabBar.standardAppearance = appearance
-            tabBar.scrollEdgeAppearance = appearance  // 스크롤 시에도 동일한 모습 유지
-        } else {
-            // iOS 15 미만에서는 아래 방식으로 설정
-            tabBar.isTranslucent = false
-        }
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
         
-        // 탭바 배경색 설정 (원하는 색상으로 변경 가능)
-        tabBar.backgroundColor = .systemBackground
+        // 기본 구분선 제거
+        appearance.shadowImage = UIImage()
+        
+        // 배경색 설정
+        appearance.backgroundColor = .systemBackground
+        
+        // 커스텀 그림자 설정
+        tabBar.layer.masksToBounds = false
+        tabBar.layer.shadowColor = UIColor.black.cgColor
+        tabBar.layer.shadowOffset = CGSize(width: 0, height: -3)
+        tabBar.layer.shadowRadius = 4
+        tabBar.layer.shadowOpacity = 0.1
+        
+        // 탭바 모서리 처리 (선택사항)
+        tabBar.layer.cornerRadius = 15
+        tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
+        // appearance 적용
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // 레이아웃 변경 시에도 그림자가 유지되도록 설정
+        tabBar.layer.shadowPath = UIBezierPath(rect: tabBar.bounds).cgPath
     }
 }
