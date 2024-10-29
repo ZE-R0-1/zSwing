@@ -5,6 +5,8 @@
 //  Created by USER on 10/21/24.
 //
 
+// MARK: - MapViewController.swift
+
 import UIKit
 import MapKit
 import CoreLocation
@@ -67,8 +69,6 @@ class MapViewController: UIViewController {
     
     private let db = Firestore.firestore()
     private var currentAnnotations: [MKAnnotation] = []
-    private var bottomSheetHeightConstraint: NSLayoutConstraint?
-    private let bottomSheetHeight: CGFloat = 300
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -101,12 +101,12 @@ class MapViewController: UIViewController {
         
         // Add Bottom Sheet
         view.addSubview(bottomSheetView)
-        bottomSheetHeightConstraint = bottomSheetView.heightAnchor.constraint(equalToConstant: bottomSheetHeight)
+        bottomSheetView.heightConstraint = bottomSheetView.heightAnchor.constraint(equalToConstant: 0)
         NSLayoutConstraint.activate([
             bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomSheetHeightConstraint!
+            bottomSheetView.heightConstraint!
         ])
         
         // Add Buttons Stack
@@ -140,7 +140,6 @@ class MapViewController: UIViewController {
         mapView.showsUserLocation = true
     }
     
-    // MARK: - Setup Location Manager
     private func setupLocationManager() {
         locationManager.delegate = self
         
@@ -176,6 +175,52 @@ class MapViewController: UIViewController {
         }) { _ in
             UIView.animate(withDuration: 0.1) {
                 button.transform = .identity
+            }
+        }
+    }
+    
+    private func showToast(message: String) {
+        let padding: CGFloat = 8
+        
+        let containerView = UIView()
+        containerView.backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        containerView.layer.cornerRadius = 10
+        containerView.clipsToBounds = true
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let toast = UILabel()
+        toast.textColor = .white
+        toast.text = message
+        toast.textAlignment = .center
+        toast.numberOfLines = 0
+        toast.font = .systemFont(ofSize: 15, weight: .medium)
+        toast.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(toast)
+        view.addSubview(containerView)
+        
+        NSLayoutConstraint.activate([
+            toast.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
+            toast.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
+            toast.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
+            toast.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
+        ])
+        
+        NSLayoutConstraint.activate([
+            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
+            containerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+        ])
+        
+        containerView.alpha = 0
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
+            containerView.alpha = 1
+        }) { _ in
+            UIView.animate(withDuration: 0.3, delay: 2, options: .curveEaseInOut, animations: {
+                containerView.alpha = 0
+            }) { _ in
+                containerView.removeFromSuperview()
             }
         }
     }
@@ -283,52 +328,6 @@ class MapViewController: UIViewController {
         mapView.removeAnnotations(currentAnnotations)
         currentAnnotations = newAnnotations
         mapView.addAnnotations(newAnnotations)
-    }
-    
-    private func showToast(message: String) {
-        let padding: CGFloat = 8
-        
-        let containerView = UIView()
-        containerView.backgroundColor = UIColor.black.withAlphaComponent(0.75)
-        containerView.layer.cornerRadius = 10
-        containerView.clipsToBounds = true
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let toast = UILabel()
-        toast.textColor = .white
-        toast.text = message
-        toast.textAlignment = .center
-        toast.numberOfLines = 0
-        toast.font = .systemFont(ofSize: 15, weight: .medium)
-        toast.translatesAutoresizingMaskIntoConstraints = false
-        
-        containerView.addSubview(toast)
-        view.addSubview(containerView)
-        
-        NSLayoutConstraint.activate([
-            toast.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
-            toast.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
-            toast.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
-            toast.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
-        ])
-        
-        NSLayoutConstraint.activate([
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
-            containerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
-            containerView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
-        ])
-        
-        containerView.alpha = 0
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
-            containerView.alpha = 1
-        }) { _ in
-            UIView.animate(withDuration: 0.3, delay: 2, options: .curveEaseInOut, animations: {
-                containerView.alpha = 0
-            }) { _ in
-                containerView.removeFromSuperview()
-            }
-        }
     }
     
     private func showAlert(title: String, message: String) {

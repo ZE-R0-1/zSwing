@@ -26,7 +26,14 @@ class RideDetailBottomSheetView: UIView {
     }()
     
     private var initialTouchPoint: CGPoint = .zero
-    private var originalPosition: CGPoint = .zero
+    private var currentHeight: CGFloat = 0
+    
+    // Height states
+    private let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4  // 40%
+    private let maximumHeight: CGFloat = UIScreen.main.bounds.height * 0.9  // 90%
+    private let minimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2  // 20%
+    
+    var heightConstraint: NSLayoutConstraint?
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -78,34 +85,60 @@ class RideDetailBottomSheetView: UIView {
     
     // MARK: - Gesture Handling
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: self)
+        let translation = gesture.translation(in: self.superview)
+        let velocity = gesture.velocity(in: self.superview)
         
         switch gesture.state {
         case .began:
-            initialTouchPoint = gesture.location(in: self)
-            originalPosition = center
+            initialTouchPoint = gesture.location(in: self.superview)
+            currentHeight = frame.height
             
         case .changed:
-            if translation.y > 0 { // Only allow downward dragging
-                center = CGPoint(x: originalPosition.x, y: originalPosition.y + translation.y)
-            }
+            let newHeight = currentHeight - translation.y
+            updateHeight(newHeight)
             
-        case .ended, .cancelled:
-            let velocity = gesture.velocity(in: self)
-            let shouldDismiss = velocity.y > 500 || frame.origin.y > superview!.frame.height * 0.75
+        case .ended:
+            let projectedHeight = currentHeight - translation.y - velocity.y * 0.2
             
-            if shouldDismiss {
-                hide()
+            // Determine final height based on velocity and projected position
+            if velocity.y > 1000 {
+                // Fast downward swipe
+                animateHeight(to: minimumHeight)
+            } else if velocity.y < -1000 {
+                // Fast upward swipe
+                animateHeight(to: maximumHeight)
+            } else if projectedHeight < (defaultHeight + minimumHeight) / 2 {
+                // Below middle of minimum and default
+                animateHeight(to: minimumHeight)
+            } else if projectedHeight > (defaultHeight + maximumHeight) / 2 {
+                // Above middle of default and maximum
+                animateHeight(to: maximumHeight)
             } else {
-                // Animate back to original position
-                UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
-                    self.center = self.originalPosition
-                }
+                // Return to default height
+                animateHeight(to: defaultHeight)
             }
             
         default:
             break
         }
+    }
+    
+    private func updateHeight(_ height: CGFloat) {
+        let newHeight = min(max(height, minimumHeight), maximumHeight)
+        heightConstraint?.constant = newHeight
+        superview?.layoutIfNeeded()
+    }
+    
+    private func animateHeight(to height: CGFloat) {
+        UIView.animate(withDuration: 0.3,
+                      delay: 0,
+                      usingSpringWithDamping: 0.8,
+                      initialSpringVelocity: 0.5,
+                      options: .curveEaseOut,
+                      animations: { [weak self] in
+            self?.heightConstraint?.constant = height
+            self?.superview?.layoutIfNeeded()
+        })
     }
     
     // MARK: - Public Methods
@@ -128,22 +161,19 @@ class RideDetailBottomSheetView: UIView {
             infoStackView.addArrangedSubview($0)
         }
         
-        // Show bottom sheet with animation
+        // Show with animation
         isHidden = false
-        alpha = 0
-        UIView.animate(withDuration: 0.3) {
-            self.alpha = 1
-        }
-    }
-    
-    func hide() {
-        UIView.animate(withDuration: 0.3) {
-            self.alpha = 0
-            self.transform = CGAffineTransform(translationX: 0, y: self.frame.height)
-        } completion: { _ in
-            self.isHidden = true
-            self.transform = .identity
-        }
+        heightConstraint?.constant = 0
+        
+        UIView.animate(withDuration: 0.5,
+                      delay: 0,
+                      usingSpringWithDamping: 0.8,
+                      initialSpringVelocity: 0.5,
+                      options: .curveEaseOut,
+                      animations: { [weak self] in
+            self?.heightConstraint?.constant = self?.defaultHeight ?? 0
+            self?.superview?.layoutIfNeeded()
+        })
     }
     
     // MARK: - Private Methods
