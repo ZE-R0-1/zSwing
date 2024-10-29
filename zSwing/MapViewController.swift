@@ -5,8 +5,6 @@
 //  Created by USER on 10/21/24.
 //
 
-// MARK: - MapViewController.swift
-
 import UIKit
 import MapKit
 import CoreLocation
@@ -18,6 +16,11 @@ class MapViewController: UIViewController {
     private let mapView: MKMapView = {
         let map = MKMapView()
         map.translatesAutoresizingMaskIntoConstraints = false
+        // 줌 거리 제한 설정
+        map.cameraZoomRange = MKMapView.CameraZoomRange(
+            minCenterCoordinateDistance: 500,    // 최대 줌인 (500 meters)
+            maxCenterCoordinateDistance: 20000   // 최대 줌아웃 (20 kilometers)
+        )
         return map
     }()
     
@@ -138,6 +141,11 @@ class MapViewController: UIViewController {
         
         mapView.delegate = self
         mapView.showsUserLocation = true
+        // 지도 제스처 설정
+        mapView.isZoomEnabled = true
+        mapView.isScrollEnabled = true
+        mapView.isPitchEnabled = false  // 3D 기울기 비활성화 (선택사항)
+        mapView.isRotateEnabled = false // 회전 비활성화 (선택사항)
     }
     
     private func setupLocationManager() {
