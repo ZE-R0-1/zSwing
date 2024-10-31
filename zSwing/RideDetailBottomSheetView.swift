@@ -126,6 +126,12 @@ class RideDetailBottomSheetView: UIView {
     private func updateHeight(_ height: CGFloat) {
         let newHeight = min(max(height, minimumHeight), maximumHeight)
         heightConstraint?.constant = newHeight
+        
+        // 맵뷰의 마진 업데이트를 위해 delegate 호출
+        if let mapVC = superview?.next as? MapViewController {
+            mapVC.updateMapLayoutMargins(bottomInset: newHeight)
+        }
+        
         superview?.layoutIfNeeded()
     }
     
@@ -137,9 +143,16 @@ class RideDetailBottomSheetView: UIView {
                       options: .curveEaseOut,
                       animations: { [weak self] in
             self?.heightConstraint?.constant = height
+            
+            // 맵뷰의 마진 업데이트를 위해 delegate 호출
+            if let mapVC = self?.superview?.next as? MapViewController {
+                mapVC.updateMapLayoutMargins(bottomInset: height)
+            }
+            
             self?.superview?.layoutIfNeeded()
         })
     }
+
     
     // MARK: - Public Methods
     func showRideDetail(for rideInfo: RideInfo) {
@@ -165,17 +178,30 @@ class RideDetailBottomSheetView: UIView {
         isHidden = false
         heightConstraint?.constant = 0
         
+        // 시작할 때 맵뷰의 마진을 0으로 설정
+        if let mapVC = superview?.next as? MapViewController {
+            mapVC.updateMapLayoutMargins(bottomInset: 0)
+        }
+        
+        superview?.layoutIfNeeded()  // 초기 상태 적용
+        
         UIView.animate(withDuration: 0.5,
                       delay: 0,
                       usingSpringWithDamping: 0.8,
                       initialSpringVelocity: 0.5,
                       options: .curveEaseOut,
                       animations: { [weak self] in
-            self?.heightConstraint?.constant = self?.defaultHeight ?? 0
-            self?.superview?.layoutIfNeeded()
+            guard let self = self else { return }
+            self.heightConstraint?.constant = self.defaultHeight
+            
+            // 애니메이션과 함께 맵뷰의 마진도 업데이트
+            if let mapVC = self.superview?.next as? MapViewController {
+                mapVC.updateMapLayoutMargins(bottomInset: self.defaultHeight)
+            }
+            
+            self.superview?.layoutIfNeeded()
         })
     }
-    
     // MARK: - Private Methods
     private func createLabel(text: String, font: UIFont, textColor: UIColor = .black) -> UILabel {
         let label = UILabel()

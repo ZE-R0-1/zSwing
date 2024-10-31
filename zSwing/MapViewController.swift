@@ -188,11 +188,18 @@ class MapViewController: UIViewController {
         if bottomSheetView.heightConstraint?.constant != 0 {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 self?.bottomSheetView.heightConstraint?.constant = 0
+                self?.updateMapLayoutMargins(bottomInset: 0) // 시트가 사라질 때 마진도 리셋
                 self?.view.layoutIfNeeded()
             }) { [weak self] _ in
                 self?.bottomSheetView.isHidden = true
             }
         }
+    }
+
+    func updateMapLayoutMargins(bottomInset: CGFloat) {
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        // SafeArea 높이를 빼서 실제 시트 높이에 맞춤
+        mapView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset - safeAreaBottom, right: 0)
     }
     
     private func animateButton(_ button: UIButton) {
