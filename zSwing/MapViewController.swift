@@ -78,7 +78,8 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupLocationManager()
-        
+        setupMapTapGesture()
+
         // 초기 맵 영역 설정 (서울 중심)
         let initialRegion = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
@@ -144,8 +145,8 @@ class MapViewController: UIViewController {
         // 지도 제스처 설정
         mapView.isZoomEnabled = true
         mapView.isScrollEnabled = true
-        mapView.isPitchEnabled = false  // 3D 기울기 비활성화 (선택사항)
-        mapView.isRotateEnabled = false // 회전 비활성화 (선택사항)
+        mapView.isPitchEnabled = false  // 3D 기울기 비활성화
+        mapView.isRotateEnabled = false // 회전 비활성화
     }
     
     private func setupLocationManager() {
@@ -166,6 +167,12 @@ class MapViewController: UIViewController {
         }
     }
     
+    private func setupMapTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMapTap(_:)))
+        tapGesture.delegate = self
+        mapView.addGestureRecognizer(tapGesture)
+    }
+    
     // MARK: - Actions
     @objc private func currentLocationButtonTapped() {
         locationManager.startUpdatingLocation()
@@ -175,6 +182,17 @@ class MapViewController: UIViewController {
     @objc private func searchButtonTapped() {
         animateButton(searchButton)
         searchInVisibleRegion()
+    }
+    
+    @objc private func handleMapTap(_ gesture: UITapGestureRecognizer) {
+        if bottomSheetView.heightConstraint?.constant != 0 {
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                self?.bottomSheetView.heightConstraint?.constant = 0
+                self?.view.layoutIfNeeded()
+            }) { [weak self] _ in
+                self?.bottomSheetView.isHidden = true
+            }
+        }
     }
     
     private func animateButton(_ button: UIButton) {
@@ -399,5 +417,16 @@ extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치 업데이트 실패: \(error.localizedDescription)")
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+extension MapViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // 바텀시트를 탭했을 때는 제스처를 무시
+        if touch.view?.isDescendant(of: bottomSheetView) == true {
+            return false
+        }
+        return true
     }
 }
