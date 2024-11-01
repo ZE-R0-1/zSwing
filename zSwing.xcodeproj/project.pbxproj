@@ -29,6 +29,7 @@
 		CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */; };
 		CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */; };
 		CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */; };
+		CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
 		CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAnnotation.swift; sourceTree = "<group>"; };
 		CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailBottomSheetView.swift; sourceTree = "<group>"; };
+		CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePlaygroundService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 				CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */,
 				CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */,
 				CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */,
+				CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */,
+				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
 				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);

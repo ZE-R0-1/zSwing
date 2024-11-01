@@ -8,7 +8,6 @@
 import UIKit
 import MapKit
 import CoreLocation
-import FirebaseFirestore
 
 class MapViewController: UIViewController {
     
@@ -16,10 +15,9 @@ class MapViewController: UIViewController {
     private let mapView: MKMapView = {
         let map = MKMapView()
         map.translatesAutoresizingMaskIntoConstraints = false
-        // 줌 거리 제한 설정
         map.cameraZoomRange = MKMapView.CameraZoomRange(
-            minCenterCoordinateDistance: 500,    // 최대 줌인 (500 meters)
-            maxCenterCoordinateDistance: 20000   // 최대 줌아웃 (20 kilometers)
+            minCenterCoordinateDistance: 500,
+            maxCenterCoordinateDistance: 20000
         )
         return map
     }()
@@ -70,7 +68,7 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
-    private let db = Firestore.firestore()
+    private let firebaseService = FirebasePlaygroundService()
     private var currentAnnotations: [MKAnnotation] = []
     
     // MARK: - Lifecycle
@@ -79,8 +77,7 @@ class MapViewController: UIViewController {
         setupUI()
         setupLocationManager()
         setupMapTapGesture()
-
-        // 초기 맵 영역 설정 (서울 중심)
+        
         let initialRegion = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
             latitudinalMeters: 5000,
@@ -94,7 +91,13 @@ class MapViewController: UIViewController {
         view.backgroundColor = .white
         title = "놀이기구 지도"
         
-        // Add MapView
+        setupMapView()
+        setupBottomSheet()
+        setupButtons()
+        setupLoadingIndicator()
+    }
+    
+    private func setupMapView() {
         view.addSubview(mapView)
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -103,7 +106,15 @@ class MapViewController: UIViewController {
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        // Add Bottom Sheet
+        mapView.delegate = self
+        mapView.showsUserLocation = true
+        mapView.isZoomEnabled = true
+        mapView.isScrollEnabled = true
+        mapView.isPitchEnabled = false
+        mapView.isRotateEnabled = false
+    }
+    
+    private func setupBottomSheet() {
         view.addSubview(bottomSheetView)
         bottomSheetView.heightConstraint = bottomSheetView.heightAnchor.constraint(equalToConstant: 0)
         NSLayoutConstraint.activate([
@@ -112,8 +123,9 @@ class MapViewController: UIViewController {
             bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             bottomSheetView.heightConstraint!
         ])
-        
-        // Add Buttons Stack
+    }
+    
+    private func setupButtons() {
         let buttonsStack = UIStackView(arrangedSubviews: [searchButton, currentLocationButton])
         buttonsStack.axis = .horizontal
         buttonsStack.spacing = 8
@@ -129,24 +141,16 @@ class MapViewController: UIViewController {
             currentLocationButton.heightAnchor.constraint(equalToConstant: 40)
         ])
         
-        // Add Loading Indicator
+        currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
+        searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
+    }
+    
+    private func setupLoadingIndicator() {
         view.addSubview(loadingIndicator)
         NSLayoutConstraint.activate([
             loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-        
-        // Add Button Targets
-        currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
-        searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
-        
-        mapView.delegate = self
-        mapView.showsUserLocation = true
-        // 지도 제스처 설정
-        mapView.isZoomEnabled = true
-        mapView.isScrollEnabled = true
-        mapView.isPitchEnabled = false  // 3D 기울기 비활성화
-        mapView.isRotateEnabled = false // 회전 비활성화
     }
     
     private func setupLocationManager() {
@@ -188,17 +192,16 @@ class MapViewController: UIViewController {
         if bottomSheetView.heightConstraint?.constant != 0 {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 self?.bottomSheetView.heightConstraint?.constant = 0
-                self?.updateMapLayoutMargins(bottomInset: 0) // 시트가 사라질 때 마진도 리셋
+                self?.updateMapLayoutMargins(bottomInset: 0)
                 self?.view.layoutIfNeeded()
             }) { [weak self] _ in
                 self?.bottomSheetView.isHidden = true
             }
         }
     }
-
+    
     func updateMapLayoutMargins(bottomInset: CGFloat) {
         let safeAreaBottom = view.safeAreaInsets.bottom
-        // SafeArea 높이를 빼서 실제 시트 높이에 맞춤
         mapView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset - safeAreaBottom, right: 0)
     }
     
@@ -210,6 +213,44 @@ class MapViewController: UIViewController {
                 button.transform = .identity
             }
         }
+    }
+    
+    // MARK: - Search Methods
+    private func searchInVisibleRegion() {
+        loadingIndicator.startAnimating()
+        
+        firebaseService.searchPlaygrounds(in: mapView.region) { [weak self] (annotations, error) in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Error fetching playgrounds: \(error)")
+                self.showAlert(title: "검색 실패", message: "데이터를 가져오는데 실패했습니다.")
+                self.loadingIndicator.stopAnimating()
+                return
+            }
+            
+            if let annotations = annotations {
+                self.updateAnnotations(with: annotations)
+                let message = annotations.isEmpty ?
+                "이 지역에 놀이기구가 없습니다" :
+                "이 지역에서 \(annotations.count)개의 놀이기구를 찾았습니다"
+                self.showToast(message: message)
+            }
+            
+            self.loadingIndicator.stopAnimating()
+        }
+    }
+    
+    private func updateAnnotations(with newAnnotations: [MKAnnotation]) {
+        mapView.removeAnnotations(currentAnnotations)
+        currentAnnotations = newAnnotations
+        mapView.addAnnotations(newAnnotations)
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     private func showToast(message: String) {
@@ -256,117 +297,6 @@ class MapViewController: UIViewController {
                 containerView.removeFromSuperview()
             }
         }
-    }
-    
-    // MARK: - Search Methods
-    private func searchInVisibleRegion() {
-        loadingIndicator.startAnimating()
-        
-        let region = mapView.region
-        let center = region.center
-        let span = region.span
-        
-        let minLat = center.latitude - (span.latitudeDelta / 2.0)
-        let maxLat = center.latitude + (span.latitudeDelta / 2.0)
-        let minLon = center.longitude - (span.longitudeDelta / 2.0)
-        let maxLon = center.longitude + (span.longitudeDelta / 2.0)
-        
-        db.collection("playgrounds")
-            .getDocuments { [weak self] (snapshot, error) in
-                guard let self = self else { return }
-                
-                if let error = error {
-                    print("Error fetching playgrounds: \(error)")
-                    self.showAlert(title: "검색 실패", message: "데이터를 가져오는데 실패했습니다.")
-                    self.loadingIndicator.stopAnimating()
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else { return }
-                
-                let filteredDocs = documents.filter { document in
-                    let data = document.data()
-                    guard let latStr = data["latCrtsVl"] as? String,
-                          let lonStr = data["lotCrtsVl"] as? String,
-                          let latitude = Double(latStr),
-                          let longitude = Double(lonStr) else {
-                        return false
-                    }
-                    
-                    return latitude >= minLat && latitude <= maxLat &&
-                    longitude >= minLon && longitude <= maxLon
-                }
-                
-                let group = DispatchGroup()
-                var allRides: [RideAnnotation] = []
-                
-                for document in filteredDocs {
-                    group.enter()
-                    let data = document.data()
-                    let pfctSn = data["pfctSn"] as? String ?? ""
-                    
-                    guard let latStr = data["latCrtsVl"] as? String,
-                          let lonStr = data["lotCrtsVl"] as? String,
-                          let latitude = Double(latStr),
-                          let longitude = Double(lonStr) else {
-                        group.leave()
-                        continue
-                    }
-                    
-                    let address = data["ronaAddr"] as? String ?? ""
-                    
-                    self.db.collection("rides")
-                        .whereField("pfctSn", isEqualTo: pfctSn)
-                        .getDocuments { (ridesSnapshot, error) in
-                            defer { group.leave() }
-                            
-                            if let rides = ridesSnapshot?.documents {
-                                let rideAnnotations = rides.compactMap { rideDoc -> RideAnnotation? in
-                                    let rideData = rideDoc.data()
-                                    return RideAnnotation(
-                                        coordinate: CLLocationCoordinate2D(
-                                            latitude: latitude,
-                                            longitude: longitude
-                                        ),
-                                        title: rideData["rideNm"] as? String ?? "알 수 없음",
-                                        subtitle: rideData["pfctNm"] as? String ?? "알 수 없음",
-                                        rideInfo: RideInfo(
-                                            rideSn: rideDoc.documentID,
-                                            installDate: rideData["rideInstlYmd"] as? String ?? "",
-                                            facilityName: rideData["pfctNm"] as? String ?? "",
-                                            rideName: rideData["rideNm"] as? String ?? "",
-                                            rideType: rideData["rideStylCd"] as? String ?? "",
-                                            address: address
-                                        )
-                                    )
-                                }
-                                allRides.append(contentsOf: rideAnnotations)
-                            }
-                        }
-                }
-                
-                group.notify(queue: .main) {
-                    self.updateAnnotations(with: allRides)
-                    self.loadingIndicator.stopAnimating()
-                    
-                    let message = allRides.isEmpty ?
-                    "이 지역에 놀이기구가 없습니다" :
-                    "이 지역에서 \(allRides.count)개의 놀이기구를 찾았습니다"
-                    self.showToast(message: message)
-                }
-            }
-    }
-    
-    private func updateAnnotations(with newAnnotations: [MKAnnotation]) {
-        mapView.removeAnnotations(currentAnnotations)
-        currentAnnotations = newAnnotations
-        mapView.addAnnotations(newAnnotations)
-    }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
     }
 }
 
