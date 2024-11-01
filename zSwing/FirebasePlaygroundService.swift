@@ -76,8 +76,8 @@ class FirebasePlaygroundService {
                                             latitude: latitude,
                                             longitude: longitude
                                         ),
-                                        title: rideData["rideNm"] as? String ?? "알 수 없음",
-                                        subtitle: rideData["pfctNm"] as? String ?? "알 수 없음",
+                                        title: rideData["pfctNm"] as? String ?? "알 수 없음",
+                                        subtitle: rideData["rideNm"] as? String ?? "알 수 없음",
                                         rideInfo: RideInfo(
                                             rideSn: rideDoc.documentID,
                                             installDate: rideData["rideInstlYmd"] as? String ?? "",

@@ -44,7 +44,7 @@ class MapViewController: UIViewController {
     private let searchButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
+        button.setTitle("이 지역 검색", for: .normal)
         button.backgroundColor = .white
         button.tintColor = .systemBlue
         button.layer.cornerRadius = 20
@@ -125,18 +125,21 @@ class MapViewController: UIViewController {
         ])
     }
     
+
     private func setupButtons() {
-        let buttonsStack = UIStackView(arrangedSubviews: [searchButton, currentLocationButton])
-        buttonsStack.axis = .horizontal
-        buttonsStack.spacing = 8
-        buttonsStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchButton)
+        view.addSubview(currentLocationButton)
         
-        view.addSubview(buttonsStack)
         NSLayoutConstraint.activate([
-            buttonsStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            buttonsStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchButton.widthAnchor.constraint(equalToConstant: 40),
+            // 검색 버튼을 중앙에 배치
+            searchButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            searchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchButton.widthAnchor.constraint(equalToConstant: 100),
             searchButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            // 현재 위치 버튼은 우측에 유지
+            currentLocationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            currentLocationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             currentLocationButton.widthAnchor.constraint(equalToConstant: 40),
             currentLocationButton.heightAnchor.constraint(equalToConstant: 40)
         ])
