@@ -6,13 +6,10 @@
 //
 
 import UIKit
+import CoreLocation
 
-/// 놀이기구 상세 정보를 보여주는 바텀 시트 뷰
-/// 드래그로 높이를 조절할 수 있으며, 카테고리 선택과 상세 정보 표시 기능을 제공합니다.
 class RideDetailBottomSheetView: UIView {
     // MARK: - Properties
-    
-    /// 바텀 시트 상단의 드래그 표시 뷰
     private let dragIndicator: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray3
@@ -21,7 +18,6 @@ class RideDetailBottomSheetView: UIView {
         return view
     }()
     
-    /// 놀이기구 정보를 표시하는 수직 스택 뷰
     private let infoStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -30,7 +26,6 @@ class RideDetailBottomSheetView: UIView {
         return stack
     }()
     
-    /// 놀이기구 카테고리 선택을 위한 수평 스크롤 컬렉션 뷰
     private let categoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -42,22 +37,28 @@ class RideDetailBottomSheetView: UIView {
         return cv
     }()
     
-    /// 드래그 제스처 관련 속성들
+    private let tableView: UITableView = {
+        let tv = UITableView()
+        tv.backgroundColor = .clear
+        tv.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        return tv
+    }()
+    
+    private var playgrounds: [PlaygroundItem] = []
     private var initialTouchPoint: CGPoint = .zero
     private var currentHeight: CGFloat = 0
-    private var selectedCategory: RideCategory? = .swing  // 기본값으로 그네 선택
+    private var selectedCategory: RideCategory? = .swing
     private var onCategorySelected: ((RideCategory?) -> Void)?
+    private var userLocation: CLLocation?
     
-    // 바텀 시트의 높이 상태값들
-    let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4  // 기본 높이 (화면의 40%)
-    let maximumHeight: CGFloat = UIScreen.main.bounds.height * 0.9  // 최대 높이 (화면의 90%)
-    let minimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2  // 최소 높이 (화면의 20%)
+    let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4
+    let maximumHeight: CGFloat = UIScreen.main.bounds.height * 0.9
+    let minimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2
     
-    /// 바텀 시트의 높이를 조절하는 제약 조건
     var heightConstraint: NSLayoutConstraint?
     
     // MARK: - Initialization
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -71,12 +72,10 @@ class RideDetailBottomSheetView: UIView {
     }
     
     // MARK: - Setup Methods
-    
-    /// UI 기본 설정을 수행하는 메서드
     private func setupUI() {
         backgroundColor = .white
         layer.cornerRadius = 20
-        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]  // 상단 모서리만 라운드 처리
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 0, height: -3)
         layer.shadowRadius = 3
@@ -86,9 +85,9 @@ class RideDetailBottomSheetView: UIView {
         setupDragIndicator()
         setupInfoStackView()
         setupCategoryCollectionView()
+        setupTableView()
     }
     
-    /// 드래그 표시 뷰 설정
     private func setupDragIndicator() {
         addSubview(dragIndicator)
         NSLayoutConstraint.activate([
@@ -99,7 +98,6 @@ class RideDetailBottomSheetView: UIView {
         ])
     }
     
-    /// 정보 스택 뷰 설정
     private func setupInfoStackView() {
         addSubview(infoStackView)
         NSLayoutConstraint.activate([
@@ -109,14 +107,12 @@ class RideDetailBottomSheetView: UIView {
         ])
     }
     
-    /// 카테고리 컬렉션 뷰 설정
     private func setupCategoryCollectionView() {
         addSubview(categoryCollectionView)
         
         categoryCollectionView.delegate = self
         categoryCollectionView.dataSource = self
         categoryCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
-        
         categoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         NSLayoutConstraint.activate([
@@ -127,16 +123,27 @@ class RideDetailBottomSheetView: UIView {
         ])
     }
     
-    /// 제스처 인식기 설정
+    private func setupTableView() {
+        addSubview(tableView)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(PlaygroundCell.self, forCellReuseIdentifier: "PlaygroundCell")
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
     private func setupGestures() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         addGestureRecognizer(panGesture)
     }
     
     // MARK: - Gesture Handling
-    
-    /// 드래그 제스처 처리
-    /// - Parameter gesture: 감지된 팬 제스처
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: self.superview)
         let velocity = gesture.velocity(in: self.superview)
@@ -175,8 +182,7 @@ class RideDetailBottomSheetView: UIView {
         }
     }
     
-    /// 바텀 시트의 높이를 업데이트하고 지도 뷰의 레이아웃을 조정
-    /// - Parameter height: 설정할 높이 값
+    // MARK: - Height Management
     func updateHeight(_ height: CGFloat) {
         let newHeight = min(max(height, minimumHeight), maximumHeight)
         heightConstraint?.constant = newHeight
@@ -188,9 +194,7 @@ class RideDetailBottomSheetView: UIView {
         superview?.layoutIfNeeded()
     }
     
-    /// 바텀 시트의 높이를 애니메이션과 함께 변경
-    /// - Parameter height: 목표 높이 값
-    private func animateHeight(to height: CGFloat) {
+    func animateHeight(to height: CGFloat) {
         UIView.animate(withDuration: 0.3,
                       delay: 0,
                       usingSpringWithDamping: 0.8,
@@ -206,18 +210,19 @@ class RideDetailBottomSheetView: UIView {
     }
     
     // MARK: - Public Methods
-    
-    /// 기본 상태로 바텀 시트를 표시
-    /// - Parameter onCategorySelected: 카테고리 선택 시 호출될 콜백
-    func showDefaultState(onCategorySelected: @escaping (RideCategory?) -> Void) {
+    func showDefaultState(with annotations: [RideAnnotation], userLocation: CLLocation?, onCategorySelected: @escaping (RideCategory?) -> Void) {
         self.onCategorySelected = onCategorySelected
+        self.userLocation = userLocation
+        
+        updatePlaygrounds(with: annotations)
+        
         isHidden = false
         heightConstraint?.constant = minimumHeight
         
         infoStackView.isHidden = true
         categoryCollectionView.isHidden = false
+        tableView.isHidden = false
         
-        // 초기 선택된 카테고리(그네) 콜백 호출
         onCategorySelected(selectedCategory)
         
         if let mapVC = superview?.next as? MapViewController {
@@ -225,13 +230,9 @@ class RideDetailBottomSheetView: UIView {
         }
     }
     
-    /// 특정 놀이기구의 상세 정보를 표시
-    /// - Parameter rideInfo: 표시할 놀이기구 정보
     func showRideDetail(for rideInfo: RideInfo) {
-        // 기존 정보 제거
         infoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        // 새로운 정보 추가
         let nameLabel = createLabel(text: rideInfo.rideName, font: .boldSystemFont(ofSize: 24))
         let facilityLabel = createLabel(text: rideInfo.facilityName, font: .systemFont(ofSize: 18), textColor: .gray)
         let addressLabel = createLabel(text: rideInfo.address, font: .systemFont(ofSize: 16))
@@ -247,15 +248,25 @@ class RideDetailBottomSheetView: UIView {
         }
         
         categoryCollectionView.isHidden = true
+        tableView.isHidden = true
         infoStackView.isHidden = false
         
-        // 상세 정보 표시를 위해 높이 조정
         animateHeight(to: defaultHeight)
     }
     
     // MARK: - Private Helper Methods
+    private func updatePlaygrounds(with annotations: [RideAnnotation]) {
+        playgrounds = annotations.map { annotation in
+            PlaygroundItem(
+                rideInfo: annotation.rideInfo,
+                coordinate: annotation.coordinate,
+                userLocation: userLocation
+            )
+        }.sorted { $0.distance < $1.distance }
+        
+        tableView.reloadData()
+    }
     
-    /// 레이블 생성 헬퍼 메서드
     private func createLabel(text: String, font: UIFont, textColor: UIColor = .black) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -264,7 +275,6 @@ class RideDetailBottomSheetView: UIView {
         return label
     }
     
-    /// 구분선 생성 헬퍼 메서드
     private func createSeparator() -> UIView {
         let separator = UIView()
         separator.backgroundColor = .systemGray4
@@ -273,15 +283,31 @@ class RideDetailBottomSheetView: UIView {
     }
 }
 
-// MARK: - UICollectionView DataSource & Delegate
+// MARK: - UITableViewDelegate & DataSource
+extension RideDetailBottomSheetView: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("테이블뷰 행 수: \(playgrounds.count)")  // 디버깅 추가
+        return playgrounds.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PlaygroundCell", for: indexPath) as! PlaygroundCell
+        cell.configure(with: playgrounds[indexPath.row])
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        showRideDetail(for: playgrounds[indexPath.row].rideInfo)
+    }
+}
 
+// MARK: - UICollectionView DataSource & Delegate
 extension RideDetailBottomSheetView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    /// 컬렉션 뷰의 아이템 개수 반환
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return RideCategory.allCases.count
     }
     
-    /// 각 아이템의 셀 구성
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
         let category = RideCategory.allCases[indexPath.item]
@@ -289,17 +315,14 @@ extension RideDetailBottomSheetView: UICollectionViewDataSource, UICollectionVie
         return cell
     }
     
-    /// 각 아이템의 크기 계산
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let category = RideCategory.allCases[indexPath.item]
         let width = category.displayName.size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 40
         return CGSize(width: width, height: 36)
     }
     
-    /// 카테고리 선택 처리
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let category = RideCategory.allCases[indexPath.item]
-        // 이미 선택된 카테고리를 다시 선택하면 선택 해제
         if category == selectedCategory {
             selectedCategory = nil
         } else {

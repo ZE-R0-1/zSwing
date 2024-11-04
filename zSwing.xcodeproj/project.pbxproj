@@ -32,6 +32,8 @@
 		CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */; };
 		CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13912CD861740090D9CE /* RideCategory.swift */; };
 		CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13932CD861960090D9CE /* CategoryCell.swift */; };
+		CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */; };
+		CEDF13982CD8B3260090D9CE /* PlaygroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13972CD8B3260090D9CE /* PlaygroundCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +57,8 @@
 		CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePlaygroundService.swift; sourceTree = "<group>"; };
 		CEDF13912CD861740090D9CE /* RideCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCategory.swift; sourceTree = "<group>"; };
 		CEDF13932CD861960090D9CE /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
+		CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundItem.swift; sourceTree = "<group>"; };
+		CEDF13972CD8B3260090D9CE /* PlaygroundCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,8 @@
 				CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */,
 				CEDF13912CD861740090D9CE /* RideCategory.swift */,
 				CEDF13932CD861960090D9CE /* CategoryCell.swift */,
+				CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */,
+				CEDF13972CD8B3260090D9CE /* PlaygroundCell.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -204,9 +210,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */,
 				CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */,
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
+				CEDF13982CD8B3260090D9CE /* PlaygroundCell.swift in Sources */,
 				CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */,
 				CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,

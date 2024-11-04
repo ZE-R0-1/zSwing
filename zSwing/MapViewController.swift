@@ -68,9 +68,9 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
-    private let bottomSheetMinimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2  // 20%
+    private let bottomSheetMinimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2
     private let firebaseService = FirebasePlaygroundService()
-    private var currentAnnotations: [MKAnnotation] = []
+    private var currentAnnotations: [RideAnnotation] = []
     
     private var currentCategory: RideCategory? {
         didSet {
@@ -91,17 +91,19 @@ class MapViewController: UIViewController {
             longitudinalMeters: 5000
         )
         mapView.setRegion(initialRegion, animated: false)
-
+        
         // Show default bottom sheet state
-        bottomSheetView.showDefaultState { [weak self] category in
-            self?.currentCategory = category
-        }
+        bottomSheetView.showDefaultState(
+            with: currentAnnotations,
+            userLocation: locationManager.location,
+            onCategorySelected: { [weak self] category in
+                self?.currentCategory = category
+            }
+        )
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        // 초기 bottom margin 설정
         updateMapLayoutMargins(bottomInset: bottomSheetView.minimumHeight)
     }
     
@@ -111,9 +113,9 @@ class MapViewController: UIViewController {
         title = "놀이기구 지도"
         
         setupMapView()
-        setupBottomSheet()
-        setupButtons()
+        setupButtons()  // bottomSheetView보다 먼저 추가
         setupLoadingIndicator()
+        setupBottomSheet()  // 가장 마지막에 추가
     }
     
     private func setupMapView() {
@@ -218,9 +220,16 @@ class MapViewController: UIViewController {
         }
         
         // 어노테이션이 아닌 지도를 탭했을 때만 바텀시트를 기본 상태로 되돌림
-        bottomSheetView.showDefaultState { [weak self] category in
-            self?.currentCategory = category
-        }
+        bottomSheetView.showDefaultState(
+            with: currentAnnotations,
+            userLocation: locationManager.location,
+            onCategorySelected: { [weak self] category in
+                self?.currentCategory = category
+            }
+        )
+        
+        // 애니메이션과 함께 minimumHeight로 변경
+        bottomSheetView.animateHeight(to: bottomSheetView.minimumHeight)
     }
     
     func updateMapLayoutMargins(bottomInset: CGFloat) {
@@ -254,6 +263,29 @@ class MapViewController: UIViewController {
             
             if let annotations = annotations {
                 self.updateAnnotations(with: annotations)
+                
+                // 현재 카테고리에 맞게 필터링된 어노테이션 생성
+                let filteredAnnotations: [RideAnnotation]
+                if let category = self.currentCategory {
+                    filteredAnnotations = annotations.filter { annotation in
+                        return annotation.rideInfo.rideType == category.rawValue
+                    }
+                } else {
+                    filteredAnnotations = annotations
+                }
+                
+                // Update bottom sheet with filtered annotations
+                self.bottomSheetView.showDefaultState(
+                    with: filteredAnnotations,
+                    userLocation: self.locationManager.location,
+                    onCategorySelected: { [weak self] category in
+                        self?.currentCategory = category
+                    }
+                )
+                
+                // 검색 완료 후 바텀시트 높이를 애니메이션과 함께 defaultHeight로 변경
+                self.bottomSheetView.animateHeight(to: self.bottomSheetView.defaultHeight)
+                
                 let message = annotations.isEmpty ?
                 "이 지역에 놀이기구가 없습니다" :
                 "이 지역에서 \(annotations.count)개의 놀이기구를 찾았습니다"
@@ -264,7 +296,7 @@ class MapViewController: UIViewController {
         }
     }
     
-    private func updateAnnotations(with newAnnotations: [MKAnnotation]) {
+    private func updateAnnotations(with newAnnotations: [RideAnnotation]) {
         mapView.removeAnnotations(currentAnnotations)
         currentAnnotations = newAnnotations
         updateAnnotationsForCategory()
