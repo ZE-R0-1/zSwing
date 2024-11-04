@@ -71,6 +71,12 @@ class MapViewController: UIViewController {
     private let firebaseService = FirebasePlaygroundService()
     private var currentAnnotations: [MKAnnotation] = []
     
+    private var currentCategory: RideCategory? {
+        didSet {
+            updateAnnotationsForCategory()
+        }
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +90,11 @@ class MapViewController: UIViewController {
             longitudinalMeters: 5000
         )
         mapView.setRegion(initialRegion, animated: false)
+        
+        // Show default bottom sheet state
+        bottomSheetView.showDefaultState { [weak self] category in
+            self?.currentCategory = category
+        }
     }
     
     // MARK: - Setup
@@ -125,19 +136,16 @@ class MapViewController: UIViewController {
         ])
     }
     
-
     private func setupButtons() {
         view.addSubview(searchButton)
         view.addSubview(currentLocationButton)
         
         NSLayoutConstraint.activate([
-            // 검색 버튼을 중앙에 배치
             searchButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             searchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             searchButton.widthAnchor.constraint(equalToConstant: 100),
             searchButton.heightAnchor.constraint(equalToConstant: 40),
             
-            // 현재 위치 버튼은 우측에 유지
             currentLocationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             currentLocationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             currentLocationButton.widthAnchor.constraint(equalToConstant: 40),
@@ -192,14 +200,18 @@ class MapViewController: UIViewController {
     }
     
     @objc private func handleMapTap(_ gesture: UITapGestureRecognizer) {
-        if bottomSheetView.heightConstraint?.constant != 0 {
-            UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                self?.bottomSheetView.heightConstraint?.constant = 0
-                self?.updateMapLayoutMargins(bottomInset: 0)
-                self?.view.layoutIfNeeded()
-            }) { [weak self] _ in
-                self?.bottomSheetView.isHidden = true
-            }
+        let point = gesture.location(in: mapView)
+        if let tappedAnnotation = mapView.annotations.first(where: { annotation in
+            guard let annotationView = mapView.view(for: annotation) else { return false }
+            return annotationView.frame.contains(point)
+        }) {
+            // 어노테이션을 탭했을 때는 아무 동작도 하지 않음
+            return
+        }
+        
+        // 어노테이션이 아닌 지도를 탭했을 때만 바텀시트를 기본 상태로 되돌림
+        bottomSheetView.showDefaultState { [weak self] category in
+            self?.currentCategory = category
         }
     }
     
@@ -247,7 +259,21 @@ class MapViewController: UIViewController {
     private func updateAnnotations(with newAnnotations: [MKAnnotation]) {
         mapView.removeAnnotations(currentAnnotations)
         currentAnnotations = newAnnotations
-        mapView.addAnnotations(newAnnotations)
+        updateAnnotationsForCategory()
+    }
+    
+    private func updateAnnotationsForCategory() {
+        mapView.removeAnnotations(mapView.annotations)
+        
+        if let category = currentCategory {
+            let filteredAnnotations = currentAnnotations.compactMap { annotation -> MKAnnotation? in
+                guard let rideAnnotation = annotation as? RideAnnotation else { return nil }
+                return rideAnnotation.rideInfo.rideType == category.rawValue ? rideAnnotation : nil
+            }
+            mapView.addAnnotations(filteredAnnotations)
+        } else {
+            mapView.addAnnotations(currentAnnotations)
+        }
     }
     
     private func showAlert(title: String, message: String) {

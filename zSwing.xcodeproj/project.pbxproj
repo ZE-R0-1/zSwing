@@ -30,6 +30,8 @@
 		CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */; };
 		CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */; };
 		CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */; };
+		CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13912CD861740090D9CE /* RideCategory.swift */; };
+		CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13932CD861960090D9CE /* CategoryCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +53,8 @@
 		CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAnnotation.swift; sourceTree = "<group>"; };
 		CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailBottomSheetView.swift; sourceTree = "<group>"; };
 		CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePlaygroundService.swift; sourceTree = "<group>"; };
+		CEDF13912CD861740090D9CE /* RideCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCategory.swift; sourceTree = "<group>"; };
+		CEDF13932CD861960090D9CE /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +110,10 @@
 				CE2B97D42CC623A100FF532F /* MapViewController.swift */,
 				CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */,
 				CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */,
-				CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */,
 				CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */,
+				CE90B6352CD0750300B5FB7F /* RideDetailBottomSheetView.swift */,
+				CEDF13912CD861740090D9CE /* RideCategory.swift */,
+				CEDF13932CD861960090D9CE /* CategoryCell.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -201,6 +207,7 @@
 				CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */,
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
+				CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */,
 				CE90B6362CD0750300B5FB7F /* RideDetailBottomSheetView.swift in Sources */,
 				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
 				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
@@ -209,6 +216,7 @@
 				CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */,
 				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
 				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
+				CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
