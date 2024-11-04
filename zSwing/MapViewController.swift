@@ -68,6 +68,7 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
+    private let bottomSheetMinimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2  // 20%
     private let firebaseService = FirebasePlaygroundService()
     private var currentAnnotations: [MKAnnotation] = []
     
@@ -90,11 +91,18 @@ class MapViewController: UIViewController {
             longitudinalMeters: 5000
         )
         mapView.setRegion(initialRegion, animated: false)
-        
+
         // Show default bottom sheet state
         bottomSheetView.showDefaultState { [weak self] category in
             self?.currentCategory = category
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // 초기 bottom margin 설정
+        updateMapLayoutMargins(bottomInset: bottomSheetView.minimumHeight)
     }
     
     // MARK: - Setup

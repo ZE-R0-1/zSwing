@@ -21,16 +21,18 @@ class MainTabBarController: UITabBarController {
     }
 
     private func setupViewControllers() {
-        let mapVC = MapViewController()
-        mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 0)
-
         let photoVC = PhotoUploadViewController()
-        photoVC.tabBarItem = UITabBarItem(title: "사진 등록", image: UIImage(systemName: "camera"), tag: 1)
-
+        photoVC.tabBarItem = UITabBarItem(title: "사진 등록", image: UIImage(systemName: "camera"), tag: 0)
+        
+        let mapVC = MapViewController()
+        mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 1)
+        
         let profileVC = ProfileViewController()
         profileVC.tabBarItem = UITabBarItem(title: "내 정보", image: UIImage(systemName: "person"), tag: 2)
 
-        viewControllers = [mapVC, photoVC, profileVC].map { UINavigationController(rootViewController: $0) }
+        viewControllers = [photoVC, mapVC, profileVC].map { UINavigationController(rootViewController: $0) }
+        
+        selectedIndex = 1
     }
     
     private func configureTabBar() {
