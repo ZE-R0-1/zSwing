@@ -1,23 +1,15 @@
 //
-//  RideDetailBottomSheetView.swift
+//  RideDetailView.swift
 //  zSwing
 //
-//  Created by USER on 10/29/24.
+//  Created by USER on 11/5/24.
 //
 
 import UIKit
 import CoreLocation
 
-class RideDetailBottomSheetView: UIView {
+class RideDetailView: UIView {
     // MARK: - Properties
-    private let dragIndicator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemGray3
-        view.layer.cornerRadius = 2.5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private let infoStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -46,62 +38,33 @@ class RideDetailBottomSheetView: UIView {
     }()
     
     private var playgrounds: [PlaygroundItem] = []
-    private var initialTouchPoint: CGPoint = .zero
-    private var currentHeight: CGFloat = 0
     private var selectedCategory: RideCategory? = .swing
     private var onCategorySelected: ((RideCategory?) -> Void)?
     private var userLocation: CLLocation?
-    
-    let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4
-    let maximumHeight: CGFloat = UIScreen.main.bounds.height * 0.9
-    let minimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2
-    
-    var heightConstraint: NSLayoutConstraint?
     
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        setupGestures()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
-        setupGestures()
     }
     
     // MARK: - Setup Methods
     private func setupUI() {
-        backgroundColor = .white
-        layer.cornerRadius = 20
-        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: -3)
-        layer.shadowRadius = 3
-        layer.shadowOpacity = 0.1
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        setupDragIndicator()
+        backgroundColor = .clear
         setupInfoStackView()
         setupCategoryCollectionView()
         setupTableView()
     }
     
-    private func setupDragIndicator() {
-        addSubview(dragIndicator)
-        NSLayoutConstraint.activate([
-            dragIndicator.widthAnchor.constraint(equalToConstant: 40),
-            dragIndicator.heightAnchor.constraint(equalToConstant: 5),
-            dragIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
-            dragIndicator.topAnchor.constraint(equalTo: topAnchor, constant: 12)
-        ])
-    }
-    
     private func setupInfoStackView() {
         addSubview(infoStackView)
         NSLayoutConstraint.activate([
-            infoStackView.topAnchor.constraint(equalTo: dragIndicator.bottomAnchor, constant: 20),
+            infoStackView.topAnchor.constraint(equalTo: topAnchor),
             infoStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             infoStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
@@ -116,7 +79,7 @@ class RideDetailBottomSheetView: UIView {
         categoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         NSLayoutConstraint.activate([
-            categoryCollectionView.topAnchor.constraint(equalTo: dragIndicator.bottomAnchor, constant: 16),
+            categoryCollectionView.topAnchor.constraint(equalTo: topAnchor),
             categoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             categoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: 40)
@@ -138,77 +101,6 @@ class RideDetailBottomSheetView: UIView {
         ])
     }
     
-    private func setupGestures() {
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        addGestureRecognizer(panGesture)
-    }
-    
-    // MARK: - Gesture Handling
-    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: self.superview)
-        let velocity = gesture.velocity(in: self.superview)
-        
-        switch gesture.state {
-        case .began:
-            initialTouchPoint = gesture.location(in: self.superview)
-            currentHeight = frame.height
-            
-        case .changed:
-            let newHeight = currentHeight - translation.y
-            updateHeight(newHeight)
-            
-        case .ended:
-            let projectedHeight = currentHeight - translation.y - velocity.y * 0.2
-            
-            if velocity.y > 1000 {
-                // 빠른 아래 방향 스와이프: 최소 높이로
-                animateHeight(to: minimumHeight)
-            } else if velocity.y < -1000 {
-                // 빠른 위 방향 스와이프: 최대 높이로
-                animateHeight(to: maximumHeight)
-            } else if projectedHeight < (defaultHeight + minimumHeight) / 2 {
-                // 최소~기본 높이의 중간 지점보다 아래면 최소 높이로
-                animateHeight(to: minimumHeight)
-            } else if projectedHeight > (defaultHeight + maximumHeight) / 2 {
-                // 기본~최대 높이의 중간 지점보다 위면 최대 높이로
-                animateHeight(to: maximumHeight)
-            } else {
-                // 그 외의 경우 기본 높이로
-                animateHeight(to: defaultHeight)
-            }
-            
-        default:
-            break
-        }
-    }
-    
-    // MARK: - Height Management
-    func updateHeight(_ height: CGFloat) {
-        let newHeight = min(max(height, minimumHeight), maximumHeight)
-        heightConstraint?.constant = newHeight
-        
-        if let mapVC = superview?.next as? MapViewController {
-            mapVC.updateMapLayoutMargins(bottomInset: newHeight)
-        }
-        
-        superview?.layoutIfNeeded()
-    }
-    
-    func animateHeight(to height: CGFloat) {
-        UIView.animate(withDuration: 0.3,
-                      delay: 0,
-                      usingSpringWithDamping: 0.8,
-                      initialSpringVelocity: 0.5,
-                      options: .curveEaseOut,
-                      animations: { [weak self] in
-            self?.heightConstraint?.constant = height
-            if let mapVC = self?.superview?.next as? MapViewController {
-                mapVC.updateMapLayoutMargins(bottomInset: height)
-            }
-            self?.superview?.layoutIfNeeded()
-        })
-    }
-    
     // MARK: - Public Methods
     func showDefaultState(with annotations: [RideAnnotation], userLocation: CLLocation?, onCategorySelected: @escaping (RideCategory?) -> Void) {
         self.onCategorySelected = onCategorySelected
@@ -216,18 +108,11 @@ class RideDetailBottomSheetView: UIView {
         
         updatePlaygrounds(with: annotations)
         
-        isHidden = false
-        heightConstraint?.constant = minimumHeight
-        
         infoStackView.isHidden = true
         categoryCollectionView.isHidden = false
         tableView.isHidden = false
         
         onCategorySelected(selectedCategory)
-        
-        if let mapVC = superview?.next as? MapViewController {
-            mapVC.updateMapLayoutMargins(bottomInset: minimumHeight)
-        }
     }
     
     func showRideDetail(for rideInfo: RideInfo) {
@@ -250,8 +135,6 @@ class RideDetailBottomSheetView: UIView {
         categoryCollectionView.isHidden = true
         tableView.isHidden = true
         infoStackView.isHidden = false
-        
-        animateHeight(to: defaultHeight)
     }
     
     // MARK: - Private Helper Methods
@@ -284,9 +167,8 @@ class RideDetailBottomSheetView: UIView {
 }
 
 // MARK: - UITableViewDelegate & DataSource
-extension RideDetailBottomSheetView: UITableViewDelegate, UITableViewDataSource {
+extension RideDetailView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("테이블뷰 행 수: \(playgrounds.count)")  // 디버깅 추가
         return playgrounds.count
     }
     
@@ -303,7 +185,7 @@ extension RideDetailBottomSheetView: UITableViewDelegate, UITableViewDataSource 
 }
 
 // MARK: - UICollectionView DataSource & Delegate
-extension RideDetailBottomSheetView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension RideDetailView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return RideCategory.allCases.count
     }

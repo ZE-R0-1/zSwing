@@ -22,10 +22,8 @@ class MapViewController: UIViewController {
         return map
     }()
     
-    private let bottomSheetView: RideDetailBottomSheetView = {
-        let view = RideDetailBottomSheetView()
-        return view
-    }()
+    private let bottomSheet = BottomSheetView()
+    private let rideDetailView = RideDetailView()
     
     private let currentLocationButton: UIButton = {
         let button = UIButton(type: .system)
@@ -68,7 +66,6 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
-    private let bottomSheetMinimumHeight: CGFloat = UIScreen.main.bounds.height * 0.2
     private let firebaseService = FirebasePlaygroundService()
     private var currentAnnotations: [RideAnnotation] = []
     
@@ -91,20 +88,6 @@ class MapViewController: UIViewController {
             longitudinalMeters: 5000
         )
         mapView.setRegion(initialRegion, animated: false)
-        
-        // Show default bottom sheet state
-        bottomSheetView.showDefaultState(
-            with: currentAnnotations,
-            userLocation: locationManager.location,
-            onCategorySelected: { [weak self] category in
-                self?.currentCategory = category
-            }
-        )
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateMapLayoutMargins(bottomInset: bottomSheetView.minimumHeight)
     }
     
     // MARK: - Setup
@@ -113,9 +96,9 @@ class MapViewController: UIViewController {
         title = "놀이기구 지도"
         
         setupMapView()
-        setupButtons()  // bottomSheetView보다 먼저 추가
+        setupButtons()
         setupLoadingIndicator()
-        setupBottomSheet()  // 가장 마지막에 추가
+        setupBottomSheet()
     }
     
     private func setupMapView() {
@@ -136,14 +119,28 @@ class MapViewController: UIViewController {
     }
     
     private func setupBottomSheet() {
-        view.addSubview(bottomSheetView)
-        bottomSheetView.heightConstraint = bottomSheetView.heightAnchor.constraint(equalToConstant: 0)
+        view.addSubview(bottomSheet)
+        bottomSheet.setContent(rideDetailView)
+        bottomSheet.heightConstraint = bottomSheet.heightAnchor.constraint(equalToConstant: bottomSheet.minimumHeight)
+        
         NSLayoutConstraint.activate([
-            bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomSheetView.heightConstraint!
+            bottomSheet.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSheet.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSheet.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomSheet.heightConstraint!
         ])
+        
+        bottomSheet.onHeightChanged = { [weak self] height in
+            self?.updateMapLayoutMargins(bottomInset: height)
+        }
+        
+        // Show default bottom sheet state
+        rideDetailView.showDefaultState(
+            with: currentAnnotations,
+            userLocation: locationManager.location
+        ) { [weak self] category in
+            self?.currentCategory = category
+        }
     }
     
     private func setupButtons() {
@@ -220,16 +217,15 @@ class MapViewController: UIViewController {
         }
         
         // 어노테이션이 아닌 지도를 탭했을 때만 바텀시트를 기본 상태로 되돌림
-        bottomSheetView.showDefaultState(
+        rideDetailView.showDefaultState(
             with: currentAnnotations,
-            userLocation: locationManager.location,
-            onCategorySelected: { [weak self] category in
-                self?.currentCategory = category
-            }
-        )
+            userLocation: locationManager.location
+        ) { [weak self] category in
+            self?.currentCategory = category
+        }
         
         // 애니메이션과 함께 minimumHeight로 변경
-        bottomSheetView.animateHeight(to: bottomSheetView.minimumHeight)
+        bottomSheet.animateHeight(to: bottomSheet.minimumHeight)
     }
     
     func updateMapLayoutMargins(bottomInset: CGFloat) {
@@ -275,16 +271,15 @@ class MapViewController: UIViewController {
                 }
                 
                 // Update bottom sheet with filtered annotations
-                self.bottomSheetView.showDefaultState(
+                self.rideDetailView.showDefaultState(
                     with: filteredAnnotations,
-                    userLocation: self.locationManager.location,
-                    onCategorySelected: { [weak self] category in
-                        self?.currentCategory = category
-                    }
-                )
+                    userLocation: self.locationManager.location
+                ) { [weak self] category in
+                    self?.currentCategory = category
+                }
                 
                 // 검색 완료 후 바텀시트 높이를 애니메이션과 함께 defaultHeight로 변경
-                self.bottomSheetView.animateHeight(to: self.bottomSheetView.defaultHeight)
+                self.bottomSheet.animateHeight(to: self.bottomSheet.defaultHeight)
                 
                 let message = annotations.isEmpty ?
                 "이 지역에 놀이기구가 없습니다" :
@@ -368,7 +363,6 @@ class MapViewController: UIViewController {
         }
     }
 }
-
 // MARK: - MKMapViewDelegate
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -394,7 +388,8 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
         if let rideAnnotation = annotation as? RideAnnotation {
             mapView.deselectAnnotation(annotation, animated: true)
-            bottomSheetView.showRideDetail(for: rideAnnotation.rideInfo)
+            rideDetailView.showRideDetail(for: rideAnnotation.rideInfo)
+            bottomSheet.animateHeight(to: bottomSheet.defaultHeight)
         }
     }
 }
@@ -430,7 +425,7 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         // 바텀시트를 탭했을 때는 제스처를 무시
-        if touch.view?.isDescendant(of: bottomSheetView) == true {
+        if touch.view?.isDescendant(of: bottomSheet) == true {
             return false
         }
         return true
