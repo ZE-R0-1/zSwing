@@ -27,10 +27,10 @@ class MainTabBarController: UITabBarController {
         let mapVC = MapViewController()
         mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 1)
         
-        let profileVC = ProfileViewController()
-        profileVC.tabBarItem = UITabBarItem(title: "내 정보", image: UIImage(systemName: "person"), tag: 2)
-
-        viewControllers = [photoVC, mapVC, profileVC].map { UINavigationController(rootViewController: $0) }
+//        let profileVC = ProfileViewController()
+//        profileVC.tabBarItem = UITabBarItem(title: "내 정보", image: UIImage(systemName: "person"), tag: 2)
+//
+        viewControllers = [photoVC, mapVC, ].map { UINavigationController(rootViewController: $0) }
         
         selectedIndex = 1
     }

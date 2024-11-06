@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
-		CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* LoginViewController.swift */; };
+		CE2B97A72CC0913300FF532F /* LoginViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* LoginViewController1.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
 		CE2B97AF2CC0913500FF532F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AE2CC0913500FF532F /* Base */; };
 		CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97B72CC0F5BA00FF532F /* FirebaseAuth */; };
@@ -35,13 +35,25 @@
 		CEDF13982CD8B3260090D9CE /* PlaygroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13972CD8B3260090D9CE /* PlaygroundCell.swift */; };
 		CEDF139C2CD9B0410090D9CE /* RideDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF139B2CD9B0410090D9CE /* RideDetailView.swift */; };
 		CEDF139E2CD9B04A0090D9CE /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF139D2CD9B04A0090D9CE /* BottomSheetView.swift */; };
+		CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13AE2CD9F63B0090D9CE /* User.swift */; };
+		CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */; };
+		CEDF13B52CD9F6B50090D9CE /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CEDF13B42CD9F6B50090D9CE /* RxCocoa */; };
+		CEDF13B72CD9F6B50090D9CE /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CEDF13B62CD9F6B50090D9CE /* RxSwift */; };
+		CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13B92CD9F75B0090D9CE /* AuthenticationRepository.swift */; };
+		CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13BC2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift */; };
+		CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */; };
+		CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */; };
+		CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */; };
+		CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */; };
+		CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */; };
+		CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		CE2B97A62CC0913300FF532F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		CE2B97A62CC0913300FF532F /* LoginViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController1.swift; sourceTree = "<group>"; };
 		CE2B97AB2CC0913500FF532F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE2B97AE2CC0913500FF532F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -61,6 +73,16 @@
 		CEDF13972CD8B3260090D9CE /* PlaygroundCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundCell.swift; sourceTree = "<group>"; };
 		CEDF139B2CD9B0410090D9CE /* RideDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailView.swift; sourceTree = "<group>"; };
 		CEDF139D2CD9B04A0090D9CE /* BottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView.swift; sourceTree = "<group>"; };
+		CEDF13AE2CD9F63B0090D9CE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUseCase.swift; sourceTree = "<group>"; };
+		CEDF13B92CD9F75B0090D9CE /* AuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository.swift; sourceTree = "<group>"; };
+		CEDF13BC2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthenticationRepository.swift; sourceTree = "<group>"; };
+		CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDIContainer.swift; sourceTree = "<group>"; };
+		CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +90,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEDF13B52CD9F6B50090D9CE /* RxCocoa in Frameworks */,
 				CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */,
+				CEDF13B72CD9F6B50090D9CE /* RxSwift in Frameworks */,
 				CE2B97C32CC0F9EB00FF532F /* GoogleSignInSwift in Frameworks */,
 				CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */,
 				CE2B97C12CC0F9EB00FF532F /* GoogleSignIn in Frameworks */,
@@ -101,10 +125,13 @@
 		CE2B97A12CC0913300FF532F /* zSwing */ = {
 			isa = PBXGroup;
 			children = (
+				CEDF13A72CD9ECB10090D9CE /* App */,
+				CEDF13A92CD9ED020090D9CE /* Domain */,
+				CEDF13AA2CD9F2680090D9CE /* Data */,
+				CEDF13AB2CD9F2760090D9CE /* Presentation */,
+				CEDF13AC2CD9F2830090D9CE /* Resources */,
 				CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */,
-				CE2B97A22CC0913300FF532F /* AppDelegate.swift */,
-				CE2B97A42CC0913300FF532F /* SceneDelegate.swift */,
-				CE2B97A62CC0913300FF532F /* LoginViewController.swift */,
+				CE2B97A62CC0913300FF532F /* LoginViewController1.swift */,
 				CE2B97AB2CC0913500FF532F /* Assets.xcassets */,
 				CE2B97AD2CC0913500FF532F /* LaunchScreen.storyboard */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
@@ -125,6 +152,133 @@
 				CEDF139B2CD9B0410090D9CE /* RideDetailView.swift */,
 			);
 			path = zSwing;
+			sourceTree = "<group>";
+		};
+		CEDF13A72CD9ECB10090D9CE /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13C62CDA045C0090D9CE /* DIContainer */,
+				CE2B97A22CC0913300FF532F /* AppDelegate.swift */,
+				CE2B97A42CC0913300FF532F /* SceneDelegate.swift */,
+				CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		CEDF13A92CD9ED020090D9CE /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13AD2CD9F62D0090D9CE /* Entities */,
+				CEDF13B02CD9F6520090D9CE /* UserCases */,
+				CEDF13B82CD9F7100090D9CE /* Repositories */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		CEDF13AA2CD9F2680090D9CE /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13CE2CDA08A60090D9CE /* DTOs */,
+				CEDF13CB2CDA08380090D9CE /* Services */,
+				CEDF13BB2CD9F79F0090D9CE /* Repositories */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		CEDF13AB2CD9F2760090D9CE /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13BE2CD9FA3C0090D9CE /* Login */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		CEDF13AC2CD9F2830090D9CE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		CEDF13AD2CD9F62D0090D9CE /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13AE2CD9F63B0090D9CE /* User.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		CEDF13B02CD9F6520090D9CE /* UserCases */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */,
+			);
+			path = UserCases;
+			sourceTree = "<group>";
+		};
+		CEDF13B82CD9F7100090D9CE /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13B92CD9F75B0090D9CE /* AuthenticationRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		CEDF13BB2CD9F79F0090D9CE /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13BC2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		CEDF13BE2CD9FA3C0090D9CE /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13C32CDA039D0090D9CE /* Views */,
+				CEDF13BF2CD9FA450090D9CE /* ViewModels */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		CEDF13BF2CD9FA450090D9CE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CEDF13C32CDA039D0090D9CE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CEDF13C62CDA045C0090D9CE /* DIContainer */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */,
+			);
+			path = DIContainer;
+			sourceTree = "<group>";
+		};
+		CEDF13CB2CDA08380090D9CE /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CEDF13CE2CDA08A60090D9CE /* DTOs */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */,
+			);
+			path = DTOs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,6 +306,8 @@
 				CE2B97C92CC0FF7900FF532F /* KakaoSDK */,
 				CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */,
 				CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */,
+				CEDF13B42CD9F6B50090D9CE /* RxCocoa */,
+				CEDF13B62CD9F6B50090D9CE /* RxSwift */,
 			);
 			productName = zSwing;
 			productReference = CE2B979F2CC0913300FF532F /* zSwing.app */;
@@ -185,6 +341,7 @@
 				CE2B97B62CC0F5BA00FF532F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = CE2B97A02CC0913300FF532F /* Products */;
 			projectDirPath = "";
@@ -215,18 +372,28 @@
 			files = (
 				CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */,
 				CE90B62E2CD0727E00B5FB7F /* RideAnnotation.swift in Sources */,
+				CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */,
+				CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */,
+				CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */,
 				CE2B97D12CC5F02100FF532F /* NicknameViewController.swift in Sources */,
+				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
+				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
 				CEDF13982CD8B3260090D9CE /* PlaygroundCell.swift in Sources */,
+				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
 				CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */,
-				CE2B97A72CC0913300FF532F /* LoginViewController.swift in Sources */,
+				CE2B97A72CC0913300FF532F /* LoginViewController1.swift in Sources */,
 				CEDF139C2CD9B0410090D9CE /* RideDetailView.swift in Sources */,
 				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
+				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CEDF139E2CD9B04A0090D9CE /* BottomSheetView.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
+				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
+				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
 				CE2B97D92CC623C700FF532F /* ProfileViewController.swift in Sources */,
 				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
+				CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */,
 				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
 				CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
@@ -476,6 +643,14 @@
 				minimumVersion = 2.23.0;
 			};
 		};
+		CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -518,6 +693,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		CEDF13B42CD9F6B50090D9CE /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		CEDF13B62CD9F6B50090D9CE /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
