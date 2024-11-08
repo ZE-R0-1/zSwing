@@ -79,16 +79,20 @@ class FirebaseAuthService: FirebaseAuthServiceProtocol {
     
     func signOut() -> Observable<Void> {
         return Observable.create { [weak self] observer in
+            print("FirebaseAuthService: Attempting to sign out")
             do {
                 try self?.auth.signOut()
+                print("FirebaseAuthService: Sign out successful")
                 observer.onNext(())
                 observer.onCompleted()
             } catch let error {
+                print("FirebaseAuthService: Sign out failed with error: \(error)")
                 observer.onError(error)
             }
             return Disposables.create()
         }
     }
+
     
     func updateLastAccessDate(for userId: String) -> Observable<Void> {
         return Observable.create { [weak self] observer in

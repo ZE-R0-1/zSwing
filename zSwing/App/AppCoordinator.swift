@@ -10,28 +10,30 @@ import RxSwift
 
 protocol Coordinator: AnyObject {
     var navigationController: UINavigationController { get }
-    var childCoordinators: [Coordinator] { get set }
     func start()
 }
 
 class AppCoordinator: Coordinator {
+    // MARK: - Properties
     let window: UIWindow
     let navigationController: UINavigationController
-    var childCoordinators: [Coordinator] = []
     private let firebaseAuthService: FirebaseAuthServiceProtocol
     private let disposeBag = DisposeBag()
     
+    // MARK: - Initialization
     init(window: UIWindow,
          navigationController: UINavigationController = UINavigationController(),
          firebaseAuthService: FirebaseAuthServiceProtocol = FirebaseAuthService()) {
+        print("🚀 Initializing AppCoordinator")
         self.window = window
         self.navigationController = navigationController
         self.firebaseAuthService = firebaseAuthService
-        
         setupNavigationBar()
     }
     
+    // MARK: - Setup
     private func setupNavigationBar() {
+        print("🎨 Setting up navigation bar appearance")
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
@@ -41,63 +43,75 @@ class AppCoordinator: Coordinator {
         navigationController.navigationBar.tintColor = .black
     }
     
+    // MARK: - Coordinator Methods
     func start() {
+        print("▶️ Starting AppCoordinator")
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
-        
         checkAuthenticationStatus()
     }
     
     private func checkAuthenticationStatus() {
-        print("Checking authentication status")
+        print("🔍 Checking authentication status")
         
         firebaseAuthService.getCurrentUser()
             .observe(on: MainScheduler.instance)
             .do(onNext: { user in
-                print("Auth status received: \(user != nil)")
+                print("👤 Auth status received: \(user != nil)")
             }, onError: { error in
-                print("Auth error: \(error)")
+                print("❌ Auth error: \(error)")
             }, onCompleted: {
-                print("Auth check completed")
+                print("✅ Auth check completed")
             })
             .subscribe(onNext: { [weak self] user in
                 if let user = user {
-                    print("User found, showing main flow")
+                    print("✅ User found, showing main flow")
                     self?.showMainFlow(for: user)
                 } else {
-                    print("No user found, showing auth flow")
+                    print("⚠️ No user found, showing auth flow")
                     self?.showAuthFlow()
                 }
             }, onError: { [weak self] error in
-                print("Error in auth check: \(error)")
+                print("❌ Error in auth check: \(error)")
                 self?.showAuthFlow()
             })
             .disposed(by: disposeBag)
     }
     
     private func showAuthFlow() {
-        print("Setting up auth flow")
+        print("🔐 Setting up auth flow")
+        
         let loginViewController = AppDIContainer.shared.makeLoginViewController()
         loginViewController.title = "로그인"
         navigationController.setViewControllers([loginViewController], animated: true)
+        
+        print("✅ Auth flow setup completed")
     }
     
     private func showMainFlow(for user: User) {
-        print("Setting up main flow for user: \(user.email)")
+        print("📱 Setting up main flow for user: \(user.email)")
         
-        // MainTabBarController 생성
-        let mainTabBarController = MainTabBarController()
+        // MainTabCoordinator 생성
+        let mainTabCoordinator = AppDIContainer.shared.makeMainTabCoordinator(
+            navigationController: navigationController
+        )
         
-        // 기존 네비게이션 스택을 모두 제거하고 MainTabBarController를 루트로 설정
-        window.rootViewController = mainTabBarController
+        // Coordinator 시작
+        mainTabCoordinator.start()
         
-        // 화면 전환 애니메이션 추가
-        UIView.transition(with: window,
-                         duration: 0.3,
-                         options: .transitionCrossDissolve,
-                         animations: nil,
-                         completion: nil)
-        
-        print("Main flow setup completed")
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // 기존 네비게이션 스택을 모두 제거하고 MainTabBarController를 루트로 설정
+            self.window.rootViewController = mainTabCoordinator.tabBarController
+            
+            // 화면 전환 애니메이션
+            UIView.transition(with: self.window,
+                             duration: 0.3,
+                             options: .transitionCrossDissolve,
+                             animations: nil,
+                             completion: { _ in
+                print("✅ Main flow setup completed")
+            })
+        }
     }
 }

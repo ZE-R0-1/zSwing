@@ -10,13 +10,17 @@ import RxSwift
 import RxRelay
 
 class MainTabBarViewModel {
+    // MARK: - Properties
     private let coordinator: MainTabCoordinator
     let tabBarAppearance = BehaviorRelay<TabBarAppearanceState>(value: .default)
     
+    // MARK: - Initialization
     init(coordinator: MainTabCoordinator) {
+        print("🚀 Initializing MainTabBarViewModel")
         self.coordinator = coordinator
     }
     
+    // MARK: - TabBar Appearance
     struct TabBarAppearanceState {
         let backgroundColor: UIColor
         let shadowColor: CGColor

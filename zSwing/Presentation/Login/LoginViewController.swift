@@ -233,8 +233,18 @@ class LoginViewController: UIViewController {
     private func handleNavigationEvent(_ event: NavigationEvent) {
         switch event {
         case .mainScreen:
-            let mainTabBarController = MainTabBarController()
-            navigationController?.setViewControllers([mainTabBarController], animated: true)
+            // MainTabCoordinator를 통해 메인 화면 설정
+            let mainTabCoordinator = AppDIContainer.shared.makeMainTabCoordinator(
+                navigationController: navigationController ?? UINavigationController()
+            )
+            mainTabCoordinator.start()
+            
+            // 윈도우의 루트 뷰컨트롤러를 변경
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = mainTabCoordinator.tabBarController
+                window.makeKeyAndVisible()
+            }
             
         case .nickname:
             let nicknameVC = NicknameViewController()

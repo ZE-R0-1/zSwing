@@ -110,37 +110,66 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
             return
         }
         
+        print("🔵 Starting Google Sign In process")
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
         
         GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { [weak self] result, error in
             if let error = error {
+                print("❌ Google Sign In error: \(error)")
                 observer.onNext(.failure(error))
                 return
             }
             
             guard let user = result?.user,
                   let idToken = user.idToken?.tokenString else {
+                print("❌ Invalid Google credentials")
                 observer.onNext(.failure(AuthError.invalidToken))
                 return
             }
             
+            print("✅ Google Sign In successful, authenticating with Firebase")
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                          accessToken: user.accessToken.tokenString)
             
             self?.firebaseAuth.signIn(with: credential) { authResult, error in
                 if let error = error {
+                    print("❌ Firebase auth error: \(error)")
                     observer.onNext(.failure(error))
                     return
                 }
                 
-                if let email = authResult?.user.email {
-                    let user = User(id: authResult?.user.uid ?? "",
-                                  email: email,
-                                  loginMethod: .google)
+                guard let firebaseUser = authResult?.user else {
+                    print("❌ No Firebase user")
+                    observer.onNext(.failure(AuthError.userNotFound))
+                    return
+                }
+                
+                print("✅ Firebase auth successful, creating user document")
+                // Firestore에 사용자 문서 생성
+                let userData = UserDTO(
+                    id: firebaseUser.uid,
+                    email: firebaseUser.email ?? "",
+                    loginMethod: "google",
+                    createdAt: Timestamp(date: Date()),
+                    lastAccessDate: Timestamp(date: Date())
+                )
+                
+                self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                    if let error = error {
+                        print("❌ Firestore error: \(error)")
+                        observer.onNext(.failure(error))
+                        return
+                    }
+                    
+                    print("✅ User document created successfully")
+                    let user = User(
+                        id: firebaseUser.uid,
+                        email: firebaseUser.email ?? "",
+                        loginMethod: .google
+                    )
                     observer.onNext(.success(user))
-                } else {
-                    observer.onNext(.failure(AuthError.missingEmail))
+                    observer.onCompleted()
                 }
             }
         }

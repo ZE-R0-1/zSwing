@@ -102,11 +102,15 @@ class LoginViewModel {
     }
     
     private func handleSignInResult(_ result: Result<User, Error>) {
+        print("🔄 Handling sign in result")
         isLoading.accept(false)
+        
         switch result {
         case .success(let user):
+            print("✅ Login successful for user: \(user.email)")
             navigationEvent.accept(.mainScreen)
         case .failure(let error):
+            print("❌ Login failed: \(error)")
             self.error.accept(error)
         }
     }
