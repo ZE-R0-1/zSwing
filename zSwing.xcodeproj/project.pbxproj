@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
-		CE2B97A72CC0913300FF532F /* LoginViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A62CC0913300FF532F /* LoginViewController1.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
 		CE2B97AF2CC0913500FF532F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AE2CC0913500FF532F /* Base */; };
 		CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97B72CC0F5BA00FF532F /* FirebaseAuth */; };
@@ -60,7 +59,6 @@
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		CE2B97A62CC0913300FF532F /* LoginViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController1.swift; sourceTree = "<group>"; };
 		CE2B97AB2CC0913500FF532F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE2B97AE2CC0913500FF532F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -145,7 +143,6 @@
 				CEDF13AB2CD9F2760090D9CE /* Presentation */,
 				CEDF13AC2CD9F2830090D9CE /* Resources */,
 				CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */,
-				CE2B97A62CC0913300FF532F /* LoginViewController1.swift */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
 				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
 				CE2B97D02CC5F02100FF532F /* NicknameViewController.swift */,
@@ -408,7 +405,6 @@
 				CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */,
 				CEDF13942CD861960090D9CE /* CategoryCell.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
-				CE2B97A72CC0913300FF532F /* LoginViewController1.swift in Sources */,
 				CEDF139C2CD9B0410090D9CE /* RideDetailView.swift in Sources */,
 				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
 				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,

@@ -189,60 +189,130 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
                                                      rawNonce: nonce,
                                                      fullName: appleCredential.fullName)
         
-        firebaseAuth.signIn(with: credential) { authResult, error in
+        firebaseAuth.signIn(with: credential) { [weak self] authResult, error in
             if let error = error {
+                print("❌ Apple Sign In Firebase auth error: \(error)")
                 observer.onNext(.failure(error))
                 return
             }
             
-            if let email = authResult?.user.email {
-                let user = User(id: authResult?.user.uid ?? "",
-                              email: email,
-                              loginMethod: .apple)
-                observer.onNext(.success(user))
-            } else {
-                observer.onNext(.failure(AuthError.missingEmail))
+            guard let firebaseUser = authResult?.user else {
+                print("❌ No Firebase user after Apple Sign In")
+                observer.onNext(.failure(AuthError.userNotFound))
+                return
+            }
+            
+            print("✅ Apple Sign In Firebase auth successful")
+            
+            // Create user document in Firestore
+            let userData = UserDTO(
+                id: firebaseUser.uid,
+                email: firebaseUser.email ?? "",
+                loginMethod: "apple",
+                createdAt: Timestamp(date: Date()),
+                lastAccessDate: Timestamp(date: Date())
+            )
+            
+            // Save to Firestore
+            self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                if let error = error {
+                    print("❌ Firestore document creation error: \(error)")
+                    observer.onNext(.failure(error))
+                } else {
+                    print("✅ Firestore document created successfully for Apple Sign In")
+                    let user = User(
+                        id: firebaseUser.uid,
+                        email: firebaseUser.email ?? "",
+                        loginMethod: .apple
+                    )
+                    observer.onNext(.success(user))
+                }
+                observer.onCompleted()
             }
         }
     }
     
     // MARK: - Firebase Auth Helper
     private func signInToFirebase(email: String, password: String, loginMethod: LoginMethod, observer: AnyObserver<Result<User, Error>>) {
+        print("🔄 Attempting Firebase sign in with email: \(email)")
+        
         firebaseAuth.signIn(withEmail: email, password: password) { [weak self] (authResult, error) in
             if let error = error {
-                // If user doesn't exist, create a new account
+                print("❌ Firebase sign in error: \(error)")
+                
+                // Check if error is user not found
                 if (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
+                    print("👤 User not found, creating new account")
+                    self?.createFirebaseAccount(email: email,
+                                             password: password,
+                                             loginMethod: loginMethod,
+                                             observer: observer)
+                } else if (error as NSError).code == AuthErrorCode.invalidCredential.rawValue {
+                    // If wrong password, try to create account as it might be first time login
+                    print("👤 User invalidCredential, attempting to create new account")
                     self?.createFirebaseAccount(email: email,
                                              password: password,
                                              loginMethod: loginMethod,
                                              observer: observer)
                 } else {
+                    print("❌ Unhandled Firebase error: \(error)")
                     observer.onNext(.failure(error))
+                    observer.onCompleted()
                 }
             } else if let email = authResult?.user.email {
+                print("✅ Firebase sign in successful")
                 let user = User(id: authResult?.user.uid ?? "",
                               email: email,
                               loginMethod: loginMethod)
                 observer.onNext(.success(user))
+                observer.onCompleted()
             }
         }
     }
-    
+
     private func createFirebaseAccount(email: String, password: String, loginMethod: LoginMethod, observer: AnyObserver<Result<User, Error>>) {
-        firebaseAuth.createUser(withEmail: email, password: password) { authResult, error in
+        print("🔄 Creating new Firebase account for email: \(email)")
+        
+        firebaseAuth.createUser(withEmail: email, password: password) { [weak self] authResult, error in
             if let error = error {
+                print("❌ Account creation error: \(error)")
                 observer.onNext(.failure(error))
+                observer.onCompleted()
                 return
             }
             
-            if let email = authResult?.user.email {
-                let user = User(id: authResult?.user.uid ?? "",
-                              email: email,
-                              loginMethod: loginMethod)
-                observer.onNext(.success(user))
-            } else {
-                observer.onNext(.failure(AuthError.missingEmail))
+            guard let firebaseUser = authResult?.user else {
+                print("❌ No Firebase user after account creation")
+                observer.onNext(.failure(AuthError.userNotFound))
+                observer.onCompleted()
+                return
+            }
+            
+            print("✅ Firebase account created successfully")
+            
+            // Create user document in Firestore
+            let userData = UserDTO(
+                id: firebaseUser.uid,
+                email: email,
+                loginMethod: loginMethod.rawValue,
+                createdAt: Timestamp(date: Date()),
+                lastAccessDate: Timestamp(date: Date())
+            )
+            
+            self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                if let error = error {
+                    print("❌ Firestore document creation error: \(error)")
+                    observer.onNext(.failure(error))
+                } else {
+                    print("✅ Firestore document created successfully")
+                    let user = User(
+                        id: firebaseUser.uid,
+                        email: email,
+                        loginMethod: loginMethod
+                    )
+                    observer.onNext(.success(user))
+                }
+                observer.onCompleted()
             }
         }
-    }
-}
+    }}
