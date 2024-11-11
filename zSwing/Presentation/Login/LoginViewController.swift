@@ -233,7 +233,6 @@ class LoginViewController: UIViewController {
     private func handleNavigationEvent(_ event: NavigationEvent) {
         switch event {
         case .mainScreen:
-            // MainTabCoordinator를 통해 메인 화면 설정
             let mainTabCoordinator = AppDIContainer.shared.makeMainTabCoordinator(
                 navigationController: navigationController ?? UINavigationController()
             )
@@ -247,8 +246,8 @@ class LoginViewController: UIViewController {
             }
             
         case .nickname:
-            let nicknameVC = NicknameViewController()
-            navigationController?.pushViewController(nicknameVC, animated: true)
+            let nicknameVC = AppDIContainer.shared.makeNicknameViewController()
+            navigationController?.pushViewController(nicknameVC, animated: false)
         }
     }
 }
@@ -269,4 +268,3 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
         viewModel.error.accept(error)
     }
 }
-

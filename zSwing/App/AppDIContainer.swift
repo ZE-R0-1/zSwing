@@ -22,6 +22,10 @@ final class AppDIContainer {
         return DefaultAuthenticationRepository()
     }()
     
+    private func makeNicknameRepository() -> NicknameRepository {
+        return DefaultNicknameRepository()
+    }
+    
     private lazy var profileRepository: ProfileRepository = {
         print("📦 Creating ProfileRepository")
         return DefaultProfileRepository(firebaseAuthService: firebaseAuthService)
@@ -39,6 +43,10 @@ final class AppDIContainer {
         return DefaultSignInUseCase(repository: authenticationRepository)
     }
     
+    private func makeNicknameUseCase() -> NicknameUseCase {
+        return DefaultNicknameUseCase(repository: makeNicknameRepository())
+    }
+    
     private func makeProfileUseCase() -> ProfileUseCase {
         print("🔨 Creating ProfileUseCase")
         return DefaultProfileUseCase(repository: profileRepository)
@@ -48,9 +56,14 @@ final class AppDIContainer {
     func makeLoginViewController() -> LoginViewController {
         print("🎨 Creating LoginViewController")
         let signInUseCase = makeSignInUseCase()
-        let viewModel = LoginViewModel(signInUseCase: signInUseCase)
+        let nicknameUseCase = makeNicknameUseCase() // 추가
+        let viewModel = LoginViewModel(
+            signInUseCase: signInUseCase,
+            nicknameUseCase: nicknameUseCase
+        )
         return LoginViewController(viewModel: viewModel)
     }
+
     
     func makeMainTabCoordinator(navigationController: UINavigationController) -> MainTabCoordinator {
         print("🎨 Creating MainTabCoordinator")
@@ -60,6 +73,11 @@ final class AppDIContainer {
         )
         print("✅ MainTabCoordinator created")
         return coordinator
+    }
+    
+    func makeNicknameViewController() -> NicknameViewController {
+        let viewModel = NicknameViewModel(useCase: makeNicknameUseCase())
+        return NicknameViewController(viewModel: viewModel)
     }
     
     func makeProfileViewController() -> ProfileViewController {

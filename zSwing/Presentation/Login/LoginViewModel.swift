@@ -13,6 +13,7 @@ import CryptoKit
 
 class LoginViewModel {
     private let signInUseCase: SignInUseCase
+    private let nicknameUseCase: NicknameUseCase // 추가
     private let disposeBag = DisposeBag()
     
     // Outputs
@@ -25,16 +26,15 @@ class LoginViewModel {
     let googleLoginTapped = PublishRelay<Void>()
     let appleLoginTapped = PublishRelay<Void>()
     
-    // Current View Controller for Google Sign In
     weak var presentingViewController: UIViewController?
-    
     private var currentNonce: String?
     
-    init(signInUseCase: SignInUseCase) {
+    init(signInUseCase: SignInUseCase, nicknameUseCase: NicknameUseCase) {
         self.signInUseCase = signInUseCase
+        self.nicknameUseCase = nicknameUseCase
         setupBindings()
     }
-    
+
     private func setupBindings() {
         // Kakao Login
         kakaoLoginTapped
@@ -103,14 +103,33 @@ class LoginViewModel {
     
     private func handleSignInResult(_ result: Result<User, Error>) {
         print("🔄 Handling sign in result")
-        isLoading.accept(false)
         
         switch result {
         case .success(let user):
             print("✅ Login successful for user: \(user.email)")
-            navigationEvent.accept(.mainScreen)
+            
+            // 닉네임 존재 여부 확인
+            nicknameUseCase.checkNicknameExists()
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] hasNickname in
+                    self?.isLoading.accept(false)
+                    if hasNickname {
+                        print("👤 User has nickname, navigating to main screen")
+                        self?.navigationEvent.accept(.mainScreen)
+                    } else {
+                        print("👤 User needs nickname, navigating to nickname screen")
+                        self?.navigationEvent.accept(.nickname)
+                    }
+                }, onError: { [weak self] error in
+                    print("❌ Error checking nickname: \(error)")
+                    self?.isLoading.accept(false)
+                    self?.error.accept(error)
+                })
+                .disposed(by: disposeBag)
+            
         case .failure(let error):
             print("❌ Login failed: \(error)")
+            self.isLoading.accept(false)
             self.error.accept(error)
         }
     }

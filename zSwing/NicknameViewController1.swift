@@ -9,7 +9,7 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-class NicknameViewController: UIViewController {
+class NicknameViewController1: UIViewController {
     
     var loginMethod: String?
     
