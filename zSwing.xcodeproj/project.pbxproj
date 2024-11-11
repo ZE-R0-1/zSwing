@@ -20,11 +20,8 @@
 		CE2B97CA2CC0FF7900FF532F /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97C92CC0FF7900FF532F /* KakaoSDK */; };
 		CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */; };
 		CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */; };
-		CE2B97D12CC5F02100FF532F /* NicknameViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D02CC5F02100FF532F /* NicknameViewController1.swift */; };
 		CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */; };
 		CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D42CC623A100FF532F /* MapViewController.swift */; };
-		CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */; };
-		CE2B97D92CC623C700FF532F /* ProfileViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D82CC623C700FF532F /* ProfileViewController1.swift */; };
 		CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */; };
 		CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */; };
 		CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */; };
@@ -69,11 +66,8 @@
 		CE2B97B02CC0913500FF532F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zSwing.entitlements; sourceTree = "<group>"; };
-		CE2B97D02CC5F02100FF532F /* NicknameViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController1.swift; sourceTree = "<group>"; };
 		CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		CE2B97D42CC623A100FF532F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadViewController.swift; sourceTree = "<group>"; };
-		CE2B97D82CC623C700FF532F /* ProfileViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController1.swift; sourceTree = "<group>"; };
 		CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUseCase.swift; sourceTree = "<group>"; };
 		CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModel.swift; path = zSwing/Presentation/Profile/ProfileViewModel.swift; sourceTree = SOURCE_ROOT; };
@@ -155,9 +149,6 @@
 				CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
 				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
-				CE2B97D02CC5F02100FF532F /* NicknameViewController1.swift */,
-				CE2B97D62CC623B100FF532F /* PhotoUploadViewController.swift */,
-				CE2B97D82CC623C700FF532F /* ProfileViewController1.swift */,
 				CE2B97D42CC623A100FF532F /* MapViewController.swift */,
 				CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */,
 				CE90B62D2CD0727E00B5FB7F /* RideAnnotation.swift */,
@@ -416,7 +407,6 @@
 				CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */,
 				CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */,
 				CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */,
-				CE2B97D12CC5F02100FF532F /* NicknameViewController1.swift in Sources */,
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
 				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController.swift in Sources */,
@@ -431,7 +421,6 @@
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
 				CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */,
 				CEDF139C2CD9B0410090D9CE /* RideDetailView.swift in Sources */,
-				CE2B97D72CC623B100FF532F /* PhotoUploadViewController.swift in Sources */,
 				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
@@ -441,7 +430,6 @@
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
-				CE2B97D92CC623C700FF532F /* ProfileViewController1.swift in Sources */,
 				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
