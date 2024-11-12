@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct RideInfo {
+struct RideInfo: Equatable {
     let rideSn: String
     let installDate: String
     let facilityName: String
     let rideName: String
-    let rideType: String
+    let rideType: RideCategory
     let address: String
 }

@@ -113,22 +113,24 @@ final class AppDIContainer {
     }
     
     // MARK: - Map
+    private func makeMapRepository() -> MapRepository {
+        print("📦 Creating MapRepository")
+        return DefaultMapRepository()
+    }
+    
+    private func makeMapUseCase() -> MapUseCase {
+        print("🔨 Creating MapUseCase")
+        return DefaultMapUseCase(repository: makeMapRepository())
+    }
+    
+    private func makeMapViewModel() -> MapViewModel {
+        print("🔨 Creating MapViewModel")
+        return MapViewModel(useCase: makeMapUseCase())
+    }
+    
     func makeMapViewController() -> UIViewController {
         print("🗺 Creating MapViewController")
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .white
-        
-        // 임시 UI 추가 (테스트용)
-        let label = UILabel()
-        label.text = "지도 화면"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        viewController.view.addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: viewController.view.centerYAnchor)
-        ])
-        
-        return viewController
+        let viewModel = makeMapViewModel()
+        return MapViewController(viewModel: viewModel)
     }
 }

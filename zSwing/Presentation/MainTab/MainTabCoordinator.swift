@@ -82,9 +82,9 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
     
     private func makeMapTab() -> UINavigationController {
         let mapVC = diContainer.makeMapViewController()
-        mapVC.title = "지도"
         
         let nav = UINavigationController(rootViewController: mapVC)
+        nav.isNavigationBarHidden = true  // 이 줄을 추가
         nav.tabBarItem = UITabBarItem(
             title: "지도",
             image: UIImage(systemName: "map"),

@@ -5,7 +5,7 @@
 //  Created by USER on 11/4/24.
 //
 
-import Foundation
+import UIKit
 
 enum RideCategory: String, CaseIterable {
     case swing = "D001"

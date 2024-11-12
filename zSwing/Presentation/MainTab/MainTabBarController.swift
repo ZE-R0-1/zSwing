@@ -26,7 +26,6 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         print("📱 MainTabBarController viewDidLoad")
         configureTabBar()
-        hideNavigationBars()
     }
     
     override func viewDidLayoutSubviews() {
@@ -95,12 +94,5 @@ class MainTabBarController: UITabBarController {
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
-    }
-    
-    private func hideNavigationBars() {
-        print("🔍 Hiding navigation bars")
-        viewControllers?.forEach { navigationController in
-            (navigationController as? UINavigationController)?.navigationBar.isHidden = true
-        }
     }
 }
