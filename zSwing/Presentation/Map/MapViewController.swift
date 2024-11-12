@@ -14,7 +14,10 @@ import CoreLocation
 class MapViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: MapViewModel
+    private let bottomSheetViewModel = MapBottomSheetViewModel()
     private let disposeBag = DisposeBag()
+    
+    private var bottomSheetView: CustomBottomSheetView!
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -51,6 +54,14 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
+    // Bottom Sheet Content
+    private let tableView: UITableView = {
+        let table = UITableView()
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        table.translatesAutoresizingMaskIntoConstraints = false
+        return table
+    }()
+    
     // MARK: - Initialization
     init(viewModel: MapViewModel) {
         self.viewModel = viewModel
@@ -65,8 +76,10 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupBottomSheet()
         setupBindings()
         viewModel.viewDidLoad.accept(())
+        bottomSheetViewModel.viewDidLoad.accept(())
     }
     
     // MARK: - UI Setup
@@ -94,14 +107,29 @@ class MapViewController: UIViewController {
         ])
     }
     
+    private func setupBottomSheet() {
+        bottomSheetView = CustomBottomSheetView(frame: .zero)
+        bottomSheetView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bottomSheetView)
+        
+        // Add table view to bottom sheet
+        bottomSheetView.addContentView(tableView)
+        
+        NSLayoutConstraint.activate([
+            bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSheetView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.6),
+            bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
     // MARK: - Bindings
     private func setupBindings() {
-        // Input Bindings
+        // Map ViewModel Bindings
         locationButton.rx.tap
             .bind(to: viewModel.locationButtonTapped)
             .disposed(by: disposeBag)
         
-        // Output Bindings
         viewModel.currentLocation
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] location in
@@ -117,6 +145,34 @@ class MapViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] error in
                 self?.showAlert(message: error.localizedDescription)
+            })
+            .disposed(by: disposeBag)
+        
+        // Bottom Sheet ViewModel Bindings
+        bottomSheetViewModel.items
+            .bind(to: tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, item, cell in
+                cell.textLabel?.text = item
+                cell.selectionStyle = .none
+            }
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: bottomSheetViewModel.itemSelected)
+            .disposed(by: disposeBag)
+        
+        // Bottom Sheet State Bindings
+        bottomSheetView.heightPercentage
+            .subscribe(onNext: { [weak self] percentage in
+                // 바텀시트 높이 변경에 따른 맵 인터랙션 조절
+                self?.adjustMapInteraction(with: percentage)
+            })
+            .disposed(by: disposeBag)
+        
+        bottomSheetView.isDismissed
+            .subscribe(onNext: { [weak self] isDismissed in
+                if isDismissed {
+                    self?.handleBottomSheetDismiss()
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -143,5 +199,25 @@ class MapViewController: UIViewController {
         )
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
+    }
+    
+    private func adjustMapInteraction(with percentage: CGFloat) {
+        // 바텀시트가 절반 이상 올라왔을 때 맵 스크롤 제한
+        mapView.isScrollEnabled = percentage < 0.5
+        
+        // 바텀시트 높이에 따른 애니메이션 처리
+        let scale = min(1.0, 1.0 - (percentage * 0.1))
+        locationButton.transform = CGAffineTransform(scaleX: scale, y: scale)
+        locationButton.alpha = 1.0 - (percentage * 0.5)
+    }
+    
+    private func handleBottomSheetDismiss() {
+        // 바텀시트 최소화 시 맵 인터랙션 복구
+        mapView.isScrollEnabled = true
+        locationButton.transform = .identity
+        locationButton.alpha = 1.0
+        
+        // 필요한 경우 바텀시트 상태 초기화
+        bottomSheetViewModel.dismissTrigger.accept(())
     }
 }

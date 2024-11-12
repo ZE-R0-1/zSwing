@@ -64,6 +64,9 @@
 		CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */; };
 		CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */; };
 		CEDF13D52CDC579C0090D9CE /* MainTabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */; };
+		CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */; };
+		CEFA52662CE34DE600B4280B /* MapBottomSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */; };
+		CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = CEFA52682CE34F0500B4280B /* RxGesture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,6 +120,8 @@
 		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
 		CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
+		CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomBottomSheetView.swift; path = zSwing/Presentation/Map/CustomBottomSheetView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapBottomSheetViewModel.swift; path = zSwing/Presentation/Map/MapBottomSheetViewModel.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +137,7 @@
 				CE2B97C12CC0F9EB00FF532F /* GoogleSignIn in Frameworks */,
 				CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */,
 				CE2B97BA2CC0F5BA00FF532F /* FirebaseFirestore in Frameworks */,
+				CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */,
 				CE2B97BC2CC0F5BA00FF532F /* FirebaseStorage in Frameworks */,
 				CE2B97CA2CC0FF7900FF532F /* KakaoSDK in Frameworks */,
 			);
@@ -198,26 +204,11 @@
 		CED42AB22CE2E22500A7AE7E /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				CED42ABA2CE2E5ED00A7AE7E /* Ride */,
-				CED42AB52CE2E26D00A7AE7E /* Components */,
+				CEFA52622CE34D8300B4280B /* Components */,
 				CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */,
 				CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */,
 			);
 			path = Map;
-			sourceTree = "<group>";
-		};
-		CED42AB52CE2E26D00A7AE7E /* Components */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		CED42ABA2CE2E5ED00A7AE7E /* Ride */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Ride;
 			sourceTree = "<group>";
 		};
 		CEDF13A72CD9ECB10090D9CE /* App */ = {
@@ -372,6 +363,15 @@
 			path = Profile;
 			sourceTree = "<group>";
 		};
+		CEFA52622CE34D8300B4280B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */,
+				CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -399,6 +399,7 @@
 				CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */,
 				CEDF13B42CD9F6B50090D9CE /* RxCocoa */,
 				CEDF13B62CD9F6B50090D9CE /* RxSwift */,
+				CEFA52682CE34F0500B4280B /* RxGesture */,
 			);
 			productName = zSwing;
 			productReference = CE2B979F2CC0913300FF532F /* zSwing.app */;
@@ -433,6 +434,7 @@
 				CE2B97BF2CC0F9EB00FF532F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */,
+				CEFA52672CE34F0500B4280B /* XCRemoteSwiftPackageReference "RxGesture" */,
 			);
 			productRefGroup = CE2B97A02CC0913300FF532F /* Products */;
 			projectDirPath = "";
@@ -463,6 +465,7 @@
 			files = (
 				CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */,
 				CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */,
+				CEFA52662CE34DE600B4280B /* MapBottomSheetViewModel.swift in Sources */,
 				CE90B62E2CD0727E00B5FB7F /* RideAnnotation1.swift in Sources */,
 				CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */,
 				CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */,
@@ -500,6 +503,7 @@
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
 				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
+				CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */,
 				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
@@ -759,6 +763,14 @@
 				minimumVersion = 6.8.0;
 			};
 		};
+		CEFA52672CE34F0500B4280B /* XCRemoteSwiftPackageReference "RxGesture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxGesture.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -811,6 +823,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
+		};
+		CEFA52682CE34F0500B4280B /* RxGesture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEFA52672CE34F0500B4280B /* XCRemoteSwiftPackageReference "RxGesture" */;
+			productName = RxGesture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
