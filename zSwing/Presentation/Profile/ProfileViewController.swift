@@ -145,29 +145,38 @@ class ProfileViewController: UIViewController {
         
         present(alert, animated: true)
     }
-    
+
     private func handleNavigation(_ event: ProfileNavigationEvent) {
-        switch event {
-        case .login:
-            print("Handling navigation to login screen")
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            
+            switch event {
+            case .loginWithNickname:
                 let loginVC = AppDIContainer.shared.makeLoginViewController()
                 let navigationController = UINavigationController(rootViewController: loginVC)
                 
-                // 화면 전환 애니메이션 추가
                 UIView.transition(with: window,
                                 duration: 0.3,
                                 options: .transitionCrossDissolve,
                                 animations: {
                     window.rootViewController = navigationController
-                }) { _ in
-                    print("Navigation to login completed")
-                }
+                })
                 
-                window.makeKeyAndVisible()
+            case .loginWithoutNickname:
+                let loginVC = AppDIContainer.shared.makeLoginViewController()
+                // 로그아웃의 경우 닉네임 입력 화면을 스킵하도록 플래그 설정
+                UserDefaults.standard.set(true, forKey: "hasNickname")
+                let navigationController = UINavigationController(rootViewController: loginVC)
+                
+                UIView.transition(with: window,
+                                duration: 0.3,
+                                options: .transitionCrossDissolve,
+                                animations: {
+                    window.rootViewController = navigationController
+                })
             }
+            
+            window.makeKeyAndVisible()
         }
     }
-
 }

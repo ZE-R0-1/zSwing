@@ -67,6 +67,7 @@
 		CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */; };
 		CEFA52662CE34DE600B4280B /* MapBottomSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */; };
 		CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = CEFA52682CE34F0500B4280B /* RxGesture */; };
+		CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526B2CE490E500B4280B /* LoadingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -122,6 +123,7 @@
 		CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
 		CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomBottomSheetView.swift; path = zSwing/Presentation/Map/CustomBottomSheetView.swift; sourceTree = SOURCE_ROOT; };
 		CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapBottomSheetViewModel.swift; path = zSwing/Presentation/Map/MapBottomSheetViewModel.swift; sourceTree = SOURCE_ROOT; };
+		CEFA526B2CE490E500B4280B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,7 +249,7 @@
 			isa = PBXGroup;
 			children = (
 				CEDF13D12CDC57590090D9CE /* MainTab */,
-				CEDF13D62CDC5BE20090D9CE /* Home */,
+				CEFA526A2CE490D100B4280B /* Loading */,
 				CEDF13BE2CD9FA3C0090D9CE /* Login */,
 				CED42A7E2CE1ED3400A7AE7E /* Nickname */,
 				CED42AB22CE2E22500A7AE7E /* Map */,
@@ -347,13 +349,6 @@
 			path = MainTab;
 			sourceTree = "<group>";
 		};
-		CEDF13D62CDC5BE20090D9CE /* Home */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
 		CEDF13D72CDC5BEF0090D9CE /* Profile */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,6 +365,14 @@
 				CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		CEFA526A2CE490D100B4280B /* Loading */ = {
+			isa = PBXGroup;
+			children = (
+				CEFA526B2CE490E500B4280B /* LoadingViewController.swift */,
+			);
+			path = Loading;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -472,6 +475,7 @@
 				CED42AAE2CE2DD9900A7AE7E /* RideDTO.swift in Sources */,
 				CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */,
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
+				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
 				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
 				CE2B97D52CC623A100FF532F /* MapViewController1.swift in Sources */,
 				CED42AAA2CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift in Sources */,

@@ -18,14 +18,12 @@ class MapViewModel {
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
     let locationButtonTapped = PublishRelay<Void>()
-    let mapRegionDidChange = PublishRelay<MKCoordinateRegion>()
     let bottomSheetStateDidChange = PublishRelay<CGFloat>()
     
     // MARK: - Outputs
     let currentLocation = BehaviorRelay<MapLocation>(value: .defaultLocation)
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
-    let shouldUpdateBottomSheet = PublishRelay<Bool>()
     let mapInteractionEnabled = BehaviorRelay<Bool>(value: true)
     
     init(useCase: MapUseCase) {
@@ -83,14 +81,6 @@ class MapViewModel {
             })
             .disposed(by: disposeBag)
         
-        // 지도 영역 변경에 따른 바텀시트 업데이트
-        mapRegionDidChange
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] region in
-                self?.updateBottomSheetContent(for: region)
-            })
-            .disposed(by: disposeBag)
-        
         // 바텀시트 상태에 따른 맵 인터랙션 제어
         bottomSheetStateDidChange
             .map { percentage -> Bool in
@@ -98,10 +88,5 @@ class MapViewModel {
             }
             .bind(to: mapInteractionEnabled)
             .disposed(by: disposeBag)
-    }
-    
-    private func updateBottomSheetContent(for region: MKCoordinateRegion) {
-        // 현재 지도 영역에 따른 바텀시트 컨텐츠 업데이트 로직
-        shouldUpdateBottomSheet.accept(true)
     }
 }

@@ -7,6 +7,7 @@
 
 import RxSwift
 import RxRelay
+import Foundation
 
 class ProfileViewModel {
     // MARK: - Dependencies
@@ -39,13 +40,22 @@ class ProfileViewModel {
             .flatMapLatest { [weak self] _ -> Observable<Result<Void, Error>> in
                 guard let self = self else { return .empty() }
                 return self.useCase.logout()
+                    .do(onNext: { result in
+                        switch result {
+                        case .success:
+                            // 로그아웃 성공 시 UserDefaults에서 닉네임 상태 제거
+                            UserDefaults.standard.removeObject(forKey: "hasNickname")
+                        case .failure:
+                            break
+                        }
+                    })
             }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] result in
                 self?.isLoading.accept(false)
                 switch result {
                 case .success:
-                    self?.navigationEvent.accept(.login)
+                    self?.navigationEvent.accept(.loginWithoutNickname) // 닉네임 입력 없이 로그인 화면으로
                 case .failure(let error):
                     self?.error.accept(error)
                 }
@@ -62,33 +72,26 @@ class ProfileViewModel {
         withdrawConfirmed
             .do(onNext: { [weak self] in
                 self?.isLoading.accept(true)
-                print("Withdrawal started")
             })
             .flatMapLatest { [weak self] _ -> Observable<Result<Void, Error>> in
                 guard let self = self else { return .empty() }
                 return self.useCase.withdraw()
+                    .do(onNext: { result in
+                        switch result {
+                        case .success:
+                            // 회원탈퇴 성공 시 UserDefaults에서 닉네임 상태 제거
+                            UserDefaults.standard.removeObject(forKey: "hasNickname")
+                        case .failure:
+                            break
+                        }
+                    })
             }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] result in
                 self?.isLoading.accept(false)
                 switch result {
                 case .success:
-                    print("Withdrawal successful, navigating to login")
-                    self?.navigationEvent.accept(.login)
-                case .failure(let error):
-                    print("Withdrawal failed: \(error)")
-                    self?.error.accept(error)
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        // Fetch current user on initialization
-        useCase.getCurrentUser()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] result in
-                switch result {
-                case .success(let user):
-                    self?.currentUser.accept(user)
+                    self?.navigationEvent.accept(.loginWithNickname) // 회원가입처럼 닉네임 입력 필요
                 case .failure(let error):
                     self?.error.accept(error)
                 }
@@ -98,5 +101,6 @@ class ProfileViewModel {
 }
 
 enum ProfileNavigationEvent {
-    case login
+    case loginWithNickname     // 회원탈퇴 후 - 닉네임 입력 필요
+    case loginWithoutNickname  // 로그아웃 후 - 닉네임 입력 불필요
 }
