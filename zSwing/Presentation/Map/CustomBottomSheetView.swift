@@ -13,8 +13,8 @@ import RxGesture
 class CustomBottomSheetView: UIView {
     // MARK: - Constants
     private enum Const {
-        static let height: CGFloat = UIScreen.main.bounds.height * 0.6
-        static let minHeight: CGFloat = 100
+        static let maxHeight: CGFloat = UIScreen.main.bounds.height * 0.9
+        static let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4
         static let cornerRadius: CGFloat = 20
         static let dragIndicatorSize = CGSize(width: 60, height: 4)
         static let dragIndicatorTopPadding: CGFloat = 12
@@ -29,6 +29,16 @@ class CustomBottomSheetView: UIView {
         return view
     }()
     
+    private let dismissButton: UIButton = {
+        let button = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        let image = UIImage(systemName: "xmark", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .systemGray
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private let contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -41,11 +51,11 @@ class CustomBottomSheetView: UIView {
     private var bottomConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
     
-    private var currentHeight: CGFloat = Const.height
+    private var currentHeight: CGFloat = Const.defaultHeight
     private var previousPanPoint: CGFloat = 0
     
     // MARK: - RxSwift Subjects
-    let heightPercentage = BehaviorRelay<CGFloat>(value: 1.0)
+    let heightPercentage = BehaviorRelay<CGFloat>(value: 0.4)
     let isDismissed = PublishRelay<Bool>()
     
     // MARK: - Initialization
@@ -53,6 +63,7 @@ class CustomBottomSheetView: UIView {
         super.init(frame: frame)
         setupUI()
         setupGestures()
+        setupBindings()
     }
     
     required init?(coder: NSCoder) {
@@ -66,20 +77,36 @@ class CustomBottomSheetView: UIView {
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         layer.masksToBounds = true
         
-        // Add shadow
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 0, height: -3)
         layer.shadowRadius = 3
         layer.shadowOpacity = 0.1
         
         addSubview(dragIndicatorView)
+        addSubview(dismissButton)
         addSubview(contentView)
         
+        bottomConstraint = bottomAnchor.constraint(equalTo: superview?.bottomAnchor ?? bottomAnchor)
+        heightConstraint = heightAnchor.constraint(equalToConstant: Const.defaultHeight)
+        
+        guard let bottomConstraint = bottomConstraint,
+              let heightConstraint = heightConstraint else { return }
+        
         NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: superview?.leadingAnchor ?? leadingAnchor),
+            trailingAnchor.constraint(equalTo: superview?.trailingAnchor ?? trailingAnchor),
+            bottomConstraint,
+            heightConstraint,
+            
             dragIndicatorView.topAnchor.constraint(equalTo: topAnchor, constant: Const.dragIndicatorTopPadding),
             dragIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
             dragIndicatorView.widthAnchor.constraint(equalToConstant: Const.dragIndicatorSize.width),
             dragIndicatorView.heightAnchor.constraint(equalToConstant: Const.dragIndicatorSize.height),
+            
+            dismissButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            dismissButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            dismissButton.widthAnchor.constraint(equalToConstant: 30),
+            dismissButton.heightAnchor.constraint(equalToConstant: 30),
             
             contentView.topAnchor.constraint(equalTo: dragIndicatorView.bottomAnchor, constant: 20),
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -95,6 +122,14 @@ class CustomBottomSheetView: UIView {
             .when(.began, .changed, .ended)
             .subscribe(onNext: { [weak self] gesture in
                 self?.handlePanGesture(gesture)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupBindings() {
+        dismissButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.dismissSheet()
             })
             .disposed(by: disposeBag)
     }
@@ -118,13 +153,13 @@ class CustomBottomSheetView: UIView {
             let projectedHeight = previousPanPoint - translation - (0.1 * velocity)
             let targetHeight: CGFloat
             
-            if projectedHeight < Const.height * 0.3 {
-                targetHeight = Const.minHeight
+            if projectedHeight < Const.defaultHeight * 0.5 {
                 isDismissed.accept(true)
-            } else if projectedHeight < Const.height * 0.7 {
-                targetHeight = Const.height * 0.5
+                targetHeight = 0 // 완전히 닫히도록 수정
+            } else if projectedHeight < Const.maxHeight * 0.7 {
+                targetHeight = Const.defaultHeight
             } else {
-                targetHeight = Const.height
+                targetHeight = Const.maxHeight
             }
             
             updateHeight(targetHeight, animated: true)
@@ -137,7 +172,7 @@ class CustomBottomSheetView: UIView {
     
     // MARK: - Helper Methods
     private func updateHeight(_ height: CGFloat, animated: Bool) {
-        let boundedHeight = max(Const.minHeight, min(height, Const.height))
+        let boundedHeight = min(height, Const.maxHeight)
         currentHeight = boundedHeight
         
         if animated {
@@ -151,14 +186,27 @@ class CustomBottomSheetView: UIView {
     }
     
     private func calculateHeightPercentage(_ height: CGFloat) -> CGFloat {
-        return (height - Const.minHeight) / (Const.height - Const.minHeight)
+        return height / Const.maxHeight
+    }
+    
+    private func dismissSheet() {
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+            self.heightConstraint?.constant = 0
+            self.superview?.layoutIfNeeded()
+        } completion: { _ in
+            self.isDismissed.accept(true)
+        }
     }
     
     // MARK: - Public Methods
+    func showSheet() {
+        updateHeight(Const.defaultHeight, animated: true)
+    }
+    
     func setHeight(_ height: CGFloat, animated: Bool) {
         updateHeight(height, animated: animated)
     }
-    
+
     func addContentView(_ view: UIView) {
         view.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(view)
@@ -169,5 +217,14 @@ class CustomBottomSheetView: UIView {
             view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+    }
+    
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        if let superview = superview {
+            bottomConstraint?.isActive = false
+            bottomConstraint = bottomAnchor.constraint(equalTo: superview.bottomAnchor)
+            bottomConstraint?.isActive = true
+        }
     }
 }

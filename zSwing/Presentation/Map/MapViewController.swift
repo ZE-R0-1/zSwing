@@ -118,9 +118,10 @@ class MapViewController: UIViewController {
         NSLayoutConstraint.activate([
             bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomSheetView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.6),
             bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
+        bottomSheetView.showSheet()
     }
     
     // MARK: - Bindings
