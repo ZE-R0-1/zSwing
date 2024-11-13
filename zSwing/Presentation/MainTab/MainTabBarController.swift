@@ -26,6 +26,10 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         print("📱 MainTabBarController viewDidLoad")
         configureTabBar()
+        
+        // 애니메이션 비활성화 설정 추가
+        self.view.layer.speed = 100  // 실질적으로 애니메이션을 눈에 띄지 않게 함
+        self.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -94,5 +98,20 @@ class MainTabBarController: UITabBarController {
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
+    }
+}
+
+// MARK: - UITabBarControllerDelegate
+extension MainTabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        // 뷰 전환 시 애니메이션 제거
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(true) }
+        return true
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, animationControllerForTransitionFrom fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        // 커스텀 전환 애니메이션 제거
+        return nil
     }
 }

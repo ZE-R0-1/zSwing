@@ -51,59 +51,52 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         print("📱 Setting up tabs")
         
         // 각 탭에 대한 ViewController 생성
-        let homeNav = makeHomeTab()
+        let homeVC = makeHomeTab()
         print("🏠 Home tab created")
         
-        let mapNav = makeMapTab()
+        let mapVC = makeMapTab()
         print("🗺 Map tab created")
         
-        let profileNav = makeProfileTab()
+        let profileVC = makeProfileTab()
         print("👤 Profile tab created")
         
         // 탭바 컨트롤러에 뷰컨트롤러들 설정
-        tabBarController.viewControllers = [homeNav, mapNav, profileNav]
+        tabBarController.setViewControllers([homeVC, mapVC, profileVC], animated: false)  // animated: false로 설정
         tabBarController.selectedIndex = 0
         
         print("✅ Tabs setup completed")
     }
     
-    private func makeHomeTab() -> UINavigationController {
+    private func makeHomeTab() -> UIViewController {
         let homeVC = diContainer.makeHomeViewController()
         homeVC.title = "홈"
-        
-        let nav = UINavigationController(rootViewController: homeVC)
-        nav.tabBarItem = UITabBarItem(
+        homeVC.tabBarItem = UITabBarItem(
             title: "홈",
             image: UIImage(systemName: "house"),
             tag: 0
         )
-        return nav
+        return homeVC
     }
     
-    private func makeMapTab() -> UINavigationController {
+    private func makeMapTab() -> UIViewController {
         let mapVC = diContainer.makeMapViewController()
-        
-        let nav = UINavigationController(rootViewController: mapVC)
-        nav.isNavigationBarHidden = true  // 이 줄을 추가
-        nav.tabBarItem = UITabBarItem(
+        mapVC.tabBarItem = UITabBarItem(
             title: "지도",
             image: UIImage(systemName: "map"),
             tag: 1
         )
-        return nav
+        return mapVC
     }
     
-    private func makeProfileTab() -> UINavigationController {
+    private func makeProfileTab() -> UIViewController {
         let profileVC = diContainer.makeProfileViewController()
         profileVC.title = "프로필"
-        
-        let nav = UINavigationController(rootViewController: profileVC)
-        nav.tabBarItem = UITabBarItem(
+        profileVC.tabBarItem = UITabBarItem(
             title: "프로필",
             image: UIImage(systemName: "person"),
             tag: 2
         )
-        return nav
+        return profileVC
     }
     
     // MARK: - Public Navigation Methods

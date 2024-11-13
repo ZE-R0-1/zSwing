@@ -386,5 +386,4 @@ class DefaultProfileRepository: ProfileRepository {
         disposable.disposed(by: DisposeBag())
         print("🔥 Firebase logout disposable set")
     }
-
 }

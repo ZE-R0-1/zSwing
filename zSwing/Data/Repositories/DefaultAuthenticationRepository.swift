@@ -130,7 +130,7 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
             
             print("✅ Google Sign In successful, authenticating with Firebase")
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                         accessToken: user.accessToken.tokenString)
+                                                           accessToken: user.accessToken.tokenString)
             
             self?.firebaseAuth.signIn(with: credential) { authResult, error in
                 if let error = error {
@@ -186,8 +186,8 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
         }
         
         let credential = OAuthProvider.appleCredential(withIDToken: tokenString,
-                                                     rawNonce: nonce,
-                                                     fullName: appleCredential.fullName)
+                                                       rawNonce: nonce,
+                                                       fullName: appleCredential.fullName)
         
         firebaseAuth.signIn(with: credential) { [weak self] authResult, error in
             if let error = error {
@@ -244,16 +244,16 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
                 if (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
                     print("👤 User not found, creating new account")
                     self?.createFirebaseAccount(email: email,
-                                             password: password,
-                                             loginMethod: loginMethod,
-                                             observer: observer)
+                                                password: password,
+                                                loginMethod: loginMethod,
+                                                observer: observer)
                 } else if (error as NSError).code == AuthErrorCode.invalidCredential.rawValue {
                     // If wrong password, try to create account as it might be first time login
                     print("👤 User invalidCredential, attempting to create new account")
                     self?.createFirebaseAccount(email: email,
-                                             password: password,
-                                             loginMethod: loginMethod,
-                                             observer: observer)
+                                                password: password,
+                                                loginMethod: loginMethod,
+                                                observer: observer)
                 } else {
                     print("❌ Unhandled Firebase error: \(error)")
                     observer.onNext(.failure(error))
@@ -262,14 +262,14 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
             } else if let email = authResult?.user.email {
                 print("✅ Firebase sign in successful")
                 let user = User(id: authResult?.user.uid ?? "",
-                              email: email,
-                              loginMethod: loginMethod)
+                                email: email,
+                                loginMethod: loginMethod)
                 observer.onNext(.success(user))
                 observer.onCompleted()
             }
         }
     }
-
+    
     private func createFirebaseAccount(email: String, password: String, loginMethod: LoginMethod, observer: AnyObserver<Result<User, Error>>) {
         print("🔄 Creating new Firebase account for email: \(email)")
         
@@ -315,4 +315,5 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
                 observer.onCompleted()
             }
         }
-    }}
+    }
+}
