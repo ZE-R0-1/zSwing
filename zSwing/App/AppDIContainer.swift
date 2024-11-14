@@ -11,9 +11,30 @@ final class AppDIContainer {
     static let shared = AppDIContainer()
     private init() {}
     
+    // MARK: - Repositories
     private lazy var authRepository = DefaultAuthenticationRepository()
     private lazy var authService: FirebaseAuthServiceProtocol = FirebaseAuthService()
+    private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository()
+    private lazy var locationRepository: MapRepository = DefaultMapRepository()
     
+    // MARK: - UseCases
+    private lazy var playgroundUseCase: PlaygroundUseCase = DefaultPlaygroundUseCase(
+        repository: playgroundRepository
+    )
+    
+    private lazy var mapUseCase: MapUseCase = DefaultMapUseCase(
+        repository: locationRepository
+    )
+    
+    // MARK: - ViewModels
+    private func makeMapViewModel() -> MapViewModel {
+        return MapViewModel(
+            useCase: mapUseCase,
+            playgroundUseCase: playgroundUseCase
+        )
+    }
+    
+    // MARK: - ViewControllers
     func makeMainTabCoordinator(navigationController: UINavigationController) -> MainTabCoordinator {
         return DefaultMainTabCoordinator(
             navigationController: navigationController,
@@ -50,11 +71,7 @@ final class AppDIContainer {
     }
     
     func makeMapViewController() -> UIViewController {
-        return MapViewController(viewModel: MapViewModel(
-            useCase: DefaultMapUseCase(
-                repository: DefaultMapRepository()
-            )
-        ))
+        return MapViewController(viewModel: makeMapViewModel())
     }
     
     func makeProfileViewController() -> UIViewController {

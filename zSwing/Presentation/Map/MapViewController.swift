@@ -14,10 +14,9 @@ import CoreLocation
 class MapViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: MapViewModel
-    private let bottomSheetViewModel = MapBottomSheetViewModel()
     private let disposeBag = DisposeBag()
-    
     private var bottomSheetView: CustomBottomSheetView!
+    private var mapViewDelegate: MapViewDelegate?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -47,6 +46,22 @@ class MapViewController: UIViewController {
         return button
     }()
     
+    private let searchButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("이 지역 검색", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.backgroundColor = .white
+        button.tintColor = .systemBlue
+        button.layer.cornerRadius = 16
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.2
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.hidesWhenStopped = true
@@ -54,10 +69,11 @@ class MapViewController: UIViewController {
         return indicator
     }()
     
-    // Bottom Sheet Content
     private let tableView: UITableView = {
         let table = UITableView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        table.register(PlaygroundCell.self, forCellReuseIdentifier: PlaygroundCell.identifier)
+        table.separatorStyle = .none
+        table.backgroundColor = .clear
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
@@ -79,7 +95,6 @@ class MapViewController: UIViewController {
         setupBottomSheet()
         setupBindings()
         viewModel.viewDidLoad.accept(())
-        bottomSheetViewModel.viewDidLoad.accept(())
     }
     
     // MARK: - UI Setup
@@ -88,6 +103,7 @@ class MapViewController: UIViewController {
         
         view.addSubview(mapView)
         view.addSubview(locationButton)
+        view.addSubview(searchButton)
         locationButton.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
@@ -101,6 +117,11 @@ class MapViewController: UIViewController {
             locationButton.widthAnchor.constraint(equalToConstant: 40),
             locationButton.heightAnchor.constraint(equalToConstant: 40),
             
+            searchButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            searchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchButton.heightAnchor.constraint(equalToConstant: 32),
+            searchButton.widthAnchor.constraint(equalToConstant: 100),
+            
             activityIndicator.centerXAnchor.constraint(equalTo: locationButton.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: locationButton.centerYAnchor)
         ])
@@ -111,7 +132,6 @@ class MapViewController: UIViewController {
         bottomSheetView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bottomSheetView)
         
-        // Add table view to bottom sheet
         bottomSheetView.addContentView(tableView)
         
         NSLayoutConstraint.activate([
@@ -125,11 +145,30 @@ class MapViewController: UIViewController {
     
     // MARK: - Bindings
     private func setupBindings() {
-        // Map ViewModel Bindings
+        // Map Control Bindings
         locationButton.rx.tap
             .bind(to: viewModel.locationButtonTapped)
             .disposed(by: disposeBag)
         
+        searchButton.rx.tap
+            .bind(to: viewModel.searchButtonTapped)
+            .disposed(by: disposeBag)
+        
+        // MKMapView delegate를 통한 region 변경 감지
+        Observable.create { [weak self] observer -> Disposable in
+            let delegate = MapViewDelegate { region in
+                observer.onNext(region)
+            }
+            self?.mapView.delegate = delegate
+            // 델리게이트 객체 유지를 위한 참조 저장
+            self?.mapViewDelegate = delegate
+            
+            return Disposables.create()
+        }
+        .bind(to: viewModel.regionDidChange)
+        .disposed(by: disposeBag)
+        
+        // ViewModel Output Bindings
         viewModel.currentLocation
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] location in
@@ -148,22 +187,31 @@ class MapViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // Bottom Sheet ViewModel Bindings
-        bottomSheetViewModel.items
-            .bind(to: tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, item, cell in
-                cell.textLabel?.text = item
-                cell.selectionStyle = .none
-            }
+        viewModel.shouldShowSearchButton
+            .map { !$0 }
+            .bind(to: searchButton.rx.isHidden)
             .disposed(by: disposeBag)
         
-        tableView.rx.itemSelected
-            .bind(to: bottomSheetViewModel.itemSelected)
+        viewModel.shouldShowBottomSheet
+            .subscribe(onNext: { [weak self] show in
+                if show {
+                    self?.bottomSheetView.showSheet()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.playgrounds
+            .bind(to: tableView.rx.items(
+                cellIdentifier: PlaygroundCell.identifier,
+                cellType: PlaygroundCell.self
+            )) { index, playground, cell in
+                cell.configure(with: playground)
+            }
             .disposed(by: disposeBag)
         
         // Bottom Sheet State Bindings
         bottomSheetView.heightPercentage
             .subscribe(onNext: { [weak self] percentage in
-                // 바텀시트 높이 변경에 따른 맵 인터랙션 조절
                 self?.adjustMapInteraction(with: percentage)
             })
             .disposed(by: disposeBag)
@@ -202,22 +250,34 @@ class MapViewController: UIViewController {
     }
     
     private func adjustMapInteraction(with percentage: CGFloat) {
-        // 바텀시트가 절반 이상 올라왔을 때 맵 스크롤 제한
         mapView.isScrollEnabled = percentage < 0.5
         
-        // 바텀시트 높이에 따른 애니메이션 처리
         let scale = min(1.0, 1.0 - (percentage * 0.1))
         locationButton.transform = CGAffineTransform(scaleX: scale, y: scale)
         locationButton.alpha = 1.0 - (percentage * 0.5)
+        
+        searchButton.transform = locationButton.transform
+        searchButton.alpha = locationButton.alpha
     }
     
     private func handleBottomSheetDismiss() {
-        // 바텀시트 최소화 시 맵 인터랙션 복구
         mapView.isScrollEnabled = true
         locationButton.transform = .identity
         locationButton.alpha = 1.0
-        
-        // 필요한 경우 바텀시트 상태 초기화
-        bottomSheetViewModel.dismissTrigger.accept(())
+        searchButton.transform = .identity
+        searchButton.alpha = 1.0
+    }
+}
+
+private class MapViewDelegate: NSObject, MKMapViewDelegate {
+    private let regionDidChange: (MKCoordinateRegion) -> Void
+    
+    init(regionDidChange: @escaping (MKCoordinateRegion) -> Void) {
+        self.regionDidChange = regionDidChange
+        super.init()
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        regionDidChange(mapView.region)
     }
 }

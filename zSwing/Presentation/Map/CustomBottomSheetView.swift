@@ -11,15 +11,6 @@ import RxCocoa
 import RxGesture
 
 class CustomBottomSheetView: UIView {
-    // MARK: - Constants
-    private enum Const {
-        static let maxHeight: CGFloat = UIScreen.main.bounds.height * 0.9
-        static let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4
-        static let cornerRadius: CGFloat = 20
-        static let dragIndicatorSize = CGSize(width: 60, height: 4)
-        static let dragIndicatorTopPadding: CGFloat = 12
-    }
-    
     // MARK: - UI Components
     private let dragIndicatorView: UIView = {
         let view = UIView()
@@ -227,4 +218,13 @@ class CustomBottomSheetView: UIView {
             bottomConstraint?.isActive = true
         }
     }
+}
+
+// MARK: - Constants
+enum Const {
+    static let maxHeight: CGFloat = UIScreen.main.bounds.height * 0.9
+    static let defaultHeight: CGFloat = UIScreen.main.bounds.height * 0.4
+    static let cornerRadius: CGFloat = 20
+    static let dragIndicatorSize = CGSize(width: 60, height: 4)
+    static let dragIndicatorTopPadding: CGFloat = 12
 }

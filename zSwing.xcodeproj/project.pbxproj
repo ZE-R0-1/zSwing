@@ -21,35 +21,22 @@
 		CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CB2CC0FF7900FF532F /* KakaoSDKAuth */; };
 		CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = CE2B97CD2CC0FF7900FF532F /* KakaoSDKUser */; };
 		CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */; };
-		CE2B97D52CC623A100FF532F /* MapViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97D42CC623A100FF532F /* MapViewController1.swift */; };
 		CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */; };
 		CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */; };
 		CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */; };
 		CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4ED2CDCA2D000EF4563 /* ProfileViewController.swift */; };
 		CE7AA4F02CDCA47100EF4563 /* DefaultProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EF2CDCA47100EF4563 /* DefaultProfileRepository.swift */; };
-		CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */; };
-		CE90B62E2CD0727E00B5FB7F /* RideAnnotation1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90B62D2CD0727E00B5FB7F /* RideAnnotation1.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
 		CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A832CE1EF5B00A7AE7E /* NicknameUseCase.swift */; };
 		CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A852CE1EFC200A7AE7E /* NicknameRepository.swift */; };
-		CED42AA12CE2DACB00A7AE7E /* MapItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AA02CE2DACB00A7AE7E /* MapItem.swift */; };
 		CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AA22CE2DB6A00A7AE7E /* MapRepository.swift */; };
 		CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AA42CE2DBB000A7AE7E /* MapUseCase.swift */; };
-		CED42AAA2CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AA92CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift */; };
 		CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AAB2CE2DD4D00A7AE7E /* DefaultMapRepository.swift */; };
-		CED42AAE2CE2DD9900A7AE7E /* RideDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AAD2CE2DD9900A7AE7E /* RideDTO.swift */; };
 		CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */; };
 		CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */; };
 		CED42ACC2CE3275800A7AE7E /* MapLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42ACB2CE3275800A7AE7E /* MapLocation.swift */; };
-		CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */; };
-		CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13912CD861740090D9CE /* RideCategory.swift */; };
-		CEDF13942CD861960090D9CE /* CategoryCell1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13932CD861960090D9CE /* CategoryCell1.swift */; };
-		CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */; };
-		CEDF13982CD8B3260090D9CE /* PlaygroundCell1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13972CD8B3260090D9CE /* PlaygroundCell1.swift */; };
-		CEDF139C2CD9B0410090D9CE /* RideDetailView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF139B2CD9B0410090D9CE /* RideDetailView1.swift */; };
-		CEDF139E2CD9B04A0090D9CE /* BottomSheetView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF139D2CD9B04A0090D9CE /* BottomSheetView1.swift */; };
 		CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13AE2CD9F63B0090D9CE /* User.swift */; };
 		CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */; };
 		CEDF13B52CD9F6B50090D9CE /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CEDF13B42CD9F6B50090D9CE /* RxCocoa */; };
@@ -65,9 +52,13 @@
 		CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */; };
 		CEDF13D52CDC579C0090D9CE /* MainTabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */; };
 		CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */; };
-		CEFA52662CE34DE600B4280B /* MapBottomSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */; };
 		CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = CEFA52682CE34F0500B4280B /* RxGesture */; };
 		CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526B2CE490E500B4280B /* LoadingViewController.swift */; };
+		CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526D2CE5D22500B4280B /* Playground.swift */; };
+		CEFA52702CE5D26300B4280B /* PlaygroundRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */; };
+		CEFA52722CE5D29900B4280B /* PlaygroundUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52712CE5D29900B4280B /* PlaygroundUseCase.swift */; };
+		CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52752CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift */; };
+		CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,35 +71,22 @@
 		CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zSwing.entitlements; sourceTree = "<group>"; };
 		CE2B97D22CC6238B00FF532F /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
-		CE2B97D42CC623A100FF532F /* MapViewController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController1.swift; sourceTree = "<group>"; };
 		CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUseCase.swift; sourceTree = "<group>"; };
 		CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModel.swift; path = zSwing/Presentation/Profile/ProfileViewModel.swift; sourceTree = SOURCE_ROOT; };
 		CE7AA4ED2CDCA2D000EF4563 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewController.swift; path = zSwing/Presentation/Profile/ProfileViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE7AA4EF2CDCA47100EF4563 /* DefaultProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultProfileRepository.swift; sourceTree = "<group>"; };
-		CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
-		CE90B62D2CD0727E00B5FB7F /* RideAnnotation1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAnnotation1.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		CED42A832CE1EF5B00A7AE7E /* NicknameUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameUseCase.swift; sourceTree = "<group>"; };
 		CED42A852CE1EFC200A7AE7E /* NicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameRepository.swift; sourceTree = "<group>"; };
-		CED42AA02CE2DACB00A7AE7E /* MapItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapItem.swift; sourceTree = "<group>"; };
 		CED42AA22CE2DB6A00A7AE7E /* MapRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRepository.swift; sourceTree = "<group>"; };
 		CED42AA42CE2DBB000A7AE7E /* MapUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUseCase.swift; sourceTree = "<group>"; };
-		CED42AA92CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMapDataSource.swift; sourceTree = "<group>"; };
 		CED42AAB2CE2DD4D00A7AE7E /* DefaultMapRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultMapRepository.swift; sourceTree = "<group>"; };
-		CED42AAD2CE2DD9900A7AE7E /* RideDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDTO.swift; sourceTree = "<group>"; };
 		CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		CED42ACB2CE3275800A7AE7E /* MapLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLocation.swift; sourceTree = "<group>"; };
-		CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePlaygroundService.swift; sourceTree = "<group>"; };
-		CEDF13912CD861740090D9CE /* RideCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCategory.swift; sourceTree = "<group>"; };
-		CEDF13932CD861960090D9CE /* CategoryCell1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell1.swift; sourceTree = "<group>"; };
-		CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundItem.swift; sourceTree = "<group>"; };
-		CEDF13972CD8B3260090D9CE /* PlaygroundCell1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundCell1.swift; sourceTree = "<group>"; };
-		CEDF139B2CD9B0410090D9CE /* RideDetailView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideDetailView1.swift; sourceTree = "<group>"; };
-		CEDF139D2CD9B04A0090D9CE /* BottomSheetView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView1.swift; sourceTree = "<group>"; };
 		CEDF13AE2CD9F63B0090D9CE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUseCase.swift; sourceTree = "<group>"; };
 		CEDF13B92CD9F75B0090D9CE /* AuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository.swift; sourceTree = "<group>"; };
@@ -122,8 +100,12 @@
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
 		CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
 		CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomBottomSheetView.swift; path = zSwing/Presentation/Map/CustomBottomSheetView.swift; sourceTree = SOURCE_ROOT; };
-		CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapBottomSheetViewModel.swift; path = zSwing/Presentation/Map/MapBottomSheetViewModel.swift; sourceTree = SOURCE_ROOT; };
 		CEFA526B2CE490E500B4280B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+		CEFA526D2CE5D22500B4280B /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
+		CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundRepository.swift; sourceTree = "<group>"; };
+		CEFA52712CE5D29900B4280B /* PlaygroundUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundUseCase.swift; sourceTree = "<group>"; };
+		CEFA52752CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlaygroundRepository.swift; sourceTree = "<group>"; };
+		CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundCell.swift; path = zSwing/Data/Repositories/PlaygroundCell.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,13 +157,6 @@
 				CE2B97CF2CC5D35600FF532F /* zSwing.entitlements */,
 				CE2B97B02CC0913500FF532F /* Info.plist */,
 				CE2B97C62CC0FADF00FF532F /* GoogleService-Info.plist */,
-				CE2B97D42CC623A100FF532F /* MapViewController1.swift */,
-				CE90B62D2CD0727E00B5FB7F /* RideAnnotation1.swift */,
-				CEDF138B2CD46ADD0090D9CE /* FirebasePlaygroundService.swift */,
-				CEDF13932CD861960090D9CE /* CategoryCell1.swift */,
-				CEDF13972CD8B3260090D9CE /* PlaygroundCell1.swift */,
-				CEDF139D2CD9B04A0090D9CE /* BottomSheetView1.swift */,
-				CEDF139B2CD9B0410090D9CE /* RideDetailView1.swift */,
 			);
 			path = zSwing;
 			sourceTree = "<group>";
@@ -198,7 +173,6 @@
 		CED42AA82CE2DC2400A7AE7E /* DataSources */ = {
 			isa = PBXGroup;
 			children = (
-				CED42AA92CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift */,
 			);
 			path = DataSources;
 			sourceTree = "<group>";
@@ -272,10 +246,7 @@
 			children = (
 				CEDF13AE2CD9F63B0090D9CE /* User.swift */,
 				CED42ACB2CE3275800A7AE7E /* MapLocation.swift */,
-				CED42AA02CE2DACB00A7AE7E /* MapItem.swift */,
-				CE90B62B2CD0725F00B5FB7F /* RideInfo.swift */,
-				CEDF13912CD861740090D9CE /* RideCategory.swift */,
-				CEDF13952CD8B2DF0090D9CE /* PlaygroundItem.swift */,
+				CEFA526D2CE5D22500B4280B /* Playground.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -287,6 +258,7 @@
 				CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */,
 				CED42A832CE1EF5B00A7AE7E /* NicknameUseCase.swift */,
 				CED42AA42CE2DBB000A7AE7E /* MapUseCase.swift */,
+				CEFA52712CE5D29900B4280B /* PlaygroundUseCase.swift */,
 			);
 			path = UserCases;
 			sourceTree = "<group>";
@@ -298,6 +270,7 @@
 				CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */,
 				CED42A852CE1EFC200A7AE7E /* NicknameRepository.swift */,
 				CED42AA22CE2DB6A00A7AE7E /* MapRepository.swift */,
+				CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -309,6 +282,7 @@
 				CE7AA4EF2CDCA47100EF4563 /* DefaultProfileRepository.swift */,
 				CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */,
 				CED42AAB2CE2DD4D00A7AE7E /* DefaultMapRepository.swift */,
+				CEFA52752CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -334,7 +308,6 @@
 			isa = PBXGroup;
 			children = (
 				CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */,
-				CED42AAD2CE2DD9900A7AE7E /* RideDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -362,7 +335,7 @@
 			isa = PBXGroup;
 			children = (
 				CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */,
-				CEFA52652CE34DE600B4280B /* MapBottomSheetViewModel.swift */,
+				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -467,51 +440,42 @@
 			buildActionMask = 2147483647;
 			files = (
 				CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */,
-				CEDF13962CD8B2E00090D9CE /* PlaygroundItem.swift in Sources */,
-				CEFA52662CE34DE600B4280B /* MapBottomSheetViewModel.swift in Sources */,
-				CE90B62E2CD0727E00B5FB7F /* RideAnnotation1.swift in Sources */,
 				CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */,
 				CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */,
-				CED42AAE2CE2DD9900A7AE7E /* RideDTO.swift in Sources */,
 				CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */,
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
 				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
 				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
-				CE2B97D52CC623A100FF532F /* MapViewController1.swift in Sources */,
-				CED42AAA2CE2DC4D00A7AE7E /* FirebaseMapDataSource.swift in Sources */,
+				CEFA52702CE5D26300B4280B /* PlaygroundRepository.swift in Sources */,
 				CE7AA4F02CDCA47100EF4563 /* DefaultProfileRepository.swift in Sources */,
 				CEDF13D52CDC579C0090D9CE /* MainTabBarViewModel.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
+				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
-				CEDF13982CD8B3260090D9CE /* PlaygroundCell1.swift in Sources */,
+				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
 				CED42ACC2CE3275800A7AE7E /* MapLocation.swift in Sources */,
 				CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */,
-				CEDF13942CD861960090D9CE /* CategoryCell1.swift in Sources */,
 				CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
 				CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */,
-				CED42AA12CE2DACB00A7AE7E /* MapItem.swift in Sources */,
 				CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */,
-				CEDF139C2CD9B0410090D9CE /* RideDetailView1.swift in Sources */,
 				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,
 				CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
-				CEDF139E2CD9B04A0090D9CE /* BottomSheetView1.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
+				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
-				CEDF138C2CD46ADD0090D9CE /* FirebasePlaygroundService.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */,
+				CEFA52722CE5D29900B4280B /* PlaygroundUseCase.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */,
-				CE90B62C2CD0725F00B5FB7F /* RideInfo.swift in Sources */,
-				CEDF13922CD861750090D9CE /* RideCategory.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
