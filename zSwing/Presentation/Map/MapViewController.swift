@@ -84,7 +84,7 @@ class MapViewController: UIViewController {
     
     // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         view.addSubview(mapView)
         view.addSubview(locationButton)

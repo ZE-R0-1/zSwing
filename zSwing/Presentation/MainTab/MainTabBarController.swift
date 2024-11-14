@@ -15,6 +15,15 @@ class MainTabBarController: UITabBarController {
         setupAppearance()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 각 뷰 컨트롤러의 레이아웃을 즉시 적용
+        viewControllers?.forEach { viewController in
+            viewController.view.setNeedsLayout()
+            viewController.view.layoutIfNeeded()
+        }
+    }
+    
     private func setupAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
