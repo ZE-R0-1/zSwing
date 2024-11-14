@@ -90,8 +90,15 @@ class MapViewModel {
         
         // 지도 영역 변경
         regionDidChange
-            .skip(1)  // 초기 로딩 스킵
-            .map { _ in true }
+            .skip(2)  // 초기 로딩 스킵
+            // 검색 중일 때는 버튼을 표시하지 않기 위해 isLoading 상태 체크
+            .withLatestFrom(isLoading) { (region, isLoading) in
+                return (region, isLoading)
+            }
+            .map { _, isLoading in
+                // 로딩 중이 아닐 때만 버튼 표시
+                return !isLoading
+            }
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
         
@@ -100,8 +107,8 @@ class MapViewModel {
             .withLatestFrom(regionDidChange)
             .do(onNext: { [weak self] _ in
                 self?.isLoading.accept(true)
-                // 로딩 시작할 때 바텀시트 숨기기
-                self?.shouldShowBottomSheet.accept(false)
+                // 검색 버튼을 탭하면 버튼 숨기기
+                self?.shouldShowSearchButton.accept(false)
             })
             .flatMapLatest { [weak self] region -> Observable<[Playground]> in
                 guard let self = self else { return .empty() }
@@ -114,10 +121,9 @@ class MapViewModel {
                     return .just([])
                 }
             }
-            .do(onNext: { [weak self] playgrounds in
+            .do(onNext: { [weak self] _ in
                 self?.isLoading.accept(false)
-                // 데이터가 있을 때만 바텀시트 표시
-                self?.shouldShowBottomSheet.accept(!playgrounds.isEmpty)
+                self?.shouldShowBottomSheet.accept(true)
             })
             .bind(to: playgrounds)
             .disposed(by: disposeBag)
