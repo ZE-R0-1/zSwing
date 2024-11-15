@@ -23,7 +23,7 @@ class CustomBottomSheetView: UIView {
         var heightPercentage: CGFloat {
             switch self {
             case .min: return 0.15
-            case .mid: return 0.6
+            case .mid: return 0.4
             case .max: return 0.9
             }
         }

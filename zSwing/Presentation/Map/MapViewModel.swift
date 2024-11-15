@@ -68,41 +68,17 @@ class MapViewModel {
             }
             .do(onNext: { [weak self] result in
                 if case .success(let location) = result {
+                    // 지도 이동만 수행
                     self?.currentLocation.accept(location)
-                    self?.currentUserLocation.accept(CLLocation(
-                        latitude: location.latitude,
-                        longitude: location.longitude
-                    ))
-                    self?.updateLocationTitle(latitude: location.latitude, longitude: location.longitude)
+                    // 첫 로드시에만 검색 수행
+                    self?.searchButtonTapped.accept(())
                 }
-            })
-            .flatMapLatest { [weak self] result -> Observable<[Playground]> in
-                guard let self = self,
-                      case .success(let location) = result else { return .empty() }
-                
-                return self.playgroundUseCase.fetchPlaygroundsNearby(
-                    coordinate: CLLocationCoordinate2D(
-                        latitude: location.latitude,
-                        longitude: location.longitude
-                    )
-                )
-                .catch { error -> Observable<[Playground]> in
-                    self.error.accept(error)
-                    return .just([])
-                }
-            }
-            .do(onNext: { [weak self] playgrounds in
-                self?.loadRideCategories(for: playgrounds)
                 self?.isLoading.accept(false)
-                self?.shouldShowBottomSheet.accept(!playgrounds.isEmpty)
             })
-            .subscribe(onNext: { [weak self] playgrounds in
-                self?.allPlaygrounds.accept(playgrounds)
-                self?.playgrounds.accept(playgrounds)
-            })
+            .subscribe()
             .disposed(by: disposeBag)
         
-        // 위치 버튼 탭 - 현재 위치로 이동만
+        // 위치 버튼 탭 - 지도 이동만
         locationButtonTapped
             .do(onNext: { [weak self] _ in
                 self?.isLoading.accept(true)
@@ -117,48 +93,21 @@ class MapViewModel {
             .subscribe(onNext: { [weak self] result in
                 if case .success(let location) = result {
                     self?.currentLocation.accept(location)
-                    self?.currentUserLocation.accept(CLLocation(
-                        latitude: location.latitude,
-                        longitude: location.longitude
-                    ))
-                    self?.updateLocationTitle(
-                        latitude: location.latitude,
-                        longitude: location.longitude
-                    )
                 }
             })
             .disposed(by: disposeBag)
         
-        // 카테고리 선택
-        categorySelected
-            .withLatestFrom(allPlaygrounds) { (category, playgrounds) -> [Playground] in
-                guard category != "전체" else { return playgrounds }
-                return playgrounds // TODO: 카테고리에 따른 필터링 로직 구현
-            }
-            .bind(to: playgrounds)
-            .disposed(by: disposeBag)
-        
-        // 지도 영역 변경
-        regionDidChange
-            .skip(2)
+        // 검색 버튼 탭 - 데이터 로드 및 위치 정보 업데이트
+        searchButtonTapped
+            .withLatestFrom(regionDidChange)
             .do(onNext: { [weak self] region in
+                self?.isLoading.accept(true)
+                self?.shouldShowSearchButton.accept(false)
+                // 검색 시에만 위치 정보 업데이트
                 self?.updateLocationTitle(
                     latitude: region.center.latitude,
                     longitude: region.center.longitude
                 )
-            })
-            .withLatestFrom(isLoading) { (region, isLoading) in
-                return !isLoading
-            }
-            .bind(to: shouldShowSearchButton)
-            .disposed(by: disposeBag)
-        
-        // 검색 버튼 탭
-        searchButtonTapped
-            .withLatestFrom(regionDidChange)
-            .do(onNext: { [weak self] _ in
-                self?.isLoading.accept(true)
-                self?.shouldShowSearchButton.accept(false)
             })
             .flatMapLatest { [weak self] region -> Observable<[Playground]> in
                 guard let self = self else { return .empty() }
@@ -181,13 +130,30 @@ class MapViewModel {
                 self?.playgrounds.accept(playgrounds)
             })
             .disposed(by: disposeBag)
+        
+        // 지도 영역 변경시 검색 버튼 표시
+        regionDidChange
+            .skip(2)
+            .withLatestFrom(isLoading) { (region, isLoading) in
+                return !isLoading
+            }
+            .bind(to: shouldShowSearchButton)
+            .disposed(by: disposeBag)
+        
+        // 카테고리 선택
+        categorySelected
+            .withLatestFrom(allPlaygrounds) { (category, playgrounds) -> [Playground] in
+                guard category != "전체" else { return playgrounds }
+                return playgrounds // TODO: 카테고리에 따른 필터링 로직 구현
+            }
+            .bind(to: playgrounds)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
     private func loadRideCategories(for playgrounds: [Playground]) {
         let uniqueCategories = Set<String>()
         
-        // 모든 놀이터의 기구 정보를 가져와서 카테고리 추출
         Observable.from(playgrounds)
             .flatMap { [weak self] playground -> Observable<[Ride]> in
                 guard let self = self else { return .empty() }
@@ -223,8 +189,8 @@ class MapViewModel {
                     placemark.thoroughfare,
                     placemark.subThoroughfare
                 ]
-                .compactMap { $0 }
-                .joined(separator: " ")
+                    .compactMap { $0 }
+                    .joined(separator: " ")
                 
                 self?.locationTitle.accept(address)
             }

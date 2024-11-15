@@ -248,10 +248,12 @@ class MapViewController: UIViewController {
     }
     
     private func adjustMapInteraction(with percentage: CGFloat) {
-        mapView.isScrollEnabled = percentage < 0.5
-        mapView.isZoomEnabled = percentage < 0.5
-        mapView.isRotateEnabled = percentage < 0.5
+        // 맵뷰 인터랙션은 항상 활성화
+        mapView.isScrollEnabled = true
+        mapView.isZoomEnabled = true
+        mapView.isRotateEnabled = true
         
+        // 버튼 UI 조정은 유지
         let scale = min(1.0, 1.0 - (percentage * 0.1))
         locationButton.transform = CGAffineTransform(scaleX: scale, y: scale)
         locationButton.alpha = 1.0 - (percentage * 0.5)
