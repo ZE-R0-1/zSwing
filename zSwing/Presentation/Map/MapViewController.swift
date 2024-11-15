@@ -133,14 +133,13 @@ class MapViewController: UIViewController {
         view.addSubview(bottomSheetView)
         
         bottomSheetView.addContentView(tableView)
+        bottomSheetView.bind(to: viewModel)
         
         NSLayoutConstraint.activate([
             bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
-        bottomSheetView.showSheet()
     }
     
     // MARK: - Bindings
@@ -160,7 +159,6 @@ class MapViewController: UIViewController {
                 observer.onNext(region)
             }
             self?.mapView.delegate = delegate
-            // 델리게이트 객체 유지를 위한 참조 저장
             self?.mapViewDelegate = delegate
             
             return Disposables.create()
@@ -200,12 +198,14 @@ class MapViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
+        // TableView Bindings
         viewModel.playgrounds
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
-            )) { index, playground, cell in
-                cell.configure(with: playground)
+            )) { [weak self] index, playground, cell in
+                let distance = self?.calculateDistance(for: playground)
+                cell.configure(with: playground, distance: distance)
             }
             .disposed(by: disposeBag)
         
@@ -215,17 +215,15 @@ class MapViewController: UIViewController {
                 self?.adjustMapInteraction(with: percentage)
             })
             .disposed(by: disposeBag)
-        
-        bottomSheetView.isDismissed
-            .subscribe(onNext: { [weak self] isDismissed in
-                if isDismissed {
-                    self?.handleBottomSheetDismiss()
-                }
-            })
-            .disposed(by: disposeBag)
     }
     
     // MARK: - Helper Methods
+    private func calculateDistance(for playground: Playground) -> Double? {
+        guard let userLocation = mapView.userLocation.location else { return nil }
+        let distance = playground.distance(from: userLocation)
+        return distance / 1000.0  // 미터를 킬로미터로 변환
+    }
+    
     private func updateMapRegion(with location: MapLocation) {
         let coordinate = CLLocationCoordinate2D(
             latitude: location.latitude,
@@ -251,6 +249,8 @@ class MapViewController: UIViewController {
     
     private func adjustMapInteraction(with percentage: CGFloat) {
         mapView.isScrollEnabled = percentage < 0.5
+        mapView.isZoomEnabled = percentage < 0.5
+        mapView.isRotateEnabled = percentage < 0.5
         
         let scale = min(1.0, 1.0 - (percentage * 0.1))
         locationButton.transform = CGAffineTransform(scaleX: scale, y: scale)
@@ -258,14 +258,6 @@ class MapViewController: UIViewController {
         
         searchButton.transform = locationButton.transform
         searchButton.alpha = locationButton.alpha
-    }
-    
-    private func handleBottomSheetDismiss() {
-        mapView.isScrollEnabled = true
-        locationButton.transform = .identity
-        locationButton.alpha = 1.0
-        searchButton.transform = .identity
-        searchButton.alpha = 1.0
     }
 }
 

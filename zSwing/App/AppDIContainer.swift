@@ -16,6 +16,7 @@ final class AppDIContainer {
     private lazy var authService: FirebaseAuthServiceProtocol = FirebaseAuthService()
     private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository()
     private lazy var locationRepository: MapRepository = DefaultMapRepository()
+    private lazy var rideRepository: RideRepository = DefaultRideRepository()
     
     // MARK: - UseCases
     private lazy var playgroundUseCase: PlaygroundUseCase = DefaultPlaygroundUseCase(
@@ -26,11 +27,16 @@ final class AppDIContainer {
         repository: locationRepository
     )
     
+    private lazy var rideUseCase: RideUseCase = DefaultRideUseCase(
+        repository: rideRepository
+    )
+    
     // MARK: - ViewModels
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
             useCase: mapUseCase,
-            playgroundUseCase: playgroundUseCase
+            playgroundUseCase: playgroundUseCase,
+            rideUseCase: rideUseCase
         )
     }
     
