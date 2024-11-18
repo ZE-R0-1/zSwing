@@ -15,36 +15,44 @@ class DefaultPlaygroundRepository: PlaygroundRepository {
     
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
         return Observable.create { observer in
+            let startTime = Date()  // 시작 시간 기록
+            print("데이터 불러오기 시작: \(startTime)")
+            
             let collection = self.db.collection("playgrounds")
             
             collection.getDocuments { snapshot, error in
+                let fetchTime = Date().timeIntervalSince(startTime)  // Firestore 데이터 가져오는 시간
+                print("Firestore 데이터 가져오는 시간: \(String(format: "%.3f", fetchTime))초")
+                
                 if let error = error {
+                    print("에러 발생 시간: \(Date().timeIntervalSince(startTime))초")
                     observer.onError(error)
                     return
                 }
                 
+                let processingStart = Date()  // 데이터 처리 시작 시간
+                
                 let playgrounds = snapshot?.documents.compactMap { document -> Playground? in
                     guard
-                        let pfcfNm = document.data()["pfcfNm"] as? String,
+                        let pfctNm = document.data()["pfctNm"] as? String,
                         let latString = document.data()["latCrtsVl"] as? String,
-                        let lonString = document.data()["lotCrtsVl"] as? String,
-                        let latCrtsVl = Double(latString),  // 문자열을 Double로 변환
-                        let lotCrtsVl = Double(lonString)   // 문자열을 Double로 변환
+                        let lotString = document.data()["lotCrtsVl"] as? String,
+                        let pfctSnString = document.data()["pfctSn"] as? String,
+                        let latCrtsVl = Double(latString),
+                        let lotCrtsVl = Double(lotString),
+                        let pfctSn = Int(pfctSnString)
                     else { return nil }
                     
-                    // 지도 영역 내에 있는 데이터만 필터링
                     let coordinate = CLLocationCoordinate2D(
                         latitude: latCrtsVl,
                         longitude: lotCrtsVl
                     )
                     
-                    // 현재 지도에 보이는 영역 계산
                     let minLat = region.center.latitude - (region.span.latitudeDelta / 2)
                     let maxLat = region.center.latitude + (region.span.latitudeDelta / 2)
                     let minLon = region.center.longitude - (region.span.longitudeDelta / 2)
                     let maxLon = region.center.longitude + (region.span.longitudeDelta / 2)
                     
-                    // 영역 내에 있는지 확인
                     guard coordinate.latitude >= minLat &&
                           coordinate.latitude <= maxLat &&
                           coordinate.longitude >= minLon &&
@@ -53,15 +61,17 @@ class DefaultPlaygroundRepository: PlaygroundRepository {
                     
                     return Playground(
                         pfctSn: document.documentID,
-                        pfcfNm: pfcfNm,
+                        pfctNm: pfctNm,
                         coordinate: coordinate
                     )
                 } ?? []
                 
-                print("Found \(playgrounds.count) playgrounds in region")  // 디버깅용 프린트
-                playgrounds.forEach { playground in  // 디버깅용 프린트
-                    print("Playground: \(playground.pfcfNm) at \(playground.coordinate.latitude), \(playground.coordinate.longitude)")
-                }
+                let processingTime = Date().timeIntervalSince(processingStart)  // 데이터 처리 시간
+                print("데이터 처리 시간: \(String(format: "%.3f", processingTime))초")
+                
+                let totalTime = Date().timeIntervalSince(startTime)  // 전체 소요 시간
+                print("전체 소요 시간: \(String(format: "%.3f", totalTime))초")
+                print("처리된 놀이터 개수: \(playgrounds.count)개")
                 
                 observer.onNext(playgrounds)
                 observer.onCompleted()

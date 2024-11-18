@@ -22,10 +22,6 @@ class MapViewController: UIViewController {
     private let mapView: MKMapView = {
         let map = MKMapView()
         map.translatesAutoresizingMaskIntoConstraints = false
-        map.cameraZoomRange = MKMapView.CameraZoomRange(
-            minCenterCoordinateDistance: 500,
-            maxCenterCoordinateDistance: 20000
-        )
         map.showsUserLocation = true
         return map
     }()
@@ -93,7 +89,13 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBottomSheet()
-        setupBindings()
+        setupBindings()      
+        
+        mapView.delegate = self
+        mapView.register(
+            PlaygroundAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
+        )
         viewModel.viewDidLoad.accept(())
     }
     
@@ -198,8 +200,11 @@ class MapViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // TableView Bindings
-        viewModel.playgrounds
+        // Shared playgrounds Observable
+        let sharedPlaygrounds = viewModel.playgrounds.share()
+        
+        // TableView Binding
+        sharedPlaygrounds
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
@@ -209,10 +214,22 @@ class MapViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        // Bottom Sheet State Bindings
-        bottomSheetView.heightPercentage
-            .subscribe(onNext: { [weak self] percentage in
-                self?.adjustMapInteraction(with: percentage)
+        // Map Annotations Binding
+        sharedPlaygrounds
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] playgrounds in
+                guard let self = self else { return }
+                
+                // 기존 어노테이션 제거
+                let existingAnnotations = self.mapView.annotations.filter { $0 is PlaygroundAnnotation }
+                self.mapView.removeAnnotations(existingAnnotations)
+                
+                // 새로운 어노테이션 추가
+                let annotations = playgrounds.map { playground in
+                    let annotation = PlaygroundAnnotation(playground: playground)
+                    return annotation
+                }
+                self.mapView.addAnnotations(annotations)
             })
             .disposed(by: disposeBag)
     }
@@ -231,8 +248,8 @@ class MapViewController: UIViewController {
         )
         let region = MKCoordinateRegion(
             center: coordinate,
-            latitudinalMeters: 1000,
-            longitudinalMeters: 1000
+            latitudinalMeters: 1000,    // 1000m로 변경
+            longitudinalMeters: 1000     // 1000m로 변경
         )
         mapView.setRegion(region, animated: true)
     }
@@ -263,6 +280,43 @@ class MapViewController: UIViewController {
     }
 }
 
+// MARK: - MapView Delegate
+extension MapViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let annotation = annotation as? PlaygroundAnnotation else {
+            if annotation is MKUserLocation {
+                return nil
+            }
+            return nil
+        }
+        
+        let annotationView = mapView.dequeueReusableAnnotationView(
+            withIdentifier: PlaygroundAnnotationView.identifier,
+            for: annotation
+        ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
+            annotation: annotation,
+            reuseIdentifier: PlaygroundAnnotationView.identifier
+        )
+        
+        return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard let annotationView = view as? PlaygroundAnnotationView else { return }
+        annotationView.animateSelection(selected: true)
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        guard let annotationView = view as? PlaygroundAnnotationView else { return }
+        annotationView.animateSelection(selected: false)
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        mapViewDelegate?.mapView(mapView, regionDidChangeAnimated: animated)
+    }
+}
+
+// MARK: - Map Region Delegate
 private class MapViewDelegate: NSObject, MKMapViewDelegate {
     private let regionDidChange: (MKCoordinateRegion) -> Void
     

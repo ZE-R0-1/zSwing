@@ -123,7 +123,7 @@ class PlaygroundCell: UITableViewCell {
     
     // MARK: - Configuration
     func configure(with playground: Playground, distance: Double?) {
-        nameLabel.text = playground.pfcfNm
+        nameLabel.text = playground.pfctNm
         if let distance = distance {
             distanceLabel.text = String(format: "%.1fkm", distance)
         } else {

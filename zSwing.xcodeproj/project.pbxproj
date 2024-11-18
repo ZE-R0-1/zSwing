@@ -63,6 +63,8 @@
 		CEFA527C2CE710B300B4280B /* RideRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA527B2CE710B300B4280B /* RideRepository.swift */; };
 		CEFA527E2CE7125300B4280B /* DefaultRideRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA527D2CE7125300B4280B /* DefaultRideRepository.swift */; };
 		CEFA52802CE7187300B4280B /* RideUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA527F2CE7187300B4280B /* RideUseCase.swift */; };
+		CEFA52822CE736DA00B4280B /* PlaygroundAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52812CE736DA00B4280B /* PlaygroundAnnotationView.swift */; };
+		CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -114,6 +116,8 @@
 		CEFA527B2CE710B300B4280B /* RideRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideRepository.swift; sourceTree = "<group>"; };
 		CEFA527D2CE7125300B4280B /* DefaultRideRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultRideRepository.swift; sourceTree = "<group>"; };
 		CEFA527F2CE7187300B4280B /* RideUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideUseCase.swift; sourceTree = "<group>"; };
+		CEFA52812CE736DA00B4280B /* PlaygroundAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundAnnotationView.swift; path = zSwing/Domain/UserCases/PlaygroundAnnotationView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundAnnotation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +260,7 @@
 				CED42ACB2CE3275800A7AE7E /* MapLocation.swift */,
 				CEFA526D2CE5D22500B4280B /* Playground.swift */,
 				CEFA52792CE70E6400B4280B /* Ride.swift */,
+				CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -348,6 +353,7 @@
 			children = (
 				CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */,
 				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
+				CEFA52812CE736DA00B4280B /* PlaygroundAnnotationView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -484,9 +490,11 @@
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CEFA52802CE7187300B4280B /* RideUseCase.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
+				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
 				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
+				CEFA52822CE736DA00B4280B /* PlaygroundAnnotationView.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */,
 				CEFA52722CE5D29900B4280B /* PlaygroundUseCase.swift in Sources */,

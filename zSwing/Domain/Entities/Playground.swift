@@ -10,7 +10,7 @@ import CoreLocation
 
 struct Playground {
     let pfctSn: String
-    let pfcfNm: String
+    let pfctNm: String
     let coordinate: CLLocationCoordinate2D
     
     // 현재 위치로부터의 거리
