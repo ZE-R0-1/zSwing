@@ -10,11 +10,6 @@ import RxSwift
 import RxCocoa
 import RxGesture
 
-import UIKit
-import RxSwift
-import RxCocoa
-import RxGesture
-
 class CustomBottomSheetView: UIView {
     // MARK: - Sheet Height States
     enum SheetHeight {

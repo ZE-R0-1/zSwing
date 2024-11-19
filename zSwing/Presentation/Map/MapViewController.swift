@@ -93,12 +93,12 @@ class MapViewController: UIViewController {
         
         // 어노테이션 뷰 등록
         mapView.register(
-            PlaygroundAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
+            EnhancedPlaygroundAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: EnhancedPlaygroundAnnotationView.identifier
         )
         mapView.register(
-            PlaygroundClusterAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
+            EnhancedPlaygroundClusterAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier
         )
         
         mapView.delegate = self
@@ -284,31 +284,59 @@ class MapViewController: UIViewController {
         searchButton.transform = locationButton.transform
         searchButton.alpha = locationButton.alpha
     }
+    
+    // 클러스터 내 놀이터들을 모두 포함하는 지도 영역 계산
+    private func calculateRegion(for playgrounds: [Playground]) -> MKCoordinateRegion {
+        var minLat = Double.infinity
+        var maxLat = -Double.infinity
+        var minLon = Double.infinity
+        var maxLon = -Double.infinity
+        
+        playgrounds.forEach { playground in
+            minLat = min(minLat, playground.coordinate.latitude)
+            maxLat = max(maxLat, playground.coordinate.latitude)
+            minLon = min(minLon, playground.coordinate.longitude)
+            maxLon = max(maxLon, playground.coordinate.longitude)
+        }
+        
+        let center = CLLocationCoordinate2D(
+            latitude: (minLat + maxLat) / 2,
+            longitude: (minLon + maxLon) / 2
+        )
+        
+        let span = MKCoordinateSpan(
+            latitudeDelta: (maxLat - minLat) * 1.5,
+            longitudeDelta: (maxLon - minLon) * 1.5
+        )
+        
+        return MKCoordinateRegion(center: center, span: span)
+    }
+
 }
 
 // MARK: - MapView Delegate
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let cluster = annotation as? MKClusterAnnotation {
-            // 클러스터 어노테이션 뷰
+            // 향상된 클러스터 어노테이션 뷰 사용
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundClusterAnnotationView.identifier,
+                withIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier,
                 for: cluster
-            ) as? PlaygroundClusterAnnotationView ?? PlaygroundClusterAnnotationView(
+            ) as? EnhancedPlaygroundClusterAnnotationView ?? EnhancedPlaygroundClusterAnnotationView(
                 annotation: cluster,
-                reuseIdentifier: PlaygroundClusterAnnotationView.identifier
+                reuseIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier
             )
+            annotationView.configure(with: cluster)
             return annotationView
         } else if let playground = annotation as? PlaygroundAnnotation {
-            // 일반 놀이터 어노테이션 뷰
+            // 기존 놀이터 어노테이션 뷰
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundAnnotationView.identifier,
+                withIdentifier: EnhancedPlaygroundAnnotationView.identifier,
                 for: playground
-            ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
+            ) as? EnhancedPlaygroundAnnotationView ?? EnhancedPlaygroundAnnotationView(
                 annotation: playground,
-                reuseIdentifier: PlaygroundAnnotationView.identifier
+                reuseIdentifier: EnhancedPlaygroundAnnotationView.identifier
             )
-            // 클러스터링 활성화
             annotationView.clusteringIdentifier = "playground"
             return annotationView
         } else if annotation is MKUserLocation {
@@ -316,23 +344,26 @@ extension MapViewController: MKMapViewDelegate {
         }
         return nil
     }
-    
+
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let annotationView = view as? PlaygroundAnnotationView {
-            annotationView.animateSelection(selected: true)
-        } else if let clusterView = view as? PlaygroundClusterAnnotationView {
+        if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
+            
+            // 클러스터에 포함된 놀이터들을 지도에 표시
+            let region = calculateRegion(for: clusterView.getPlaygrounds())
+            mapView.setRegion(region, animated: true)
+        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
+            annotationView.animateSelection(selected: true)
         }
     }
-    
+
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        if let annotationView = view as? PlaygroundAnnotationView {
-            annotationView.animateSelection(selected: false)
-        } else if let clusterView = view as? PlaygroundClusterAnnotationView {
+        if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: false)
+        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
+            annotationView.animateSelection(selected: false)
         }
     }
-    
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         mapViewDelegate?.mapView(mapView, regionDidChangeAnimated: animated)
     }
