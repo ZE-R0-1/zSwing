@@ -89,13 +89,19 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBottomSheet()
-        setupBindings()      
+        setupBindings()
         
-        mapView.delegate = self
+        // 어노테이션 뷰 등록
         mapView.register(
             PlaygroundAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
         )
+        mapView.register(
+            PlaygroundClusterAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
+        )
+        
+        mapView.delegate = self
         viewModel.viewDidLoad.accept(())
     }
     
@@ -283,32 +289,48 @@ class MapViewController: UIViewController {
 // MARK: - MapView Delegate
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard let annotation = annotation as? PlaygroundAnnotation else {
-            if annotation is MKUserLocation {
-                return nil
-            }
+        if let cluster = annotation as? MKClusterAnnotation {
+            // 클러스터 어노테이션 뷰
+            let annotationView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: PlaygroundClusterAnnotationView.identifier,
+                for: cluster
+            ) as? PlaygroundClusterAnnotationView ?? PlaygroundClusterAnnotationView(
+                annotation: cluster,
+                reuseIdentifier: PlaygroundClusterAnnotationView.identifier
+            )
+            return annotationView
+        } else if let playground = annotation as? PlaygroundAnnotation {
+            // 일반 놀이터 어노테이션 뷰
+            let annotationView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: PlaygroundAnnotationView.identifier,
+                for: playground
+            ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
+                annotation: playground,
+                reuseIdentifier: PlaygroundAnnotationView.identifier
+            )
+            // 클러스터링 활성화
+            annotationView.clusteringIdentifier = "playground"
+            return annotationView
+        } else if annotation is MKUserLocation {
             return nil
         }
-        
-        let annotationView = mapView.dequeueReusableAnnotationView(
-            withIdentifier: PlaygroundAnnotationView.identifier,
-            for: annotation
-        ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
-            annotation: annotation,
-            reuseIdentifier: PlaygroundAnnotationView.identifier
-        )
-        
-        return annotationView
+        return nil
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        guard let annotationView = view as? PlaygroundAnnotationView else { return }
-        annotationView.animateSelection(selected: true)
+        if let annotationView = view as? PlaygroundAnnotationView {
+            annotationView.animateSelection(selected: true)
+        } else if let clusterView = view as? PlaygroundClusterAnnotationView {
+            clusterView.animateSelection(selected: true)
+        }
     }
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        guard let annotationView = view as? PlaygroundAnnotationView else { return }
-        annotationView.animateSelection(selected: false)
+        if let annotationView = view as? PlaygroundAnnotationView {
+            annotationView.animateSelection(selected: false)
+        } else if let clusterView = view as? PlaygroundClusterAnnotationView {
+            clusterView.animateSelection(selected: false)
+        }
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
