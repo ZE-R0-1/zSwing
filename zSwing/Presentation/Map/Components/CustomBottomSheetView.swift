@@ -254,18 +254,12 @@ class CustomBottomSheetView: UIView {
             .disposed(by: disposeBag)
     }
     
-    func updateCategories(_ categories: [String]) {
+    func updateCategories(_ categories: [CategoryInfo]) {
         categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // "전체" 카테고리 추가
-        addCategoryButton(title: "전체")
-        
-        // 나머지 카테고리 추가
-        categories.forEach { category in
-            addCategoryButton(title: category)
+        categories.forEach { categoryInfo in
+            addCategoryButton(for: categoryInfo)
         }
     }
-    
 
     func updateTitle(_ title: String) {
         titleLabel.text = title
@@ -288,41 +282,69 @@ class CustomBottomSheetView: UIView {
     }
     
     // MARK: - Private Methods
-    private func addCategoryButton(title: String) {
+    private func addCategoryButton(for categoryInfo: CategoryInfo) {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
         let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
         button.backgroundColor = .systemGray6
         button.layer.cornerRadius = 17
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
-        // 다중 선택을 위한 바인딩 수정
+        // 카테고리 이름과 수량을 함께 표시
+        let attributedTitle = NSMutableAttributedString(
+            string: categoryInfo.name,
+            attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
+        )
+        attributedTitle.append(NSAttributedString(
+            string: " \(categoryInfo.count)",
+            attributes: [
+                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+                .foregroundColor: UIColor.systemGray
+            ]
+        ))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        
+        // 선택 상태에 따른 스타일링
         selectedCategories
-            .map { $0.contains(title) }
+            .map { $0.contains(categoryInfo.name) }
             .bind { [weak button] isSelected in
                 button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
-                button?.setTitleColor(isSelected ? .white : .black, for: .normal)
+                
+                // 선택 상태에 따른 텍스트 색상 변경
+                let attributedTitle = NSMutableAttributedString(
+                    string: categoryInfo.name,
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 14, weight: .medium),
+                        .foregroundColor: isSelected ? UIColor.white : UIColor.black
+                    ]
+                )
+                attributedTitle.append(NSAttributedString(
+                    string: " \(categoryInfo.count)",
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+                        .foregroundColor: isSelected ? UIColor.white.withAlphaComponent(0.8) : UIColor.systemGray
+                    ]
+                ))
+                button?.setAttributedTitle(attributedTitle, for: .normal)
             }
             .disposed(by: disposeBag)
         
-        // 탭 이벤트 처리 수정
+        // 탭 이벤트 처리 (기존 로직 유지)
         button.rx.tap
             .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
                 var updatedCategories = categories
-                if title == "전체" {
-                    // "전체" 선택 시 다른 모든 선택 해제
+                if categoryInfo.name == "전체" {
                     return ["전체"]
                 } else {
-                    // "전체"가 선택되어 있었다면 제거
                     updatedCategories.remove("전체")
-                    
-                    if updatedCategories.contains(title) {
-                        updatedCategories.remove(title)
+                    if updatedCategories.contains(categoryInfo.name) {
+                        updatedCategories.remove(categoryInfo.name)
                     } else {
-                        updatedCategories.insert(title)
+                        updatedCategories.insert(categoryInfo.name)
                     }
-                    
-                    // 아무것도 선택되지 않았다면 "전체" 선택
                     if updatedCategories.isEmpty {
                         updatedCategories = ["전체"]
                     }
@@ -334,7 +356,7 @@ class CustomBottomSheetView: UIView {
         
         categoryStackView.addArrangedSubview(button)
     }
-    
+
     private func updateHeight(_ height: SheetHeight, animated: Bool = true) {
         currentHeight = height
         let newHeight = UIScreen.main.bounds.height * height.heightPercentage

@@ -30,7 +30,7 @@ class MapViewModel {
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
     let playgrounds = BehaviorRelay<[Playground]>(value: [])
-    let categories = BehaviorRelay<[String]>(value: [])
+    let categories = BehaviorRelay<[CategoryInfo]>(value: [])
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     let shouldShowBottomSheet = BehaviorRelay<Bool>(value: true)
     
@@ -162,7 +162,7 @@ class MapViewModel {
     // MARK: - Private Methods
     private func loadRideCategories(for playgrounds: [Playground]) {
         var ridesByPlaygroundDict: [String: [Ride]] = [:]
-        var uniqueCategories = Set<String>()
+        var categoryCountMap: [String: Int] = [:]  // 카테고리별 수량 저장
         
         Observable.from(playgrounds)
             .flatMap { [weak self] playground -> Observable<[Ride]> in
@@ -170,24 +170,32 @@ class MapViewModel {
                 return self.rideUseCase.fetchRides(for: playground.pfctSn)
                     .do(onNext: { rides in
                         ridesByPlaygroundDict[playground.pfctSn] = rides
+                        // 각 카테고리별 수량 계산
+                        rides.forEach { ride in
+                            categoryCountMap[ride.rideNm, default: 0] += 1
+                        }
                     })
             }
-            .map { rides in
-                rides.map { $0.rideNm }
+            .map { _ in categoryCountMap }
+            .map { countMap -> [CategoryInfo] in
+                // "전체" 카테고리 추가
+                let totalCount = ridesByPlaygroundDict.values.reduce(0) { $0 + $1.count }
+                var categoryInfos = [CategoryInfo(name: "전체", count: totalCount)]
+                
+                // 나머지 카테고리 정보 추가
+                categoryInfos.append(contentsOf: countMap.map {
+                    CategoryInfo(name: $0.key, count: $0.value)
+                }.sorted { $0.name < $1.name })
+                
+                return categoryInfos
             }
-            .reduce(uniqueCategories) { categories, rideNames in
-                var newCategories = categories
-                rideNames.forEach { newCategories.insert($0) }
-                return newCategories
-            }
-            .map { Array($0).sorted() }
             .do(onNext: { [weak self] _ in
                 self?.ridesByPlayground.accept(ridesByPlaygroundDict)
             })
             .bind(to: categories)
             .disposed(by: disposeBag)
     }
-
+    
     private func updateLocationTitle(latitude: Double, longitude: Double) {
         let location = CLLocation(latitude: latitude, longitude: longitude)
         let geocoder = CLGeocoder()
