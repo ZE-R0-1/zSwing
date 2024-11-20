@@ -123,11 +123,22 @@ class PlaygroundCell: UITableViewCell {
     
     // MARK: - Configuration
     func configure(with playground: Playground, distance: Double?) {
+        // 초기 상태 설정
+        alpha = 0.0
+        transform = CGAffineTransform(translationX: 20, y: 0)
+        
         nameLabel.text = playground.pfctNm
+        
         if let distance = distance {
             distanceLabel.text = String(format: "%.1fkm", distance)
         } else {
             distanceLabel.text = "거리 정보 없음"
+        }
+        
+        // 애니메이션과 함께 표시
+        UIView.animate(withDuration: 0.3, delay: 0.1, options: .curveEaseOut) {
+            self.alpha = 1.0
+            self.transform = .identity
         }
     }
     

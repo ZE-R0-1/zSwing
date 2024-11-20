@@ -36,8 +36,8 @@ class MapViewModel {
     
     // MARK: - Private Properties
     private let allPlaygrounds = BehaviorRelay<[Playground]>(value: [])
-    private let ridesByPlayground = BehaviorRelay<[String: [Ride]]>(value: [:])
-    
+    private let ridesByPlayground = BehaviorRelay<[String: [Ride]]>(value: [:])  // 놀이터별 놀이기구 데이터 저장
+
     init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase, rideUseCase: RideUseCase) {
         self.useCase = useCase
         self.playgroundUseCase = playgroundUseCase
@@ -140,19 +140,29 @@ class MapViewModel {
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
         
-        // 카테고리 선택
+        // 카테고리 선택에 따른 필터링 로직 수정
         categoriesSelected
-            .withLatestFrom(allPlaygrounds) { (selectedCategories, playgrounds) -> [Playground] in
-                guard !selectedCategories.contains("전체") else { return playgrounds }
+            .withLatestFrom(Observable.combineLatest(
+                allPlaygrounds,
+                ridesByPlayground
+            )) { (selectedCategories, combined) -> [Playground] in
+                let (playgrounds, ridesByPfctSn) = combined
                 
+                // "전체" 카테고리가 선택된 경우 모든 놀이터 표시
+                guard !selectedCategories.contains("전체") else {
+                    return playgrounds
+                }
+                
+                // 선택된 카테고리의 놀이기구가 있는 놀이터만 필터링
                 return playgrounds.filter { playground in
-                    // 해당 놀이터의 놀이기구들 중에서 선택된 카테고리에 속하는 것이 있는지 확인
-                    if let rides = self.ridesByPlayground.value[playground.pfctSn] {
-                        return rides.contains { ride in
-                            selectedCategories.contains(ride.rideNm)
-                        }
+                    guard let rides = ridesByPfctSn[playground.pfctSn] else {
+                        return false
                     }
-                    return false
+                    
+                    // 놀이터가 가진 놀이기구 중 하나라도 선택된 카테고리에 포함되는지 확인
+                    return rides.contains { ride in
+                        selectedCategories.contains(ride.rideNm)
+                    }
                 }
             }
             .bind(to: playgrounds)

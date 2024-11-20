@@ -17,6 +17,7 @@ class MapViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var bottomSheetView: CustomBottomSheetView!
     private var mapViewDelegate: MapViewDelegate?
+    private var currentLocation: CLLocation?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -209,15 +210,39 @@ class MapViewController: UIViewController {
         // Shared playgrounds Observable
         let sharedPlaygrounds = viewModel.playgrounds.share()
         
+        // 현재 위치 Observable
+        let userLocation = mapView.rx.observe(MKUserLocation.self, "userLocation")
+            .compactMap { $0?.location }
+            .startWith(nil)
+            .share()
+        
         // TableView Binding
         sharedPlaygrounds
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
             )) { [weak self] index, playground, cell in
-                let distance = self?.calculateDistance(for: playground)
+                // 가장 최신의 위치 정보 가져오기
+                let distance: Double?
+                if let location = self?.mapView.userLocation.location {
+                    let playgroundLocation = CLLocation(
+                        latitude: playground.coordinate.latitude,
+                        longitude: playground.coordinate.longitude
+                    )
+                    distance = playgroundLocation.distance(from: location) / 1000.0
+                } else {
+                    distance = nil
+                }
+                
                 cell.configure(with: playground, distance: distance)
             }
+            .disposed(by: disposeBag)
+        
+        // 위치가 업데이트될 때마다 테이블뷰 리로드
+        userLocation
+            .subscribe(onNext: { [weak self] _ in
+                self?.tableView.reloadData()
+            })
             .disposed(by: disposeBag)
         
         // Map Annotations Binding
@@ -242,9 +267,14 @@ class MapViewController: UIViewController {
     
     // MARK: - Helper Methods
     private func calculateDistance(for playground: Playground) -> Double? {
-        guard let userLocation = mapView.userLocation.location else { return nil }
-        let distance = playground.distance(from: userLocation)
-        return distance / 1000.0  // 미터를 킬로미터로 변환
+        guard let userLocation = currentLocation else { return nil }
+        
+        let playgroundLocation = CLLocation(
+            latitude: playground.coordinate.latitude,
+            longitude: playground.coordinate.longitude
+        )
+        
+        return playgroundLocation.distance(from: userLocation) / 1000.0  // meters to kilometers
     }
     
     private func updateMapRegion(with location: MapLocation) {
