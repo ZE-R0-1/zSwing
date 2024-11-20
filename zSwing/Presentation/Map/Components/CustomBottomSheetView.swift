@@ -31,6 +31,7 @@ class CustomBottomSheetView: UIView {
     private var currentHeight: SheetHeight = .mid
     private var previousPanPoint: CGFloat = 0
     private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
+    private var contentScrollView: UIScrollView?
     
     private let visibleCategoriesCount = 3  // 초기에 보여줄 카테고리 수
     private let expandStep = 2  // 한 번에 추가로 보여줄 카테고리 수
@@ -357,17 +358,73 @@ class CustomBottomSheetView: UIView {
             view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+        
+        // UITableView나 UIScrollView인 경우 저장
+        if let scrollView = view as? UIScrollView {
+            contentScrollView = scrollView
+            updateScrollEnabled()
+        }
     }
     
     func showSheet() {
         updateHeight(.mid)
     }
     
-    // MARK: - Gesture Handling
+    // MARK: - Private Methods
+    private func updateScrollEnabled() {
+        if let scrollView = contentScrollView {
+            // 최대 높이일 때만 스크롤 활성화
+            scrollView.isScrollEnabled = currentHeight == .max
+            
+            // 스크롤 위치 초기화 (선택사항)
+            if currentHeight != .max {
+                scrollView.setContentOffset(.zero, animated: true)
+            }
+        }
+    }
+    
+    private func updateHeight(_ height: SheetHeight, animated: Bool = true) {
+        currentHeight = height
+        let newHeight = UIScreen.main.bounds.height * height.heightPercentage
+        
+        if animated {
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+                self.heightConstraint?.constant = newHeight
+                self.superview?.layoutIfNeeded()
+            } completion: { _ in
+                self.updateScrollEnabled()
+            }
+        } else {
+            heightConstraint?.constant = newHeight
+            updateScrollEnabled()
+        }
+        
+        heightPercentage.accept(height.heightPercentage)
+    }
+    
+    private func updateHeight(_ height: CGFloat, animated: Bool = true) {
+        if animated {
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+                self.heightConstraint?.constant = height
+                self.superview?.layoutIfNeeded()
+            } completion: { _ in
+                self.updateScrollEnabled()
+            }
+        } else {
+            heightConstraint?.constant = height
+            updateScrollEnabled()
+        }
+    }
+    
     private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: self).y
         let velocity = gesture.velocity(in: self).y
         let screenHeight = UIScreen.main.bounds.height
+        
+        // 현재 최대 높이이고 위로 스크롤하려는 경우 제스처 무시
+        if currentHeight == .max && translation < 0 {
+            return
+        }
         
         switch gesture.state {
         case .began:
@@ -375,8 +432,13 @@ class CustomBottomSheetView: UIView {
             
         case .changed:
             let newHeight = previousPanPoint - translation
-            let heightPercentage = newHeight / screenHeight
-            updateHeight(newHeight, animated: false)
+            
+            // 최대 높이 제한
+            let maxHeight = screenHeight * SheetHeight.max.heightPercentage
+            let limitedHeight = min(newHeight, maxHeight)
+            
+            let heightPercentage = limitedHeight / screenHeight
+            updateHeight(limitedHeight, animated: false)
             self.heightPercentage.accept(heightPercentage)
             
         case .ended, .cancelled:
@@ -414,34 +476,6 @@ class CustomBottomSheetView: UIView {
             
         default:
             break
-        }
-    }
-    
-    // MARK: - Private Methods
-    private func updateHeight(_ height: SheetHeight, animated: Bool = true) {
-        currentHeight = height
-        let newHeight = UIScreen.main.bounds.height * height.heightPercentage
-        
-        if animated {
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
-                self.heightConstraint?.constant = newHeight
-                self.superview?.layoutIfNeeded()
-            }
-        } else {
-            heightConstraint?.constant = newHeight
-        }
-        
-        heightPercentage.accept(height.heightPercentage)
-    }
-    
-    private func updateHeight(_ height: CGFloat, animated: Bool = true) {
-        if animated {
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
-                self.heightConstraint?.constant = height
-                self.superview?.layoutIfNeeded()
-            }
-        } else {
-            heightConstraint?.constant = height
         }
     }
     

@@ -39,8 +39,7 @@ class DefaultPlaygroundRepository: PlaygroundRepository {
                         let lotString = document.data()["lotCrtsVl"] as? String,
                         let pfctSnString = document.data()["pfctSn"] as? String,
                         let latCrtsVl = Double(latString),
-                        let lotCrtsVl = Double(lotString),
-                        let pfctSn = Int(pfctSnString)
+                        let lotCrtsVl = Double(lotString)
                     else { return nil }
                     
                     let coordinate = CLLocationCoordinate2D(
