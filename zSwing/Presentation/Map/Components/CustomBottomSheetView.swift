@@ -24,6 +24,24 @@ class CustomBottomSheetView: UIView {
         }
     }
     
+    // MARK: - Properties
+    private let disposeBag = DisposeBag()
+    private var bottomConstraint: NSLayoutConstraint?
+    private var heightConstraint: NSLayoutConstraint?
+    private var currentHeight: SheetHeight = .mid
+    private var previousPanPoint: CGFloat = 0
+    private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
+    
+    private let visibleCategoriesCount = 3  // 초기에 보여줄 카테고리 수
+    private let expandStep = 2  // 한 번에 추가로 보여줄 카테고리 수
+    private var currentlyVisibleCount = 2  // 현재 보이는 카테고리 수
+    private var allCategories: [CategoryInfo] = []  // 모든 카테고리 저장
+    
+    // MARK: - Outputs
+    let heightPercentage = BehaviorRelay<CGFloat>(value: 0.6)
+    let isDismissed = PublishRelay<Bool>()
+    let categoriesSelected = PublishRelay<Set<String>>()
+    
     // MARK: - UI Components
     private let headerView: UIView = {
         let view = UIView()
@@ -76,24 +94,23 @@ class CustomBottomSheetView: UIView {
         return view
     }()
     
-    // MARK: - Properties
-    private let disposeBag = DisposeBag()
-    private var bottomConstraint: NSLayoutConstraint?
-    private var heightConstraint: NSLayoutConstraint?
-    private var currentHeight: SheetHeight = .mid
-    private var previousPanPoint: CGFloat = 0
-    private var selectedCategories = BehaviorRelay<Set<String>>(value: [])
-    
-    // MARK: - Outputs
-    let heightPercentage = BehaviorRelay<CGFloat>(value: 0.6)
-    let isDismissed = PublishRelay<Bool>()
-    let categoriesSelected = PublishRelay<Set<String>>()
+    private let expandButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        button.tintColor = .systemBlue
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 17
+        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        return button
+    }()
     
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
         setupGestures()
+        setupExpandButton()
     }
     
     required init?(coder: NSCoder) {
@@ -167,6 +184,14 @@ class CustomBottomSheetView: UIView {
         ])
     }
     
+    private func setupExpandButton() {
+        expandButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.expandCategories()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     // MARK: - Gesture Setup
     private func setupGestures() {
         let panGesture = rx.panGesture()
@@ -177,6 +202,165 @@ class CustomBottomSheetView: UIView {
                 self?.handlePanGesture(gesture)
             })
             .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Category Management
+    private func addCategoryButton(for categoryInfo: CategoryInfo) {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 17
+        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        
+        // 카테고리 이름과 수량을 함께 표시
+        let attributedTitle = NSMutableAttributedString(
+            string: categoryInfo.name,
+            attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
+        )
+        attributedTitle.append(NSAttributedString(
+            string: " \(categoryInfo.count)",
+            attributes: [
+                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+                .foregroundColor: UIColor.systemGray
+            ]
+        ))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        
+        // 선택 상태에 따른 스타일링
+        selectedCategories
+            .map { $0.contains(categoryInfo.name) }
+            .bind { [weak button] isSelected in
+                button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
+                
+                // 선택 상태에 따른 텍스트 색상 변경
+                let attributedTitle = NSMutableAttributedString(
+                    string: categoryInfo.name,
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 14, weight: .medium),
+                        .foregroundColor: isSelected ? UIColor.white : UIColor.black
+                    ]
+                )
+                attributedTitle.append(NSAttributedString(
+                    string: " \(categoryInfo.count)",
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+                        .foregroundColor: isSelected ? UIColor.white.withAlphaComponent(0.8) : UIColor.systemGray
+                    ]
+                ))
+                button?.setAttributedTitle(attributedTitle, for: .normal)
+            }
+            .disposed(by: disposeBag)
+        
+        // 탭 이벤트 처리
+        button.rx.tap
+            .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
+                var updatedCategories = categories
+                if categoryInfo.name == "전체" {
+                    return ["전체"]
+                } else {
+                    updatedCategories.remove("전체")
+                    if updatedCategories.contains(categoryInfo.name) {
+                        updatedCategories.remove(categoryInfo.name)
+                    } else {
+                        updatedCategories.insert(categoryInfo.name)
+                    }
+                    if updatedCategories.isEmpty {
+                        updatedCategories = ["전체"]
+                    }
+                }
+                return updatedCategories
+            }
+            .bind(to: selectedCategories)
+            .disposed(by: disposeBag)
+        
+        categoryStackView.addArrangedSubview(button)
+    }
+    
+    private func updateExpandButton(remainingCount: Int) {
+        let buttonSize: CGFloat = 34
+        expandButton.widthAnchor.constraint(equalToConstant: buttonSize).isActive = true
+        expandButton.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
+        expandButton.setTitle("+\(remainingCount)", for: .normal)
+    }
+    
+    private func expandCategories() {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self = self else { return }
+            self.currentlyVisibleCount = min(
+                self.currentlyVisibleCount + self.expandStep,
+                self.allCategories.count
+            )
+            self.updateVisibleCategories()
+        }
+    }
+    
+    private func updateVisibleCategories() {
+        categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        // "전체" 카테고리는 항상 표시
+        if let totalCategory = allCategories.first(where: { $0.name == "전체" }) {
+            addCategoryButton(for: totalCategory)
+        }
+        
+        // 나머지 카테고리들 중 현재 보여져야 할 만큼만 표시
+        let remainingCategories = allCategories.filter { $0.name != "전체" }
+        let visibleCategories = remainingCategories.prefix(currentlyVisibleCount - 1)
+        
+        visibleCategories.forEach { categoryInfo in
+            addCategoryButton(for: categoryInfo)
+        }
+        
+        // 더 보여줄 카테고리가 있는 경우에만 확장 버튼 표시
+        if currentlyVisibleCount < allCategories.count {
+            let remainingCount = allCategories.count - currentlyVisibleCount
+            updateExpandButton(remainingCount: remainingCount)
+            categoryStackView.addArrangedSubview(expandButton)
+        }
+    }
+    
+    // MARK: - Public Methods
+    func bind(to viewModel: MapViewModel) {
+        viewModel.locationTitle
+            .bind(to: titleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .bind(to: loadingIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModel.categories
+            .map { $0.map { CategoryInfo(name: $0.name, count: $0.count) } }
+            .subscribe(onNext: { [weak self] categories in
+                self?.updateCategories(categories)
+            })
+            .disposed(by: disposeBag)
+        
+        selectedCategories
+            .bind(to: viewModel.categoriesSelected)
+            .disposed(by: disposeBag)
+    }
+    
+    func updateCategories(_ categories: [CategoryInfo]) {
+        allCategories = categories
+        currentlyVisibleCount = visibleCategoriesCount
+        updateVisibleCategories()
+    }
+    
+    func addContentView(_ view: UIView) {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(view)
+        
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
+    func showSheet() {
+        updateHeight(.mid)
     }
     
     // MARK: - Gesture Handling
@@ -233,130 +417,7 @@ class CustomBottomSheetView: UIView {
         }
     }
     
-    // MARK: - Public Methods    
-    func bind(to viewModel: MapViewModel) {
-        viewModel.locationTitle
-            .bind(to: titleLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        viewModel.isLoading
-            .bind(to: loadingIndicator.rx.isAnimating)
-            .disposed(by: disposeBag)
-        
-        viewModel.categories
-            .subscribe(onNext: { [weak self] categories in
-                self?.updateCategories(categories)
-            })
-            .disposed(by: disposeBag)
-        
-        selectedCategories
-            .bind(to: viewModel.categoriesSelected)
-            .disposed(by: disposeBag)
-    }
-    
-    func updateCategories(_ categories: [CategoryInfo]) {
-        categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        categories.forEach { categoryInfo in
-            addCategoryButton(for: categoryInfo)
-        }
-    }
-
-    func updateTitle(_ title: String) {
-        titleLabel.text = title
-    }
-    
-    func addContentView(_ view: UIView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(view)
-        
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
-    }
-    
-    func showSheet() {
-        updateHeight(.mid)
-    }
-    
     // MARK: - Private Methods
-    private func addCategoryButton(for categoryInfo: CategoryInfo) {
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 17
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        
-        // 카테고리 이름과 수량을 함께 표시
-        let attributedTitle = NSMutableAttributedString(
-            string: categoryInfo.name,
-            attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
-        )
-        attributedTitle.append(NSAttributedString(
-            string: " \(categoryInfo.count)",
-            attributes: [
-                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                .foregroundColor: UIColor.systemGray
-            ]
-        ))
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        
-        // 선택 상태에 따른 스타일링
-        selectedCategories
-            .map { $0.contains(categoryInfo.name) }
-            .bind { [weak button] isSelected in
-                button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
-                
-                // 선택 상태에 따른 텍스트 색상 변경
-                let attributedTitle = NSMutableAttributedString(
-                    string: categoryInfo.name,
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 14, weight: .medium),
-                        .foregroundColor: isSelected ? UIColor.white : UIColor.black
-                    ]
-                )
-                attributedTitle.append(NSAttributedString(
-                    string: " \(categoryInfo.count)",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                        .foregroundColor: isSelected ? UIColor.white.withAlphaComponent(0.8) : UIColor.systemGray
-                    ]
-                ))
-                button?.setAttributedTitle(attributedTitle, for: .normal)
-            }
-            .disposed(by: disposeBag)
-        
-        // 탭 이벤트 처리 (기존 로직 유지)
-        button.rx.tap
-            .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
-                var updatedCategories = categories
-                if categoryInfo.name == "전체" {
-                    return ["전체"]
-                } else {
-                    updatedCategories.remove("전체")
-                    if updatedCategories.contains(categoryInfo.name) {
-                        updatedCategories.remove(categoryInfo.name)
-                    } else {
-                        updatedCategories.insert(categoryInfo.name)
-                    }
-                    if updatedCategories.isEmpty {
-                        updatedCategories = ["전체"]
-                    }
-                }
-                return updatedCategories
-            }
-            .bind(to: selectedCategories)
-            .disposed(by: disposeBag)
-        
-        categoryStackView.addArrangedSubview(button)
-    }
-
     private func updateHeight(_ height: SheetHeight, animated: Bool = true) {
         currentHeight = height
         let newHeight = UIScreen.main.bounds.height * height.heightPercentage
@@ -384,12 +445,26 @@ class CustomBottomSheetView: UIView {
         }
     }
     
+    // MARK: - Layout Updates
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         if let superview = superview {
             bottomConstraint?.isActive = false
             bottomConstraint = bottomAnchor.constraint(equalTo: superview.bottomAnchor)
             bottomConstraint?.isActive = true
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // 스크롤뷰가 새로운 컨텐츠 크기에 맞게 조정되도록
+        categoryScrollView.layoutIfNeeded()
+        
+        // 필요한 경우 스크롤 위치 조정
+        if let lastButton = categoryStackView.arrangedSubviews.last {
+            let targetRect = lastButton.convert(lastButton.bounds, to: categoryScrollView)
+            categoryScrollView.scrollRectToVisible(targetRect, animated: true)
         }
     }
 }
