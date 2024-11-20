@@ -311,7 +311,6 @@ class MapViewController: UIViewController {
         
         return MKCoordinateRegion(center: center, span: span)
     }
-
 }
 
 // MARK: - MapView Delegate

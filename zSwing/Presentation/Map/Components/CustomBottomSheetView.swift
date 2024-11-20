@@ -82,12 +82,12 @@ class CustomBottomSheetView: UIView {
     private var heightConstraint: NSLayoutConstraint?
     private var currentHeight: SheetHeight = .mid
     private var previousPanPoint: CGFloat = 0
-    private var selectedCategory = BehaviorRelay<String?>(value: nil)
+    private var selectedCategories = BehaviorRelay<Set<String>>(value: [])
     
     // MARK: - Outputs
     let heightPercentage = BehaviorRelay<CGFloat>(value: 0.6)
     let isDismissed = PublishRelay<Bool>()
-    let categorySelected = PublishRelay<String>()
+    let categoriesSelected = PublishRelay<Set<String>>()
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -235,27 +235,22 @@ class CustomBottomSheetView: UIView {
     
     // MARK: - Public Methods    
     func bind(to viewModel: MapViewModel) {
-        // 제목 바인딩
         viewModel.locationTitle
             .bind(to: titleLabel.rx.text)
             .disposed(by: disposeBag)
         
-        // 로딩 상태 바인딩
         viewModel.isLoading
             .bind(to: loadingIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
-        // 카테고리 바인딩
         viewModel.categories
             .subscribe(onNext: { [weak self] categories in
                 self?.updateCategories(categories)
             })
             .disposed(by: disposeBag)
         
-        // 선택된 카테고리 바인딩
-        selectedCategory
-            .compactMap { $0 }
-            .bind(to: viewModel.categorySelected)
+        selectedCategories
+            .bind(to: viewModel.categoriesSelected)
             .disposed(by: disposeBag)
     }
     
@@ -271,31 +266,6 @@ class CustomBottomSheetView: UIView {
         }
     }
     
-    private func addCategoryButton(title: String) {
-        let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 17
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        
-        // 선택 상태 스타일링
-        selectedCategory
-            .map { $0 == title }
-            .bind { [weak button] isSelected in
-                button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
-                button?.setTitleColor(isSelected ? .white : .black, for: .normal)
-            }
-            .disposed(by: disposeBag)
-        
-        // 탭 이벤트 처리
-        button.rx.tap
-            .map { title }
-            .bind(to: selectedCategory)
-            .disposed(by: disposeBag)
-        
-        categoryStackView.addArrangedSubview(button)
-    }
 
     func updateTitle(_ title: String) {
         titleLabel.text = title
@@ -318,24 +288,51 @@ class CustomBottomSheetView: UIView {
     }
     
     // MARK: - Private Methods
-    private func createCategoryButton(title: String) -> UIButton {
+    private func addCategoryButton(title: String) {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
         button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 16
+        button.layer.cornerRadius = 17
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
-        // 선택된 카테고리 스타일 변경
-        selectedCategory
-            .map { $0 == title }
-            .subscribe(onNext: { [weak button] isSelected in
+        // 다중 선택을 위한 바인딩 수정
+        selectedCategories
+            .map { $0.contains(title) }
+            .bind { [weak button] isSelected in
                 button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
                 button?.setTitleColor(isSelected ? .white : .black, for: .normal)
-            })
+            }
             .disposed(by: disposeBag)
         
-        return button
+        // 탭 이벤트 처리 수정
+        button.rx.tap
+            .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
+                var updatedCategories = categories
+                if title == "전체" {
+                    // "전체" 선택 시 다른 모든 선택 해제
+                    return ["전체"]
+                } else {
+                    // "전체"가 선택되어 있었다면 제거
+                    updatedCategories.remove("전체")
+                    
+                    if updatedCategories.contains(title) {
+                        updatedCategories.remove(title)
+                    } else {
+                        updatedCategories.insert(title)
+                    }
+                    
+                    // 아무것도 선택되지 않았다면 "전체" 선택
+                    if updatedCategories.isEmpty {
+                        updatedCategories = ["전체"]
+                    }
+                }
+                return updatedCategories
+            }
+            .bind(to: selectedCategories)
+            .disposed(by: disposeBag)
+        
+        categoryStackView.addArrangedSubview(button)
     }
     
     private func updateHeight(_ height: SheetHeight, animated: Bool = true) {

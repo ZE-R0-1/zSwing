@@ -12,4 +12,8 @@ struct Ride {
     let pfctNm: String
     let rideNm: String
     let pfctSn: String
+    
+    var category: String {
+        return rideNm
+    }
 }

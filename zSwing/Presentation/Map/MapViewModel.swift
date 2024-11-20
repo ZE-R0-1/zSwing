@@ -22,7 +22,7 @@ class MapViewModel {
     let locationButtonTapped = PublishRelay<Void>()
     let regionDidChange = PublishRelay<MKCoordinateRegion>()
     let searchButtonTapped = PublishRelay<Void>()
-    let categorySelected = PublishRelay<String>()
+    let categoriesSelected = PublishRelay<Set<String>>()
     
     // MARK: - Outputs
     let currentLocation = BehaviorRelay<MapLocation>(value: .defaultLocation)
@@ -34,9 +34,9 @@ class MapViewModel {
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     let shouldShowBottomSheet = BehaviorRelay<Bool>(value: true)
     
-    // Private
+    // MARK: - Private Properties
     private let allPlaygrounds = BehaviorRelay<[Playground]>(value: [])
-    private let currentUserLocation = BehaviorRelay<CLLocation?>(value: nil)
+    private let ridesByPlayground = BehaviorRelay<[String: [Ride]]>(value: [:])
     
     init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase, rideUseCase: RideUseCase) {
         self.useCase = useCase
@@ -141,10 +141,19 @@ class MapViewModel {
             .disposed(by: disposeBag)
         
         // 카테고리 선택
-        categorySelected
-            .withLatestFrom(allPlaygrounds) { (category, playgrounds) -> [Playground] in
-                guard category != "전체" else { return playgrounds }
-                return playgrounds // TODO: 카테고리에 따른 필터링 로직 구현
+        categoriesSelected
+            .withLatestFrom(allPlaygrounds) { (selectedCategories, playgrounds) -> [Playground] in
+                guard !selectedCategories.contains("전체") else { return playgrounds }
+                
+                return playgrounds.filter { playground in
+                    // 해당 놀이터의 놀이기구들 중에서 선택된 카테고리에 속하는 것이 있는지 확인
+                    if let rides = self.ridesByPlayground.value[playground.pfctSn] {
+                        return rides.contains { ride in
+                            selectedCategories.contains(ride.rideNm)
+                        }
+                    }
+                    return false
+                }
             }
             .bind(to: playgrounds)
             .disposed(by: disposeBag)
@@ -152,12 +161,16 @@ class MapViewModel {
     
     // MARK: - Private Methods
     private func loadRideCategories(for playgrounds: [Playground]) {
-        let uniqueCategories = Set<String>()
+        var ridesByPlaygroundDict: [String: [Ride]] = [:]
+        var uniqueCategories = Set<String>()
         
         Observable.from(playgrounds)
             .flatMap { [weak self] playground -> Observable<[Ride]> in
                 guard let self = self else { return .empty() }
                 return self.rideUseCase.fetchRides(for: playground.pfctSn)
+                    .do(onNext: { rides in
+                        ridesByPlaygroundDict[playground.pfctSn] = rides
+                    })
             }
             .map { rides in
                 rides.map { $0.rideNm }
@@ -168,10 +181,13 @@ class MapViewModel {
                 return newCategories
             }
             .map { Array($0).sorted() }
+            .do(onNext: { [weak self] _ in
+                self?.ridesByPlayground.accept(ridesByPlaygroundDict)
+            })
             .bind(to: categories)
             .disposed(by: disposeBag)
     }
-    
+
     private func updateLocationTitle(latitude: Double, longitude: Double) {
         let location = CLLocation(latitude: latitude, longitude: longitude)
         let geocoder = CLGeocoder()
