@@ -32,11 +32,7 @@ class CustomBottomSheetView: UIView {
     private var previousPanPoint: CGFloat = 0
     private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
     private var contentScrollView: UIScrollView?
-    
-    private let visibleCategoriesCount = 3  // 초기에 보여줄 카테고리 수
-    private let expandStep = 2  // 한 번에 추가로 보여줄 카테고리 수
-    private var currentlyVisibleCount = 2  // 현재 보이는 카테고리 수
-    private var allCategories: [CategoryInfo] = []  // 모든 카테고리 저장
+    private var allCategories: [CategoryInfo] = []
     
     private var isTableViewScrolled = false
     private var panStartLocation: CGFloat = 0
@@ -98,23 +94,11 @@ class CustomBottomSheetView: UIView {
         return view
     }()
     
-    private let expandButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
-        button.tintColor = .systemBlue
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 17
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        return button
-    }()
-    
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
         setupGestures()
-        setupExpandButton()
     }
     
     required init?(coder: NSCoder) {
@@ -186,14 +170,6 @@ class CustomBottomSheetView: UIView {
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-    }
-    
-    private func setupExpandButton() {
-        expandButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.expandCategories()
-            })
-            .disposed(by: disposeBag)
     }
     
     // MARK: - Gesture Setup
@@ -277,43 +253,19 @@ class CustomBottomSheetView: UIView {
         categoryStackView.addArrangedSubview(button)
     }
     
-    private func updateExpandButton(remainingCount: Int) {
-        let buttonSize: CGFloat = 34
-        expandButton.widthAnchor.constraint(equalToConstant: buttonSize).isActive = true
-        expandButton.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
-        expandButton.setTitle("+\(remainingCount)", for: .normal)
-    }
-    
-    private func expandCategories() {
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            guard let self = self else { return }
-            self.currentlyVisibleCount = min(
-                self.currentlyVisibleCount + self.expandStep,
-                self.allCategories.count
-            )
-            self.updateVisibleCategories()
-        }
-    }
-    
     private func updateVisibleCategories() {
         categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
+        // "전체" 카테고리는 항상 표시
         if let totalCategory = allCategories.first(where: { $0.name == "전체" }) {
             addCategoryButton(for: totalCategory)
         }
         
-        let remainingCategories = allCategories.filter { $0.name != "전체" }
-        let visibleCategories = remainingCategories.prefix(currentlyVisibleCount - 1)
-        
-        visibleCategories.forEach { categoryInfo in
-            addCategoryButton(for: categoryInfo)
-        }
-        
-        if currentlyVisibleCount < allCategories.count {
-            let remainingCount = allCategories.count - currentlyVisibleCount
-            updateExpandButton(remainingCount: remainingCount)
-            categoryStackView.addArrangedSubview(expandButton)
-        }
+        // 나머지 카테고리들 모두 표시
+        allCategories.filter { $0.name != "전체" }
+            .forEach { categoryInfo in
+                addCategoryButton(for: categoryInfo)
+            }
     }
     
     // MARK: - Public Methods
@@ -340,7 +292,6 @@ class CustomBottomSheetView: UIView {
     
     func updateCategories(_ categories: [CategoryInfo]) {
         allCategories = categories
-        currentlyVisibleCount = visibleCategoriesCount
         updateVisibleCategories()
     }
     
@@ -355,7 +306,6 @@ class CustomBottomSheetView: UIView {
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        // UITableView나 UIScrollView인 경우 저장하고 delegate 설정
         if let scrollView = view as? UIScrollView {
             contentScrollView = scrollView
             scrollView.delegate = self
@@ -370,10 +320,8 @@ class CustomBottomSheetView: UIView {
     // MARK: - Private Methods
     private func updateScrollEnabled() {
         if let scrollView = contentScrollView {
-            // 최대 높이일 때만 스크롤 활성화
             scrollView.isScrollEnabled = currentHeight == .max
             
-            // 스크롤 위치 초기화 (선택사항)
             if currentHeight != .max {
                 scrollView.setContentOffset(.zero, animated: true)
             }
@@ -497,13 +445,7 @@ class CustomBottomSheetView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
         categoryScrollView.layoutIfNeeded()
-        
-        if let lastButton = categoryStackView.arrangedSubviews.last {
-            let targetRect = lastButton.convert(lastButton.bounds, to: categoryScrollView)
-            categoryScrollView.scrollRectToVisible(targetRect, animated: true)
-        }
     }
 }
 
