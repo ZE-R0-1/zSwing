@@ -38,6 +38,9 @@ class CustomBottomSheetView: UIView {
     private var currentlyVisibleCount = 2  // 현재 보이는 카테고리 수
     private var allCategories: [CategoryInfo] = []  // 모든 카테고리 저장
     
+    private var isTableViewScrolled = false
+    private var panStartLocation: CGFloat = 0
+    
     // MARK: - Outputs
     let heightPercentage = BehaviorRelay<CGFloat>(value: 0.6)
     let isDismissed = PublishRelay<Bool>()
@@ -214,7 +217,6 @@ class CustomBottomSheetView: UIView {
         button.layer.cornerRadius = 17
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
-        // 카테고리 이름과 수량을 함께 표시
         let attributedTitle = NSMutableAttributedString(
             string: categoryInfo.name,
             attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
@@ -228,13 +230,11 @@ class CustomBottomSheetView: UIView {
         ))
         button.setAttributedTitle(attributedTitle, for: .normal)
         
-        // 선택 상태에 따른 스타일링
         selectedCategories
             .map { $0.contains(categoryInfo.name) }
             .bind { [weak button] isSelected in
                 button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
                 
-                // 선택 상태에 따른 텍스트 색상 변경
                 let attributedTitle = NSMutableAttributedString(
                     string: categoryInfo.name,
                     attributes: [
@@ -253,7 +253,6 @@ class CustomBottomSheetView: UIView {
             }
             .disposed(by: disposeBag)
         
-        // 탭 이벤트 처리
         button.rx.tap
             .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
                 var updatedCategories = categories
@@ -299,12 +298,10 @@ class CustomBottomSheetView: UIView {
     private func updateVisibleCategories() {
         categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        // "전체" 카테고리는 항상 표시
         if let totalCategory = allCategories.first(where: { $0.name == "전체" }) {
             addCategoryButton(for: totalCategory)
         }
         
-        // 나머지 카테고리들 중 현재 보여져야 할 만큼만 표시
         let remainingCategories = allCategories.filter { $0.name != "전체" }
         let visibleCategories = remainingCategories.prefix(currentlyVisibleCount - 1)
         
@@ -312,7 +309,6 @@ class CustomBottomSheetView: UIView {
             addCategoryButton(for: categoryInfo)
         }
         
-        // 더 보여줄 카테고리가 있는 경우에만 확장 버튼 표시
         if currentlyVisibleCount < allCategories.count {
             let remainingCount = allCategories.count - currentlyVisibleCount
             updateExpandButton(remainingCount: remainingCount)
@@ -359,9 +355,10 @@ class CustomBottomSheetView: UIView {
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        // UITableView나 UIScrollView인 경우 저장
+        // UITableView나 UIScrollView인 경우 저장하고 delegate 설정
         if let scrollView = view as? UIScrollView {
             contentScrollView = scrollView
+            scrollView.delegate = self
             updateScrollEnabled()
         }
     }
@@ -417,26 +414,35 @@ class CustomBottomSheetView: UIView {
     }
     
     private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        guard let scrollView = contentScrollView else { return }
         let translation = gesture.translation(in: self).y
         let velocity = gesture.velocity(in: self).y
         let screenHeight = UIScreen.main.bounds.height
         
-        // 현재 최대 높이이고 위로 스크롤하려는 경우 제스처 무시
-        if currentHeight == .max && translation < 0 {
-            return
-        }
-        
         switch gesture.state {
         case .began:
+            panStartLocation = scrollView.contentOffset.y
             previousPanPoint = heightConstraint?.constant ?? 0
             
         case .changed:
+            // max 상태에서의 처리
+            if currentHeight == .max {
+                // 테이블뷰가 맨 위에 있고 아래로 드래그하는 경우
+                if scrollView.contentOffset.y <= 0 && translation > 0 {
+                    scrollView.contentOffset.y = 0
+                    let newHeight = previousPanPoint - translation
+                    let heightPercentage = newHeight / screenHeight
+                    updateHeight(newHeight, animated: false)
+                    self.heightPercentage.accept(heightPercentage)
+                }
+                // 그 외의 경우는 테이블뷰 스크롤 허용
+                return
+            }
+            
+            // 그 외 상태에서는 일반적인 바텀시트 동작
             let newHeight = previousPanPoint - translation
-            
-            // 최대 높이 제한
             let maxHeight = screenHeight * SheetHeight.max.heightPercentage
-            let limitedHeight = min(newHeight, maxHeight)
-            
+            let limitedHeight = min(max(newHeight, screenHeight * SheetHeight.min.heightPercentage), maxHeight)
             let heightPercentage = limitedHeight / screenHeight
             updateHeight(limitedHeight, animated: false)
             self.heightPercentage.accept(heightPercentage)
@@ -447,9 +453,9 @@ class CustomBottomSheetView: UIView {
             // 속도가 빠른 경우 스와이프 방향으로 이동
             if abs(velocity) > 1500 {
                 if velocity > 0 {  // 아래로 스와이프
-                    if currentHeight == .max {
+                    if currentHeight == .max && scrollView.contentOffset.y <= 0 {
                         updateHeight(.mid)
-                    } else {
+                    } else if currentHeight != .max {
                         updateHeight(.min)
                     }
                 } else {  // 위로 스와이프
@@ -492,13 +498,34 @@ class CustomBottomSheetView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        // 스크롤뷰가 새로운 컨텐츠 크기에 맞게 조정되도록
         categoryScrollView.layoutIfNeeded()
         
-        // 필요한 경우 스크롤 위치 조정
         if let lastButton = categoryStackView.arrangedSubviews.last {
             let targetRect = lastButton.convert(lastButton.bounds, to: categoryScrollView)
             categoryScrollView.scrollRectToVisible(targetRect, animated: true)
         }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension CustomBottomSheetView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if currentHeight == .max && scrollView.contentOffset.y <= 0 {
+            scrollView.contentOffset.y = 0
+        }
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isTableViewScrolled = true
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            isTableViewScrolled = false
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        isTableViewScrolled = false
     }
 }
