@@ -121,7 +121,14 @@ class MapViewModel {
                 }
             }
             .do(onNext: { [weak self] playgrounds in
-                self?.loadRideCategories(for: playgrounds)
+                // 검색 결과와 관계없이 항상 카테고리 초기화
+                if playgrounds.isEmpty {
+                    // 데이터가 없을 때는 "전체(0)" 카테고리만 표시
+                    self?.categories.accept([CategoryInfo(name: "전체", count: 0)])
+                } else {
+                    // 데이터가 있을 때는 기존 로직대로 카테고리 로드
+                    self?.loadRideCategories(for: playgrounds)
+                }
                 self?.isLoading.accept(false)
                 self?.shouldShowBottomSheet.accept(!playgrounds.isEmpty)
             })
