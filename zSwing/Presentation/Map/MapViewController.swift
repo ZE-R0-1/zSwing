@@ -378,9 +378,6 @@ extension MapViewController: MKMapViewDelegate {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
             
-            // 클러스터에 포함된 놀이터들을 지도에 표시
-            let region = calculateRegion(for: clusterView.getPlaygrounds())
-            mapView.setRegion(region, animated: true)
         } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
             annotationView.animateSelection(selected: true)
         }

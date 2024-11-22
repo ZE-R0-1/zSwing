@@ -106,23 +106,16 @@ class EnhancedPlaygroundAnnotationView: MKAnnotationView {
         // 새 애니메이션 시작
         animator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 0.7) {
             if selected {
-                self.containerView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                self.containerView.backgroundColor = .systemBlue
-                self.iconImageView.tintColor = .white
-                self.titleLabel.textColor = .systemBlue
-                self.containerView.layer.shadowOpacity = 0.4
-                self.containerView.layer.shadowRadius = 6
+                self.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+                self.iconImageView.backgroundColor = self.iconImageView.backgroundColor?.withAlphaComponent(1.0)
             } else {
-                self.containerView.transform = .identity
-                self.containerView.backgroundColor = .white
-                self.iconImageView.tintColor = .systemBlue
-                self.titleLabel.textColor = .darkGray
-                self.containerView.layer.shadowOpacity = 0.2
-                self.containerView.layer.shadowRadius = 4
+                self.transform = .identity
+                self.iconImageView.backgroundColor = self.iconImageView.backgroundColor?.withAlphaComponent(0.85)
             }
         }
         
         animator?.startAnimation()
+
     }
     
     // MARK: - Override Methods

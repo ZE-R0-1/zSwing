@@ -217,12 +217,13 @@ class MapViewModel {
             }
             
             if let placemark = placemarks?.first {
-                let address = [
-                    placemark.administrativeArea,
-                    placemark.locality,
-                    placemark.thoroughfare,
-                    placemark.subThoroughfare
+                let components = [
+                    placemark.locality,     // 시
+                    placemark.subLocality,           // 동
+                    placemark.thoroughfare,          // 도로명
                 ]
+                
+                let address = components
                     .compactMap { $0 }
                     .joined(separator: " ")
                 
