@@ -352,21 +352,13 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
-            
-            // 클러스터의 놀이터들을 포함하는 영역으로 지도 이동
-            let playgrounds = clusterView.getPlaygrounds()
-            let region = calculateRegion(for: playgrounds)
-            mapView.setRegion(region, animated: true)
-            
         } else if let annotationView = view as? EnhancedPlaygroundAnnotationView,
                   let playgroundAnnotation = annotationView.annotation as? PlaygroundAnnotation {
             annotationView.animateSelection(selected: true)
-            
-            // 놀이터 상세 정보로 전환
             bottomSheetView.transition(to: .playgroundDetail(playgroundAnnotation.playground))
         }
     }
-    
+
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: false)
