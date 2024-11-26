@@ -26,6 +26,9 @@
 		CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */; };
 		CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4ED2CDCA2D000EF4563 /* ProfileViewController.swift */; };
 		CE7AA4F02CDCA47100EF4563 /* DefaultProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EF2CDCA47100EF4563 /* DefaultProfileRepository.swift */; };
+		CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */; };
+		CE7BEE5C2CF55933004F8915 /* PlaygroundListContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */; };
+		CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */; };
 		CECE0FE62CED6A6F00E3D0EE /* CategoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE0FE52CED6A6F00E3D0EE /* CategoryInfo.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
@@ -84,6 +87,9 @@
 		CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModel.swift; path = zSwing/Presentation/Profile/ProfileViewModel.swift; sourceTree = SOURCE_ROOT; };
 		CE7AA4ED2CDCA2D000EF4563 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewController.swift; path = zSwing/Presentation/Profile/ProfileViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE7AA4EF2CDCA47100EF4563 /* DefaultProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultProfileRepository.swift; sourceTree = "<group>"; };
+		CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetProtocols.swift; sourceTree = "<group>"; };
+		CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListContent.swift; sourceTree = "<group>"; };
+		CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailContent.swift; sourceTree = "<group>"; };
 		CECE0FE52CED6A6F00E3D0EE /* CategoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryInfo.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
@@ -108,7 +114,7 @@
 		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
 		CEDF13D42CDC579C0090D9CE /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
-		CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomBottomSheetView.swift; path = zSwing/Presentation/Map/Components/CustomBottomSheetView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomBottomSheetView.swift; path = zSwing/Presentation/Map/BottomSheet/CustomBottomSheetView.swift; sourceTree = SOURCE_ROOT; };
 		CEFA526B2CE490E500B4280B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		CEFA526D2CE5D22500B4280B /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundRepository.swift; sourceTree = "<group>"; };
@@ -177,6 +183,17 @@
 			path = zSwing;
 			sourceTree = "<group>";
 		};
+		CE7BEE582CF556E0004F8915 /* BottomSheet */ = {
+			isa = PBXGroup;
+			children = (
+				CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */,
+				CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */,
+				CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */,
+				CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */,
+			);
+			path = BottomSheet;
+			sourceTree = "<group>";
+		};
 		CED42A7E2CE1ED3400A7AE7E /* Nickname */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +206,7 @@
 		CED42AB22CE2E22500A7AE7E /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				CE7BEE582CF556E0004F8915 /* BottomSheet */,
 				CEFA52622CE34D8300B4280B /* Components */,
 				CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */,
 				CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */,
@@ -348,7 +366,6 @@
 		CEFA52622CE34D8300B4280B /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				CEFA52632CE34DB500B4280B /* CustomBottomSheetView.swift */,
 				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
 				CEFA528B2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift */,
 				CEFA528D2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift */,
@@ -469,9 +486,11 @@
 				CEFA527E2CE7125300B4280B /* DefaultRideRepository.swift in Sources */,
 				CEFA527C2CE710B300B4280B /* RideRepository.swift in Sources */,
 				CECE0FE62CED6A6F00E3D0EE /* CategoryInfo.swift in Sources */,
+				CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
 				CEFA528E2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift in Sources */,
 				CEFA528C2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift in Sources */,
+				CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
 				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
@@ -488,6 +507,7 @@
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
+				CE7BEE5C2CF55933004F8915 /* PlaygroundListContent.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CEFA52802CE7187300B4280B /* RideUseCase.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,

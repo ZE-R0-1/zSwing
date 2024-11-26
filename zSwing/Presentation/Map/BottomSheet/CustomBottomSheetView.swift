@@ -30,17 +30,14 @@ class CustomBottomSheetView: UIView {
     private var heightConstraint: NSLayoutConstraint?
     private var currentHeight: SheetHeight = .mid
     private var previousPanPoint: CGFloat = 0
-    private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
     private var contentScrollView: UIScrollView?
-    private var allCategories: [CategoryInfo] = []
-    
-    private var isTableViewScrolled = false
+    private var currentContent: BottomSheetContent?
     private var panStartLocation: CGFloat = 0
+    
+    weak var delegate: BottomSheetDelegate?
     
     // MARK: - Outputs
     let heightPercentage = BehaviorRelay<CGFloat>(value: 0.6)
-    let isDismissed = PublishRelay<Bool>()
-    let categoriesSelected = PublishRelay<Set<String>>()
     
     // MARK: - UI Components
     private let headerView: UIView = {
@@ -63,28 +60,6 @@ class CustomBottomSheetView: UIView {
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-    
-    private let loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .medium)
-        indicator.hidesWhenStopped = true
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        return indicator
-    }()
-    
-    private let categoryScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
-    private let categoryStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
     }()
     
     private let contentView: UIView = {
@@ -120,9 +95,6 @@ class CustomBottomSheetView: UIView {
         addSubview(headerView)
         headerView.addSubview(dragIndicatorView)
         headerView.addSubview(titleLabel)
-        headerView.addSubview(loadingIndicator)
-        addSubview(categoryScrollView)
-        categoryScrollView.addSubview(categoryStackView)
         addSubview(contentView)
         
         bottomConstraint = bottomAnchor.constraint(equalTo: superview?.bottomAnchor ?? bottomAnchor)
@@ -148,28 +120,53 @@ class CustomBottomSheetView: UIView {
             
             titleLabel.topAnchor.constraint(equalTo: dragIndicatorView.bottomAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: loadingIndicator.leadingAnchor, constant: -8),
+            titleLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
             titleLabel.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -16),
             
-            loadingIndicator.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            loadingIndicator.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
-            
-            categoryScrollView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            categoryScrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            categoryScrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            categoryScrollView.heightAnchor.constraint(equalToConstant: 50),
-            
-            categoryStackView.topAnchor.constraint(equalTo: categoryScrollView.topAnchor, constant: 8),
-            categoryStackView.leadingAnchor.constraint(equalTo: categoryScrollView.leadingAnchor, constant: 20),
-            categoryStackView.trailingAnchor.constraint(equalTo: categoryScrollView.trailingAnchor, constant: -20),
-            categoryStackView.bottomAnchor.constraint(equalTo: categoryScrollView.bottomAnchor, constant: -8),
-            categoryStackView.heightAnchor.constraint(equalToConstant: 34),
-            
-            contentView.topAnchor.constraint(equalTo: categoryScrollView.bottomAnchor),
+            contentView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+    
+    // MARK: - Content Management
+    func transition(to contentType: BottomSheetContentType, animated: Bool = true) {
+        currentContent?.prepareForReuse()
+        currentContent?.removeFromSuperview()
+        
+        let newContent: BottomSheetContent
+        switch contentType {
+        case .playgroundList:
+            newContent = PlaygroundListContent()
+        case .playgroundDetail(let playground):
+            newContent = PlaygroundDetailContent(playground: playground)
+        }
+        
+        addContent(newContent, animated: animated)
+    }
+    
+    private func addContent(_ content: BottomSheetContent, animated: Bool) {
+        currentContent = content
+        titleLabel.text = content.contentTitle
+        
+        if animated {
+            UIView.transition(
+                with: contentView,
+                duration: 0.3,
+                options: .transitionCrossDissolve,
+                animations: {
+                    self.contentView.subviews.forEach { $0.removeFromSuperview() }
+                    self.addContentView(content)
+                }
+            )
+        } else {
+            contentView.subviews.forEach { $0.removeFromSuperview() }
+            addContentView(content)
+        }
+        
+        contentScrollView = content.contentScrollView
+        updateScrollEnabled()
     }
     
     // MARK: - Gesture Setup
@@ -184,115 +181,11 @@ class CustomBottomSheetView: UIView {
             .disposed(by: disposeBag)
     }
     
-    // MARK: - Category Management
-    private func addCategoryButton(for categoryInfo: CategoryInfo) {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 17
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        
-        let attributedTitle = NSMutableAttributedString(
-            string: categoryInfo.name,
-            attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
-        )
-        attributedTitle.append(NSAttributedString(
-            string: " \(categoryInfo.count)",
-            attributes: [
-                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                .foregroundColor: UIColor.systemGray
-            ]
-        ))
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        
-        selectedCategories
-            .map { $0.contains(categoryInfo.name) }
-            .bind { [weak button] isSelected in
-                button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
-                
-                let attributedTitle = NSMutableAttributedString(
-                    string: categoryInfo.name,
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 14, weight: .medium),
-                        .foregroundColor: isSelected ? UIColor.white : UIColor.black
-                    ]
-                )
-                attributedTitle.append(NSAttributedString(
-                    string: " \(categoryInfo.count)",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                        .foregroundColor: isSelected ? UIColor.white.withAlphaComponent(0.8) : UIColor.systemGray
-                    ]
-                ))
-                button?.setAttributedTitle(attributedTitle, for: .normal)
-            }
-            .disposed(by: disposeBag)
-        
-        button.rx.tap
-            .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
-                var updatedCategories = categories
-                if categoryInfo.name == "전체" {
-                    return ["전체"]
-                } else {
-                    updatedCategories.remove("전체")
-                    if updatedCategories.contains(categoryInfo.name) {
-                        updatedCategories.remove(categoryInfo.name)
-                    } else {
-                        updatedCategories.insert(categoryInfo.name)
-                    }
-                    if updatedCategories.isEmpty {
-                        updatedCategories = ["전체"]
-                    }
-                }
-                return updatedCategories
-            }
-            .bind(to: selectedCategories)
-            .disposed(by: disposeBag)
-        
-        categoryStackView.addArrangedSubview(button)
-    }
-    
-    private func updateVisibleCategories() {
-        categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // "전체" 카테고리는 항상 표시
-        if let totalCategory = allCategories.first(where: { $0.name == "전체" }) {
-            addCategoryButton(for: totalCategory)
-        }
-        
-        // 나머지 카테고리들 모두 표시
-        allCategories.filter { $0.name != "전체" }
-            .forEach { categoryInfo in
-                addCategoryButton(for: categoryInfo)
-            }
-    }
-    
     // MARK: - Public Methods
     func bind(to viewModel: MapViewModel) {
-        viewModel.locationTitle
-            .bind(to: titleLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        viewModel.isLoading
-            .bind(to: loadingIndicator.rx.isAnimating)
-            .disposed(by: disposeBag)
-        
-        viewModel.categories
-            .map { $0.map { CategoryInfo(name: $0.name, count: $0.count) } }
-            .subscribe(onNext: { [weak self] categories in
-                self?.updateCategories(categories)
-            })
-            .disposed(by: disposeBag)
-        
-        selectedCategories
-            .bind(to: viewModel.categoriesSelected)
-            .disposed(by: disposeBag)
-    }
-    
-    func updateCategories(_ categories: [CategoryInfo]) {
-        allCategories = categories
-        updateVisibleCategories()
+        if let listContent = currentContent as? PlaygroundListContent {
+            listContent.bind(to: viewModel)
+        }
     }
     
     func addContentView(_ view: UIView) {
@@ -317,7 +210,7 @@ class CustomBottomSheetView: UIView {
         updateHeight(.mid)
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Helper Methods
     private func updateScrollEnabled() {
         if let scrollView = contentScrollView {
             scrollView.isScrollEnabled = currentHeight == .max
@@ -345,6 +238,7 @@ class CustomBottomSheetView: UIView {
         }
         
         heightPercentage.accept(height.heightPercentage)
+        delegate?.bottomSheet(self, heightDidChange: height.heightPercentage)
     }
     
     private func updateHeight(_ height: CGFloat, animated: Bool = true) {
@@ -359,6 +253,10 @@ class CustomBottomSheetView: UIView {
             heightConstraint?.constant = height
             updateScrollEnabled()
         }
+        
+        let percentage = height / UIScreen.main.bounds.height
+        heightPercentage.accept(percentage)
+        delegate?.bottomSheet(self, heightDidChange: percentage)
     }
     
     private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -442,11 +340,6 @@ class CustomBottomSheetView: UIView {
             bottomConstraint?.isActive = true
         }
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        categoryScrollView.layoutIfNeeded()
-    }
 }
 
 // MARK: - UIScrollViewDelegate
@@ -455,19 +348,5 @@ extension CustomBottomSheetView: UIScrollViewDelegate {
         if currentHeight == .max && scrollView.contentOffset.y <= 0 {
             scrollView.contentOffset.y = 0
         }
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        isTableViewScrolled = true
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            isTableViewScrolled = false
-        }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        isTableViewScrolled = false
     }
 }

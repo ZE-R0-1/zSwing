@@ -136,13 +136,23 @@ class MapViewController: UIViewController {
         ])
     }
     
-    private func setupBottomSheet() {
+    func setupBottomSheet() {
         bottomSheetView = CustomBottomSheetView(frame: .zero)
         bottomSheetView.translatesAutoresizingMaskIntoConstraints = false
+        bottomSheetView.delegate = self
         view.addSubview(bottomSheetView)
         
-        bottomSheetView.addContentView(tableView)
-        bottomSheetView.bind(to: viewModel)
+        // 초기 콘텐츠 설정
+        bottomSheetView.transition(to: .playgroundList, animated: false)
+        bottomSheetView.bind(to: viewModel)  // 이 부분 추가
+        
+        // 놀이터 선택 노티피케이션 관찰
+        NotificationCenter.default.rx.notification(.playgroundSelected)
+            .subscribe(onNext: { [weak self] notification in
+                guard let playground = notification.userInfo?["playground"] as? Playground else { return }
+                self?.bottomSheetView.transition(to: .playgroundDetail(playground))
+            })
+            .disposed(by: disposeBag)
         
         NSLayoutConstraint.activate([
             bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -207,46 +217,11 @@ class MapViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // Shared playgrounds Observable
-        let sharedPlaygrounds = viewModel.playgrounds.share()
-        
-        // 현재 위치 Observable
-        let userLocation = mapView.rx.observe(MKUserLocation.self, "userLocation")
-            .compactMap { $0?.location }
-            .startWith(nil)
-            .share()
-        
-        // TableView Binding
-        sharedPlaygrounds
-            .bind(to: tableView.rx.items(
-                cellIdentifier: PlaygroundCell.identifier,
-                cellType: PlaygroundCell.self
-            )) { [weak self] index, playground, cell in
-                // 가장 최신의 위치 정보 가져오기
-                let distance: Double?
-                if let location = self?.mapView.userLocation.location {
-                    let playgroundLocation = CLLocation(
-                        latitude: playground.coordinate.latitude,
-                        longitude: playground.coordinate.longitude
-                    )
-                    distance = playgroundLocation.distance(from: location) / 1000.0
-                } else {
-                    distance = nil
-                }
-                
-                cell.configure(with: playground, distance: distance)
-            }
-            .disposed(by: disposeBag)
-        
-        // 위치가 업데이트될 때마다 테이블뷰 리로드
-        userLocation
-            .subscribe(onNext: { [weak self] _ in
-                self?.tableView.reloadData()
-            })
-            .disposed(by: disposeBag)
+        // BottomSheet 바인딩
+        bottomSheetView.bind(to: viewModel)
         
         // Map Annotations Binding
-        sharedPlaygrounds
+        viewModel.playgrounds
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] playgrounds in
                 guard let self = self else { return }
@@ -378,11 +353,20 @@ extension MapViewController: MKMapViewDelegate {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
             
-        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
+            // 클러스터의 놀이터들을 포함하는 영역으로 지도 이동
+            let playgrounds = clusterView.getPlaygrounds()
+            let region = calculateRegion(for: playgrounds)
+            mapView.setRegion(region, animated: true)
+            
+        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView,
+                  let playgroundAnnotation = annotationView.annotation as? PlaygroundAnnotation {
             annotationView.animateSelection(selected: true)
+            
+            // 놀이터 상세 정보로 전환
+            bottomSheetView.transition(to: .playgroundDetail(playgroundAnnotation.playground))
         }
     }
-
+    
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: false)
@@ -390,6 +374,7 @@ extension MapViewController: MKMapViewDelegate {
             annotationView.animateSelection(selected: false)
         }
     }
+    
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         mapViewDelegate?.mapView(mapView, regionDidChangeAnimated: animated)
     }
@@ -406,5 +391,16 @@ private class MapViewDelegate: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         regionDidChange(mapView.region)
+    }
+}
+
+extension MapViewController: BottomSheetDelegate {
+    func bottomSheet(_ sheet: CustomBottomSheetView, didSelectContent content: BottomSheetContent) {
+        // 필요한 경우 콘텐츠 선택 처리
+    }
+    
+    func bottomSheet(_ sheet: CustomBottomSheetView, heightDidChange height: CGFloat) {
+        // 높이 변경에 따른 처리
+        adjustMapInteraction(with: height)
     }
 }
