@@ -8,10 +8,15 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import CoreLocation
 
 class PlaygroundListContent: UIView, BottomSheetContent {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
+    private let locationManager = CLLocationManager()
+    private var currentLocation: CLLocation? {
+        return locationManager.location
+    }
     private var viewModel: MapViewModel?
     private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
     private var allCategories: [CategoryInfo] = []
@@ -89,17 +94,11 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         button.layer.cornerRadius = 17
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
+        // 카테고리 이름만 설정
         let attributedTitle = NSMutableAttributedString(
             string: categoryInfo.name,
             attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
         )
-        attributedTitle.append(NSAttributedString(
-            string: " \(categoryInfo.count)",
-            attributes: [
-                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                .foregroundColor: UIColor.systemGray
-            ]
-        ))
         button.setAttributedTitle(attributedTitle, for: .normal)
         
         selectedCategories
@@ -107,6 +106,7 @@ class PlaygroundListContent: UIView, BottomSheetContent {
             .bind { [weak button] isSelected in
                 button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
                 
+                // 카테고리 이름만 설정
                 let attributedTitle = NSMutableAttributedString(
                     string: categoryInfo.name,
                     attributes: [
@@ -114,13 +114,6 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                         .foregroundColor: isSelected ? UIColor.white : UIColor.black
                     ]
                 )
-                attributedTitle.append(NSAttributedString(
-                    string: " \(categoryInfo.count)",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-                        .foregroundColor: isSelected ? UIColor.white.withAlphaComponent(0.8) : UIColor.systemGray
-                    ]
-                ))
                 button?.setAttributedTitle(attributedTitle, for: .normal)
             }
             .disposed(by: disposeBag)
@@ -148,7 +141,6 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         
         categoryStackView.addArrangedSubview(button)
     }
-    
     private func updateCategories(_ categories: [CategoryInfo]) {
         allCategories = categories
         categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -188,8 +180,17 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
             )) { [weak self] index, playground, cell in
-                let distance: Double? = nil
-                cell.configure(with: playground, distance: distance)
+                // currentLocation이 있으면 거리 계산
+                if let currentLocation = self?.currentLocation {
+                    let playgroundLocation = CLLocation(
+                        latitude: playground.coordinate.latitude,
+                        longitude: playground.coordinate.longitude
+                    )
+                    let distance = currentLocation.distance(from: playgroundLocation) / 1000.0
+                    cell.configure(with: playground, distance: distance)
+                } else {
+                    cell.configure(with: playground, distance: nil)
+                }
             }
             .disposed(by: disposeBag)
         
