@@ -29,20 +29,35 @@ class MapViewModel {
     let locationTitle = BehaviorRelay<String>(value: "")
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
-    let playgrounds = BehaviorRelay<[Playground]>(value: [])
     let categories = BehaviorRelay<[CategoryInfo]>(value: [])
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     let shouldShowBottomSheet = BehaviorRelay<Bool>(value: true)
     
     // MARK: - Private Properties
     private let allPlaygrounds = BehaviorRelay<[Playground]>(value: [])
+    private let filteredPlaygrounds = BehaviorRelay<[Playground]>(value: [])
     private let ridesByPlayground = BehaviorRelay<[String: [Ride]]>(value: [:])  // 놀이터별 놀이기구 데이터 저장
-
+    
+    // 필터링된 놀이터를 외부에 노출하는 computed property
+    var playgrounds: BehaviorRelay<[Playground]> {
+        return filteredPlaygrounds
+    }
+    
     init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase, rideUseCase: RideUseCase) {
         self.useCase = useCase
         self.playgroundUseCase = playgroundUseCase
         self.rideUseCase = rideUseCase
         setupBindings()
+    }
+    
+    // 클러스터의 놀이터들만 표시하도록 필터링
+    func filterPlaygrounds(_ clusterPlaygrounds: [Playground]) {
+        filteredPlaygrounds.accept(clusterPlaygrounds)
+    }
+    
+    // 필터 초기화 (전체 놀이터 표시)
+    func resetPlaygroundFilter() {
+        filteredPlaygrounds.accept(allPlaygrounds.value)
     }
     
     private func setupBindings() {
@@ -103,7 +118,6 @@ class MapViewModel {
             .do(onNext: { [weak self] region in
                 self?.isLoading.accept(true)
                 self?.shouldShowSearchButton.accept(false)
-                // 검색 시에만 위치 정보 업데이트
                 self?.updateLocationTitle(
                     latitude: region.center.latitude,
                     longitude: region.center.longitude
@@ -121,12 +135,9 @@ class MapViewModel {
                 }
             }
             .do(onNext: { [weak self] playgrounds in
-                // 검색 결과와 관계없이 항상 카테고리 초기화
                 if playgrounds.isEmpty {
-                    // 데이터가 없을 때는 "전체(0)" 카테고리만 표시
                     self?.categories.accept([CategoryInfo(name: "전체", count: 0)])
                 } else {
-                    // 데이터가 있을 때는 기존 로직대로 카테고리 로드
                     self?.loadRideCategories(for: playgrounds)
                 }
                 self?.isLoading.accept(false)
@@ -134,9 +145,10 @@ class MapViewModel {
             })
             .subscribe(onNext: { [weak self] playgrounds in
                 self?.allPlaygrounds.accept(playgrounds)
-                self?.playgrounds.accept(playgrounds)
+                self?.filteredPlaygrounds.accept(playgrounds)  // 초기에는 모든 놀이터 표시
             })
             .disposed(by: disposeBag)
+
         
         // 지도 영역 변경시 검색 버튼 표시
         regionDidChange

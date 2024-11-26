@@ -6,8 +6,12 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class PlaygroundDetailContent: UIView, BottomSheetContent {
+    private let disposeBag = DisposeBag()
+    
     private let scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
@@ -22,6 +26,20 @@ class PlaygroundDetailContent: UIView, BottomSheetContent {
         return stack
     }()
     
+    // 닫기 버튼 추가
+    private let closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .systemGray
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    // 닫기 이벤트를 위한 릴레이
+    let closeButtonTapped = PublishRelay<Void>()
+    
     var contentScrollView: UIScrollView? { scrollView }
     var contentTitle: String { playground.pfctNm }
     private let playground: Playground
@@ -30,6 +48,7 @@ class PlaygroundDetailContent: UIView, BottomSheetContent {
         self.playground = playground
         super.init(frame: .zero)
         setupUI()
+        setupBindings()
     }
     
     required init?(coder: NSCoder) {
@@ -39,6 +58,7 @@ class PlaygroundDetailContent: UIView, BottomSheetContent {
     private func setupUI() {
         addSubview(scrollView)
         scrollView.addSubview(stackView)
+        addSubview(closeButton) // 닫기 버튼 추가
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topAnchor),
@@ -50,10 +70,23 @@ class PlaygroundDetailContent: UIView, BottomSheetContent {
             stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32)
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32),
+            
+            // 닫기 버튼 제약조건
+            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            closeButton.widthAnchor.constraint(equalToConstant: 30),
+            closeButton.heightAnchor.constraint(equalToConstant: 30)
         ])
         
         setupContent()
+    }
+    
+    private func setupBindings() {
+        // 닫기 버튼 탭 이벤트 바인딩
+        closeButton.rx.tap
+            .bind(to: closeButtonTapped)
+            .disposed(by: disposeBag)
     }
     
     private func setupContent() {

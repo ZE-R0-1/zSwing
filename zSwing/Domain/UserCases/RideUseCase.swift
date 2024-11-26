@@ -22,5 +22,4 @@ class DefaultRideUseCase: RideUseCase {
     func fetchRides(for playgroundId: String) -> Observable<[Ride]> {
         return repository.fetchRides(for: playgroundId)
     }
-    
 }

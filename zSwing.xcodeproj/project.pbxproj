@@ -29,7 +29,6 @@
 		CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */; };
 		CE7BEE5C2CF55933004F8915 /* PlaygroundListContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */; };
 		CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */; };
-		CECE0FE62CED6A6F00E3D0EE /* CategoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE0FE52CED6A6F00E3D0EE /* CategoryInfo.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
@@ -41,6 +40,7 @@
 		CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */; };
 		CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */; };
 		CED42ACC2CE3275800A7AE7E /* MapLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42ACB2CE3275800A7AE7E /* MapLocation.swift */; };
+		CED477742CF58E61004659AA /* CategoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED477732CF58E61004659AA /* CategoryInfo.swift */; };
 		CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13AE2CD9F63B0090D9CE /* User.swift */; };
 		CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */; };
 		CEDF13B52CD9F6B50090D9CE /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CEDF13B42CD9F6B50090D9CE /* RxCocoa */; };
@@ -90,7 +90,6 @@
 		CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetProtocols.swift; sourceTree = "<group>"; };
 		CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListContent.swift; sourceTree = "<group>"; };
 		CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailContent.swift; sourceTree = "<group>"; };
-		CECE0FE52CED6A6F00E3D0EE /* CategoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryInfo.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +101,7 @@
 		CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		CED42ACB2CE3275800A7AE7E /* MapLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLocation.swift; sourceTree = "<group>"; };
+		CED477732CF58E61004659AA /* CategoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryInfo.swift; sourceTree = "<group>"; };
 		CEDF13AE2CD9F63B0090D9CE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUseCase.swift; sourceTree = "<group>"; };
 		CEDF13B92CD9F75B0090D9CE /* AuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository.swift; sourceTree = "<group>"; };
@@ -275,7 +275,7 @@
 				CEFA526D2CE5D22500B4280B /* Playground.swift */,
 				CEFA52792CE70E6400B4280B /* Ride.swift */,
 				CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */,
-				CECE0FE52CED6A6F00E3D0EE /* CategoryInfo.swift */,
+				CED477732CF58E61004659AA /* CategoryInfo.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -485,13 +485,13 @@
 				CEDF13D52CDC579C0090D9CE /* MainTabBarViewModel.swift in Sources */,
 				CEFA527E2CE7125300B4280B /* DefaultRideRepository.swift in Sources */,
 				CEFA527C2CE710B300B4280B /* RideRepository.swift in Sources */,
-				CECE0FE62CED6A6F00E3D0EE /* CategoryInfo.swift in Sources */,
 				CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
 				CEFA528E2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift in Sources */,
 				CEFA528C2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift in Sources */,
 				CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
+				CED477742CF58E61004659AA /* CategoryInfo.swift in Sources */,
 				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
 				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,

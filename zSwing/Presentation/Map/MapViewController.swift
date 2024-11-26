@@ -322,7 +322,6 @@ class MapViewController: UIViewController {
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let cluster = annotation as? MKClusterAnnotation {
-            // 향상된 클러스터 어노테이션 뷰 사용
             let annotationView = mapView.dequeueReusableAnnotationView(
                 withIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier,
                 for: cluster
@@ -333,7 +332,6 @@ extension MapViewController: MKMapViewDelegate {
             annotationView.configure(with: cluster)
             return annotationView
         } else if let playground = annotation as? PlaygroundAnnotation {
-            // 기존 놀이터 어노테이션 뷰
             let annotationView = mapView.dequeueReusableAnnotationView(
                 withIdentifier: EnhancedPlaygroundAnnotationView.identifier,
                 for: playground
@@ -343,8 +341,6 @@ extension MapViewController: MKMapViewDelegate {
             )
             annotationView.clusteringIdentifier = "playground"
             return annotationView
-        } else if annotation is MKUserLocation {
-            return nil
         }
         return nil
     }
@@ -352,6 +348,19 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
+            
+            // 클러스터에 포함된 놀이터들을 가져옴
+            let clusterPlaygrounds = clusterView.getPlaygrounds()
+            
+            // PlaygroundListContent로 전환하고 데이터를 필터링
+            bottomSheetView.transition(to: .playgroundList, animated: true)
+            
+            // 클러스터에 포함된 놀이터만 표시하도록 필터링
+            viewModel.filterPlaygrounds(clusterPlaygrounds)
+            
+            // 시트를 보여줌
+            bottomSheetView.showSheet()
+            
         } else if let annotationView = view as? EnhancedPlaygroundAnnotationView,
                   let playgroundAnnotation = annotationView.annotation as? PlaygroundAnnotation {
             annotationView.animateSelection(selected: true)
@@ -362,6 +371,8 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: false)
+            // 클러스터 선택 해제시 전체 놀이터 목록으로 복원
+            viewModel.resetPlaygroundFilter()
         } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
             annotationView.animateSelection(selected: false)
         }

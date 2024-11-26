@@ -26,6 +26,7 @@ class CustomBottomSheetView: UIView {
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
+    private var viewModel: MapViewModel?
     private var bottomConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
     private var currentHeight: SheetHeight = .mid
@@ -138,7 +139,11 @@ class CustomBottomSheetView: UIView {
         let newContent: BottomSheetContent
         switch contentType {
         case .playgroundList:
-            newContent = PlaygroundListContent()
+            let listContent = PlaygroundListContent()
+            if let viewModel = self.viewModel {
+                listContent.bind(to: viewModel)  // 뷰모델 바인딩 추가
+            }
+            newContent = listContent
         case .playgroundDetail(let playground):
             newContent = PlaygroundDetailContent(playground: playground)
         }
@@ -146,9 +151,18 @@ class CustomBottomSheetView: UIView {
         addContent(newContent, animated: animated)
     }
     
-    private func addContent(_ content: BottomSheetContent, animated: Bool) {
+    func addContent(_ content: BottomSheetContent, animated: Bool) {
         currentContent = content
         titleLabel.text = content.contentTitle
+        
+        // DetailContent의 닫기 버튼 처리
+        if let detailContent = content as? PlaygroundDetailContent {
+            detailContent.closeButtonTapped
+                .subscribe(onNext: { [weak self] _ in
+                    self?.transition(to: .playgroundList, animated: true)
+                })
+                .disposed(by: disposeBag)
+        }
         
         if animated {
             UIView.transition(
@@ -183,6 +197,7 @@ class CustomBottomSheetView: UIView {
     
     // MARK: - Public Methods
     func bind(to viewModel: MapViewModel) {
+        self.viewModel = viewModel  // viewModel 저장
         if let listContent = currentContent as? PlaygroundListContent {
             listContent.bind(to: viewModel)
         }
