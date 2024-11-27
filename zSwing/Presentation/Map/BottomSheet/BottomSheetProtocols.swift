@@ -9,7 +9,6 @@ import UIKit
 
 protocol BottomSheetContent: UIView {
     var contentScrollView: UIScrollView? { get }
-    var contentTitle: String { get }
     func prepareForReuse()
 }
 

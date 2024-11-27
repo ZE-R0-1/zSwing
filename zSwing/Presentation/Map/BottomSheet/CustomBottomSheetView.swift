@@ -17,8 +17,8 @@ class CustomBottomSheetView: UIView {
         
         var heightPercentage: CGFloat {
             switch self {
-            case .min: return 0.15
-            case .mid: return 0.4
+            case .min: return 0.1
+            case .mid: return 0.465
             case .max: return 0.9
             }
         }
@@ -56,13 +56,6 @@ class CustomBottomSheetView: UIView {
         return view
     }()
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     private let contentView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -95,7 +88,6 @@ class CustomBottomSheetView: UIView {
         
         addSubview(headerView)
         headerView.addSubview(dragIndicatorView)
-        headerView.addSubview(titleLabel)
         addSubview(contentView)
         
         bottomConstraint = bottomAnchor.constraint(equalTo: superview?.bottomAnchor ?? bottomAnchor)
@@ -119,12 +111,7 @@ class CustomBottomSheetView: UIView {
             dragIndicatorView.widthAnchor.constraint(equalToConstant: 40),
             dragIndicatorView.heightAnchor.constraint(equalToConstant: 4),
             
-            titleLabel.topAnchor.constraint(equalTo: dragIndicatorView.bottomAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
-            titleLabel.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -16),
-            
-            contentView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            contentView.topAnchor.constraint(equalTo: dragIndicatorView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -153,7 +140,6 @@ class CustomBottomSheetView: UIView {
     
     func addContent(_ content: BottomSheetContent, animated: Bool) {
         currentContent = content
-        titleLabel.text = content.contentTitle
         
         // DetailContent의 닫기 버튼 처리
         if let detailContent = content as? PlaygroundDetailContent {

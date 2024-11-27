@@ -18,37 +18,87 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         return locationManager.location
     }
     private var viewModel: MapViewModel?
-    private var selectedCategories = BehaviorRelay<Set<String>>(value: ["전체"])
-    private var allCategories: [CategoryInfo] = []
     
     var contentScrollView: UIScrollView? { tableView }
-    var contentTitle: String { "놀이터 목록" }
     
     // MARK: - UI Components
-    private let categoryScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
+    private let headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
-    private let categoryStackView: UIStackView = {
+    private let locationStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 8
+        stack.spacing = 4
+        stack.alignment = .center
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-
+    
+    private let locationIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "location.fill")
+        imageView.tintColor = .black
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    private let locationLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let temperatureLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .systemGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let weatherLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .systemGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["전체", "실내", "실외"])
+        control.selectedSegmentIndex = 0
+        control.backgroundColor = .systemGray6
+        control.selectedSegmentTintColor = .white
+        control.setTitleTextAttributes([.foregroundColor: UIColor.systemGray], for: .normal)
+        control.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
+        control.translatesAutoresizingMaskIntoConstraints = false
+        return control
+    }()
+    
     private let tableView: UITableView = {
         let table = UITableView()
         table.register(PlaygroundCell.self, forCellReuseIdentifier: PlaygroundCell.identifier)
         table.separatorStyle = .none
-        table.backgroundColor = .clear
-        table.delegate = nil
-        table.dataSource = nil
+        table.backgroundColor = .white
+        table.delegate = nil       // 명시적으로 nil 설정
+        table.dataSource = nil    // 명시적으로 nil 설정
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
+    }()
+    
+    private let searchButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
+        button.tintColor = .black
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     // MARK: - Initialization
@@ -63,124 +113,95 @@ class PlaygroundListContent: UIView, BottomSheetContent {
     
     // MARK: - Setup
     private func setupUI() {
-        addSubview(categoryScrollView)
-        categoryScrollView.addSubview(categoryStackView)
+        backgroundColor = .white
+        
+        // 헤더뷰 설정
+        addSubview(headerView)
+        
+        // 위치 정보 스택뷰 설정
+        headerView.addSubview(locationStackView)
+        locationStackView.addArrangedSubview(locationIconImageView)
+        locationStackView.addArrangedSubview(locationLabel)
+        
+        // 날씨 정보 레이블 설정
+        headerView.addSubview(temperatureLabel)
+        headerView.addSubview(weatherLabel)
+        
+        // 검색 버튼 설정
+        headerView.addSubview(searchButton)
+        
+        // 세그먼트 컨트롤 설정
+        headerView.addSubview(segmentedControl)
+        
+        // 테이블뷰 설정
         addSubview(tableView)
         
+        // Auto Layout 설정
         NSLayoutConstraint.activate([
-            categoryScrollView.topAnchor.constraint(equalTo: topAnchor),
-            categoryScrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            categoryScrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            categoryScrollView.heightAnchor.constraint(equalToConstant: 50),
+            // 헤더뷰
+            headerView.topAnchor.constraint(equalTo: topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 100),
             
-            categoryStackView.topAnchor.constraint(equalTo: categoryScrollView.topAnchor, constant: 8),
-            categoryStackView.leadingAnchor.constraint(equalTo: categoryScrollView.leadingAnchor, constant: 20),
-            categoryStackView.trailingAnchor.constraint(equalTo: categoryScrollView.trailingAnchor, constant: -20),
-            categoryStackView.bottomAnchor.constraint(equalTo: categoryScrollView.bottomAnchor, constant: -8),
-            categoryStackView.heightAnchor.constraint(equalToConstant: 34),
+            // 위치 정보 스택뷰
+            locationStackView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 16),
+            locationStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
             
-            tableView.topAnchor.constraint(equalTo: categoryScrollView.bottomAnchor),
+            // 위치 아이콘
+            locationIconImageView.widthAnchor.constraint(equalToConstant: 16),
+            locationIconImageView.heightAnchor.constraint(equalToConstant: 16),
+            
+            // 검색 버튼
+            searchButton.centerYAnchor.constraint(equalTo: locationStackView.centerYAnchor),
+            searchButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+            searchButton.widthAnchor.constraint(equalToConstant: 24),
+            searchButton.heightAnchor.constraint(equalToConstant: 24),
+            
+            // 날씨 정보
+            temperatureLabel.topAnchor.constraint(equalTo: locationStackView.bottomAnchor, constant: 4),
+            temperatureLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+            
+            weatherLabel.centerYAnchor.constraint(equalTo: temperatureLabel.centerYAnchor),
+            weatherLabel.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor, constant: 8),
+            
+            // 세그먼트 컨트롤
+            segmentedControl.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -8),
+            segmentedControl.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+            segmentedControl.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 32),
+            
+            // 테이블뷰
+            tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        // 초기 데이터 설정
+        locationLabel.text = "영등포구"
+        temperatureLabel.text = "17°C"
+        weatherLabel.text = "구름 조금"
     }
-    
-    private func addCategoryButton(for categoryInfo: CategoryInfo) {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 17
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        
-        // 카테고리 이름만 설정
-        let attributedTitle = NSMutableAttributedString(
-            string: categoryInfo.name,
-            attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)]
-        )
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        
-        selectedCategories
-            .map { $0.contains(categoryInfo.name) }
-            .bind { [weak button] isSelected in
-                button?.backgroundColor = isSelected ? .systemBlue : .systemGray6
-                
-                // 카테고리 이름만 설정
-                let attributedTitle = NSMutableAttributedString(
-                    string: categoryInfo.name,
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 14, weight: .medium),
-                        .foregroundColor: isSelected ? UIColor.white : UIColor.black
-                    ]
-                )
-                button?.setAttributedTitle(attributedTitle, for: .normal)
-            }
-            .disposed(by: disposeBag)
-        
-        button.rx.tap
-            .withLatestFrom(selectedCategories) { _, categories -> Set<String> in
-                var updatedCategories = categories
-                if categoryInfo.name == "전체" {
-                    return ["전체"]
-                } else {
-                    updatedCategories.remove("전체")
-                    if updatedCategories.contains(categoryInfo.name) {
-                        updatedCategories.remove(categoryInfo.name)
-                    } else {
-                        updatedCategories.insert(categoryInfo.name)
-                    }
-                    if updatedCategories.isEmpty {
-                        updatedCategories = ["전체"]
-                    }
-                }
-                return updatedCategories
-            }
-            .bind(to: selectedCategories)
-            .disposed(by: disposeBag)
-        
-        categoryStackView.addArrangedSubview(button)
-    }
-    private func updateCategories(_ categories: [CategoryInfo]) {
-        allCategories = categories
-        categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // "전체" 카테고리는 항상 표시
-        if let totalCategory = categories.first(where: { $0.name == "전체" }) {
-            addCategoryButton(for: totalCategory)
-        }
-        
-        // 나머지 카테고리들 모두 표시
-        categories.filter { $0.name != "전체" }
-            .forEach { categoryInfo in
-                addCategoryButton(for: categoryInfo)
-            }
-    }
-    
     
     func bind(to viewModel: MapViewModel) {
         self.viewModel = viewModel
         
-        viewModel.categories
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] categories in
-                self?.updateCategories(categories)
-            })
-            .disposed(by: disposeBag)
-        
-        selectedCategories
-            .bind(to: viewModel.categoriesSelected)
-            .disposed(by: disposeBag)
-        
         tableView.delegate = nil
         tableView.dataSource = nil
         
+        // 위치 정보 바인딩
+        viewModel.locationTitle
+            .observe(on: MainScheduler.instance)
+            .bind(to: locationLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        // 놀이터 목록 바인딩
         viewModel.playgrounds
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
             )) { [weak self] index, playground, cell in
-                // currentLocation이 있으면 거리 계산
                 if let currentLocation = self?.currentLocation {
                     let playgroundLocation = CLLocation(
                         latitude: playground.coordinate.latitude,
@@ -194,8 +215,9 @@ class PlaygroundListContent: UIView, BottomSheetContent {
             }
             .disposed(by: disposeBag)
         
+        // 놀이터 선택 바인딩
         tableView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
+            .subscribe(onNext: { [weak self] (indexPath: IndexPath) in
                 guard let playground = self?.viewModel?.playgrounds.value[indexPath.row] else { return }
                 NotificationCenter.default.post(
                     name: .playgroundSelected,
@@ -204,6 +226,19 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                 )
             })
             .disposed(by: disposeBag)
+        
+        // 세그먼트 컨트롤 바인딩
+        segmentedControl.rx.selectedSegmentIndex
+            .map { index -> Set<String> in
+                switch index {
+                case 0: return ["전체"]
+                case 1: return ["실내"]
+                case 2: return ["실외"]
+                default: return ["전체"]
+                }
+            }
+            .bind(to: viewModel.categoriesSelected)
+            .disposed(by: disposeBag)
     }
     
     func prepareForReuse() {
@@ -211,6 +246,27 @@ class PlaygroundListContent: UIView, BottomSheetContent {
     }
 }
 
+// MARK: - Extension for layout updates
+extension PlaygroundListContent {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // 세그먼트 컨트롤 모서리 둥글게
+        segmentedControl.layer.cornerRadius = 8
+        segmentedControl.layer.masksToBounds = true
+        
+        // 커스텀 구분선 추가
+        if let hairline = headerView.layer.sublayers?.first(where: { $0.name == "hairline" }) {
+            hairline.frame = CGRect(x: 0, y: headerView.bounds.height - 1, width: headerView.bounds.width, height: 1)
+        } else {
+            let hairline = CALayer()
+            hairline.name = "hairline"
+            hairline.frame = CGRect(x: 0, y: headerView.bounds.height - 1, width: headerView.bounds.width, height: 1)
+            hairline.backgroundColor = UIColor.systemGray6.cgColor
+            headerView.layer.addSublayer(hairline)
+        }
+    }
+}
 extension Notification.Name {
     static let playgroundSelected = Notification.Name("playgroundSelected")
 }

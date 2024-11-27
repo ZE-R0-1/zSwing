@@ -14,22 +14,19 @@ class PlaygroundCell: UITableViewCell {
     private let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 6
-        view.layer.shadowOpacity = 0.1
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private let thumbnailImageView: UIImageView = {
+    private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = 20
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.systemGray4.cgColor
         imageView.backgroundColor = .systemGray6
-        imageView.image = UIImage(systemName: "figure.play")
+        imageView.image = UIImage(systemName: "mappin.circle.fill")
         imageView.tintColor = .systemBlue
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -37,29 +34,28 @@ class PlaygroundCell: UITableViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.textColor = .black
-        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let distanceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 13)
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let photoStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.spacing = 8
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
+    private let photoGridView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
+    
+    private var photoImageViews: [UIImageView] = []
     
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -73,72 +69,82 @@ class PlaygroundCell: UITableViewCell {
     
     // MARK: - UI Setup
     private func setupUI() {
-        backgroundColor = .clear
+        backgroundColor = .white
         selectionStyle = .none
         
         contentView.addSubview(containerView)
-        containerView.addSubview(thumbnailImageView)
+        containerView.addSubview(profileImageView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(distanceLabel)
-        containerView.addSubview(photoStackView)
+        containerView.addSubview(photoGridView)
         
-        // 기본 이미지 3개 추가
-        for _ in 0..<3 {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            imageView.layer.cornerRadius = 8
-            imageView.backgroundColor = .systemGray6
-            imageView.image = UIImage(systemName: "photo")
-            imageView.tintColor = .systemGray3
-            photoStackView.addArrangedSubview(imageView)
-        }
+        // 3x1 그리드로 이미지 추가
+        setupPhotoGrid()
         
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
-            thumbnailImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
-            thumbnailImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            thumbnailImageView.widthAnchor.constraint(equalToConstant: 50),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: 50),
+            profileImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            profileImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            profileImageView.widthAnchor.constraint(equalToConstant: 40),
+            profileImageView.heightAnchor.constraint(equalToConstant: 40),
             
-            nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
-            nameLabel.leadingAnchor.constraint(equalTo: thumbnailImageView.trailingAnchor, constant: 12),
+            nameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             
-            distanceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
+            distanceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             distanceLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            distanceLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
             
-            photoStackView.topAnchor.constraint(equalTo: distanceLabel.bottomAnchor, constant: 12),
-            photoStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            photoStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            photoStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16),
-            photoStackView.heightAnchor.constraint(equalTo: photoStackView.widthAnchor, multiplier: 0.3)
+            photoGridView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
+            photoGridView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            photoGridView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            photoGridView.heightAnchor.constraint(equalTo: photoGridView.widthAnchor, multiplier: 0.33),
+            photoGridView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
     }
     
+    private func setupPhotoGrid() {
+        // Clear existing image views
+        photoImageViews.forEach { $0.removeFromSuperview() }
+        photoImageViews.removeAll()
+        
+        let spacing: CGFloat = 1
+        let imageCount = 3
+        
+        for i in 0..<imageCount {
+            let imageView = UIImageView()
+            imageView.contentMode = .scaleAspectFit
+            imageView.clipsToBounds = true
+            imageView.image = UIImage(systemName: "photo")
+            imageView.tintColor = .systemGray3
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            photoGridView.addSubview(imageView)
+            photoImageViews.append(imageView)
+            
+            // Layout constraints
+            NSLayoutConstraint.activate([
+                imageView.topAnchor.constraint(equalTo: photoGridView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: photoGridView.bottomAnchor),
+                imageView.widthAnchor.constraint(equalTo: photoGridView.widthAnchor, multiplier: 1.0/3.0, constant: -spacing * 2/3),
+                imageView.leadingAnchor.constraint(equalTo: i == 0 ? photoGridView.leadingAnchor : photoImageViews[i-1].trailingAnchor, constant: spacing)
+            ])
+        }
+    }
+
     // MARK: - Configuration
     func configure(with playground: Playground, distance: Double?) {
-        // 초기 상태 설정
-        alpha = 0.0
-        transform = CGAffineTransform(translationX: 20, y: 0)
-        
         nameLabel.text = playground.pfctNm
         
         if let distance = distance {
-            distanceLabel.text = String(format: "%.1fkm", distance)
+            let distanceText = String(format: "%.1fkm", distance)
+            distanceLabel.text = "\(distanceText) · 게시물 \(Int.random(in: 10...100))+"
         } else {
-            distanceLabel.text = "거리 정보 없음"
-        }
-        
-        // 애니메이션과 함께 표시
-        UIView.animate(withDuration: 0.3, delay: 0.1, options: .curveEaseOut) {
-            self.alpha = 1.0
-            self.transform = .identity
+            distanceLabel.text = "거리 정보 없음 · 게시물 \(Int.random(in: 10...100))+"
         }
     }
     
@@ -146,11 +152,8 @@ class PlaygroundCell: UITableViewCell {
         super.prepareForReuse()
         nameLabel.text = nil
         distanceLabel.text = nil
-        // Reset images to placeholder
-        photoStackView.arrangedSubviews.forEach { view in
-            if let imageView = view as? UIImageView {
-                imageView.image = UIImage(systemName: "photo")
-            }
+        photoImageViews.forEach { imageView in
+            imageView.image = UIImage(systemName: "photo")
         }
     }
 }

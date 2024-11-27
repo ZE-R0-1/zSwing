@@ -31,10 +31,6 @@ class MainTabBarController: UITabBarController {
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
-        tabBar.layer.shadowColor = UIColor.black.cgColor
-        tabBar.layer.shadowOffset = CGSize(width: 0, height: -3)
-        tabBar.layer.shadowRadius = 4
-        tabBar.layer.shadowOpacity = 0.1
         tabBar.layer.cornerRadius = 15
     }
 }
