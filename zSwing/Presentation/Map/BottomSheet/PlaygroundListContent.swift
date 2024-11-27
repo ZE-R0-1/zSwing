@@ -101,6 +101,13 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         return button
     }()
     
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -135,6 +142,9 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         
         // 테이블뷰 설정
         addSubview(tableView)
+        
+        // 로딩 인디케이터 추가
+        addSubview(loadingIndicator)
         
         // Auto Layout 설정
         NSLayoutConstraint.activate([
@@ -175,7 +185,11 @@ class PlaygroundListContent: UIView, BottomSheetContent {
             tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            // 로딩 인디케이터
+            loadingIndicator.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: tableView.centerYAnchor)
         ])
         
         // 초기 데이터 설정
@@ -190,14 +204,30 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         tableView.delegate = nil
         tableView.dataSource = nil
         
+        // 로딩 상태 바인딩
+        viewModel.isLoading
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLoading in
+                if isLoading {
+                    self?.tableView.isHidden = true
+                    self?.loadingIndicator.startAnimating()
+                } else {
+                    self?.tableView.isHidden = false
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
+            .disposed(by: disposeBag)
+        
         // 위치 정보 바인딩
         viewModel.locationTitle
             .observe(on: MainScheduler.instance)
             .bind(to: locationLabel.rx.text)
             .disposed(by: disposeBag)
         
-        // 놀이터 목록 바인딩
+        // 데이터 로딩이 완료된 후에만 테이블뷰 바인딩
         viewModel.playgrounds
+            .observe(on: MainScheduler.instance)
+            .filter { _ in !viewModel.isLoading.value }
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
@@ -214,7 +244,7 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                 }
             }
             .disposed(by: disposeBag)
-        
+
         // 놀이터 선택 바인딩
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] (indexPath: IndexPath) in

@@ -116,7 +116,7 @@ class MapViewModel {
         searchButtonTapped
             .withLatestFrom(regionDidChange)
             .do(onNext: { [weak self] region in
-                self?.isLoading.accept(true)
+                self?.isLoading.accept(true)  // 로딩 시작
                 self?.shouldShowSearchButton.accept(false)
                 self?.updateLocationTitle(
                     latitude: region.center.latitude,
@@ -135,20 +135,19 @@ class MapViewModel {
                 }
             }
             .do(onNext: { [weak self] playgrounds in
+                self?.isLoading.accept(false)  // 로딩 완료
                 if playgrounds.isEmpty {
                     self?.categories.accept([CategoryInfo(name: "전체", count: 0)])
                 } else {
                     self?.loadRideCategories(for: playgrounds)
                 }
-                self?.isLoading.accept(false)
                 self?.shouldShowBottomSheet.accept(!playgrounds.isEmpty)
             })
             .subscribe(onNext: { [weak self] playgrounds in
                 self?.allPlaygrounds.accept(playgrounds)
-                self?.filteredPlaygrounds.accept(playgrounds)  // 초기에는 모든 놀이터 표시
+                self?.filteredPlaygrounds.accept(playgrounds)
             })
             .disposed(by: disposeBag)
-
         
         // 지도 영역 변경시 검색 버튼 표시
         regionDidChange

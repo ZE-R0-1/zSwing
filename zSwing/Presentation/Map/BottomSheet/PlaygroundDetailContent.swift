@@ -160,118 +160,118 @@ class PlaygroundDetailContent: UIView, BottomSheetContent {
     }
     
     private func createRidesSection() -> UIView {
-            let containerView = UIView()
-            
-            let titleLabel = UILabel()
-            titleLabel.text = "놀이기구"
-            titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
-            titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            let collectionView = createRidesCollectionView()
-            collectionView.translatesAutoresizingMaskIntoConstraints = false
-            
-            containerView.addSubview(titleLabel)
-            containerView.addSubview(collectionView)
-            
-            NSLayoutConstraint.activate([
-                titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
-                titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                
-                collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
-                collectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                collectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                collectionView.heightAnchor.constraint(equalToConstant: 120),
-                collectionView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-            ])
-            
-            return containerView
-        }
+        let containerView = UIView()
         
-        private func createRidesCollectionView() -> UICollectionView {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: 100, height: 120)
-            layout.minimumInteritemSpacing = 12
-            
-            let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-            collectionView.backgroundColor = .clear
-            collectionView.showsHorizontalScrollIndicator = false
-            collectionView.register(RideCell.self, forCellWithReuseIdentifier: "RideCell")
-            collectionView.delegate = self
-            collectionView.dataSource = self
-            
-            return collectionView
-        }
+        let titleLabel = UILabel()
+        titleLabel.text = "놀이기구"
+        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        func prepareForReuse() {
-            // 정리 작업
-        }
+        let collectionView = createRidesCollectionView()
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(collectionView)
+        
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            
+            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            collectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 120),
+            collectionView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+        
+        return containerView
     }
+    
+    private func createRidesCollectionView() -> UICollectionView {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 100, height: 120)
+        layout.minimumInteritemSpacing = 12
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(RideCell.self, forCellWithReuseIdentifier: "RideCell")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        return collectionView
+    }
+    
+    func prepareForReuse() {
+        // 정리 작업
+    }
+}
 
-    extension PlaygroundDetailContent: UICollectionViewDelegate, UICollectionViewDataSource {
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return playground.rides.count
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RideCell", for: indexPath) as! RideCell
-            let ride = playground.rides[indexPath.item]
-            cell.configure(with: ride)
-            return cell
-        }
+extension PlaygroundDetailContent: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return playground.rides.count
     }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RideCell", for: indexPath) as! RideCell
+        let ride = playground.rides[indexPath.item]
+        cell.configure(with: ride)
+        return cell
+    }
+}
 
-    // MARK: - RideCell
-    class RideCell: UICollectionViewCell {
-        private let iconImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFit
-            imageView.tintColor = .systemBlue
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            return imageView
-        }()
-        
-        private let nameLabel: UILabel = {
-            let label = UILabel()
-            label.font = .systemFont(ofSize: 14)
-            label.textAlignment = .center
-            label.numberOfLines = 2
-            label.translatesAutoresizingMaskIntoConstraints = false
-            return label
-        }()
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            setupUI()
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupUI() {
-            backgroundColor = .systemGray6
-            layer.cornerRadius = 12
-            
-            contentView.addSubview(iconImageView)
-            contentView.addSubview(nameLabel)
-            
-            NSLayoutConstraint.activate([
-                iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-                iconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-                iconImageView.widthAnchor.constraint(equalToConstant: 40),
-                iconImageView.heightAnchor.constraint(equalToConstant: 40),
-                
-                nameLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 8),
-                nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-                nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-                nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8)
-            ])
-        }
-        
-        func configure(with ride: Ride) {
-            nameLabel.text = ride.rideNm
-            iconImageView.image = UIImage(systemName: "figure.play")
-        }
+// MARK: - RideCell
+class RideCell: UICollectionViewCell {
+    private let iconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemBlue
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupUI() {
+        backgroundColor = .systemGray6
+        layer.cornerRadius = 12
+        
+        contentView.addSubview(iconImageView)
+        contentView.addSubview(nameLabel)
+        
+        NSLayoutConstraint.activate([
+            iconImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            iconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 40),
+            iconImageView.heightAnchor.constraint(equalToConstant: 40),
+            
+            nameLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 8),
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8)
+        ])
+    }
+    
+    func configure(with ride: Ride) {
+        nameLabel.text = ride.rideNm
+        iconImageView.image = UIImage(systemName: "figure.play")
+    }
+}
