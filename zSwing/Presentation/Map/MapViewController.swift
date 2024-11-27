@@ -17,7 +17,6 @@ class MapViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var bottomSheetView: CustomBottomSheetView!
     private var mapViewDelegate: MapViewDelegate?
-    private var currentLocation: CLLocation?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -241,17 +240,6 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
-    private func calculateDistance(for playground: Playground) -> Double? {
-        guard let userLocation = currentLocation else { return nil }
-        
-        let playgroundLocation = CLLocation(
-            latitude: playground.coordinate.latitude,
-            longitude: playground.coordinate.longitude
-        )
-        
-        return playgroundLocation.distance(from: userLocation) / 1000.0  // meters to kilometers
-    }
-    
     private func updateMapRegion(with location: MapLocation) {
         let coordinate = CLLocationCoordinate2D(
             latitude: location.latitude,

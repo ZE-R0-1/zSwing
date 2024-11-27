@@ -78,8 +78,10 @@ class PlaygroundCell: UITableViewCell {
         containerView.addSubview(distanceLabel)
         containerView.addSubview(photoGridView)
         
-        // 3x1 그리드로 이미지 추가
         setupPhotoGrid()
+        
+        let gridWidthConstraint = photoGridView.widthAnchor.constraint(equalTo: containerView.widthAnchor, constant: -32)
+        gridWidthConstraint.priority = .defaultHigh // 우선순위 조정
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -101,8 +103,8 @@ class PlaygroundCell: UITableViewCell {
             
             photoGridView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
             photoGridView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            photoGridView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            photoGridView.heightAnchor.constraint(equalTo: photoGridView.widthAnchor, multiplier: 0.33),
+            gridWidthConstraint,
+            photoGridView.heightAnchor.constraint(equalToConstant: 114), // 고정 높이로 변경
             photoGridView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
     }

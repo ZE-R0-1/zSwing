@@ -232,12 +232,12 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
             )) { [weak self] index, playground, cell in
-                if let currentLocation = self?.currentLocation {
+                if let userLocation = self?.locationManager.location {
                     let playgroundLocation = CLLocation(
                         latitude: playground.coordinate.latitude,
                         longitude: playground.coordinate.longitude
                     )
-                    let distance = currentLocation.distance(from: playgroundLocation) / 1000.0
+                    let distance = userLocation.distance(from: playgroundLocation) / 1000.0
                     cell.configure(with: playground, distance: distance)
                 } else {
                     cell.configure(with: playground, distance: nil)
