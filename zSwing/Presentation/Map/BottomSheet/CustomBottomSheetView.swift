@@ -34,6 +34,7 @@ class CustomBottomSheetView: UIView {
     private var contentScrollView: UIScrollView?
     private var currentContent: BottomSheetContent?
     private var panStartLocation: CGFloat = 0
+    private var isDraggingFromNonScrollView: Bool = false
     
     weak var delegate: BottomSheetDelegate?
     
@@ -118,6 +119,39 @@ class CustomBottomSheetView: UIView {
         ])
     }
     
+    // MARK: - Gesture Setup
+    private func setupGestures() {
+        let headerPanGesture = UIPanGestureRecognizer()
+        headerView.addGestureRecognizer(headerPanGesture)
+        
+        headerPanGesture.rx.event
+            .subscribe(onNext: { [weak self] gesture in
+                self?.isDraggingFromNonScrollView = true
+                self?.handlePanGesture(gesture)
+            })
+            .disposed(by: disposeBag)
+        
+        let contentPanGesture = rx.panGesture()
+        
+        contentPanGesture
+            .when(.began, .changed, .ended)
+            .subscribe(onNext: { [weak self] gesture in
+                guard let self = self else { return }
+                
+                // Check if the gesture started in a non-scrollview area
+                if gesture.state == .began {
+                    let location = gesture.location(in: self)
+                    if let scrollView = self.contentScrollView,
+                       let scrollViewFrame = scrollView.superview?.convert(scrollView.frame, to: self) {
+                        self.isDraggingFromNonScrollView = !scrollViewFrame.contains(location)
+                    }
+                }
+                
+                self.handlePanGesture(gesture)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     // MARK: - Content Management
     func transition(to contentType: BottomSheetContentType, animated: Bool = true) {
         currentContent?.prepareForReuse()
@@ -128,7 +162,7 @@ class CustomBottomSheetView: UIView {
         case .playgroundList:
             let listContent = PlaygroundListContent()
             if let viewModel = self.viewModel {
-                listContent.bind(to: viewModel)  // 뷰모델 바인딩 추가
+                listContent.bind(to: viewModel)
             }
             newContent = listContent
         case .playgroundDetail(let playground):
@@ -138,10 +172,16 @@ class CustomBottomSheetView: UIView {
         addContent(newContent, animated: animated)
     }
     
+    func bind(to viewModel: MapViewModel) {
+        self.viewModel = viewModel
+        if let listContent = currentContent as? PlaygroundListContent {
+            listContent.bind(to: viewModel)
+        }
+    }
+    
     func addContent(_ content: BottomSheetContent, animated: Bool) {
         currentContent = content
         
-        // DetailContent의 닫기 버튼 처리
         if let detailContent = content as? PlaygroundDetailContent {
             detailContent.closeButtonTapped
                 .subscribe(onNext: { [weak self] _ in
@@ -167,26 +207,6 @@ class CustomBottomSheetView: UIView {
         
         contentScrollView = content.contentScrollView
         updateScrollEnabled()
-    }
-    
-    // MARK: - Gesture Setup
-    private func setupGestures() {
-        let panGesture = rx.panGesture()
-        
-        panGesture
-            .when(.began, .changed, .ended)
-            .subscribe(onNext: { [weak self] gesture in
-                self?.handlePanGesture(gesture)
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Public Methods
-    func bind(to viewModel: MapViewModel) {
-        self.viewModel = viewModel  // viewModel 저장
-        if let listContent = currentContent as? PlaygroundListContent {
-            listContent.bind(to: viewModel)
-        }
     }
     
     func addContentView(_ view: UIView) {
@@ -272,10 +292,9 @@ class CustomBottomSheetView: UIView {
             previousPanPoint = heightConstraint?.constant ?? 0
             
         case .changed:
-            // max 상태에서의 처리
             if currentHeight == .max {
-                // 테이블뷰가 맨 위에 있고 아래로 드래그하는 경우
-                if scrollView.contentOffset.y <= 0 && translation > 0 {
+                // 테이블뷰가 맨 위에 있거나 non-scrollView 영역을 드래그하는 경우 시트 이동
+                if (scrollView.contentOffset.y <= 0 && translation > 0) || isDraggingFromNonScrollView {
                     scrollView.contentOffset.y = 0
                     let newHeight = previousPanPoint - translation
                     let heightPercentage = newHeight / screenHeight
@@ -283,7 +302,9 @@ class CustomBottomSheetView: UIView {
                     self.heightPercentage.accept(heightPercentage)
                 }
                 // 그 외의 경우는 테이블뷰 스크롤 허용
-                return
+                else if !isDraggingFromNonScrollView {
+                    return
+                }
             }
             
             // 그 외 상태에서는 일반적인 바텀시트 동작
@@ -295,17 +316,17 @@ class CustomBottomSheetView: UIView {
             self.heightPercentage.accept(heightPercentage)
             
         case .ended, .cancelled:
+            isDraggingFromNonScrollView = false
             let currentHeightPercentage = (heightConstraint?.constant ?? 0) / screenHeight
             
-            // 속도가 빠른 경우 스와이프 방향으로 이동
             if abs(velocity) > 1500 {
-                if velocity > 0 {  // 아래로 스와이프
-                    if currentHeight == .max && scrollView.contentOffset.y <= 0 {
+                if velocity > 0 {
+                    if currentHeight == .max && (scrollView.contentOffset.y <= 0 || isDraggingFromNonScrollView) {
                         updateHeight(.mid)
                     } else if currentHeight != .max {
                         updateHeight(.min)
                     }
-                } else {  // 위로 스와이프
+                } else {
                     if currentHeight == .min {
                         updateHeight(.mid)
                     } else {
@@ -315,7 +336,6 @@ class CustomBottomSheetView: UIView {
                 return
             }
             
-            // 속도가 느린 경우 가장 가까운 높이로 이동
             let targetHeight: SheetHeight
             if currentHeightPercentage < 0.3 {
                 targetHeight = .min

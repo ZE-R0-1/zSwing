@@ -22,8 +22,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         self.diContainer = diContainer
         self.tabBarController = MainTabBarController()
         
-        let viewModel = MainTabBarViewModel(coordinator: self)
-        (tabBarController as? MainTabBarController)?.configure(with: viewModel)
+        (tabBarController as? MainTabBarController)?.setupAppearance()
     }
     
     func start() {
@@ -44,3 +43,4 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         tabBarController.selectedIndex = 0
     }
 }
+
