@@ -228,6 +228,22 @@ class PlaygroundListContent: UIView, BottomSheetContent {
         viewModel.playgrounds
             .observe(on: MainScheduler.instance)
             .filter { _ in !viewModel.isLoading.value }
+            .map { [weak self] playgrounds -> [Playground] in
+                guard let userLocation = self?.locationManager.location else {
+                    return playgrounds
+                }
+                
+                return playgrounds.map { playground -> (Playground, Double) in
+                    let playgroundLocation = CLLocation(
+                        latitude: playground.coordinate.latitude,
+                        longitude: playground.coordinate.longitude
+                    )
+                    let distance = userLocation.distance(from: playgroundLocation)
+                    return (playground, distance)
+                }
+                .sorted { $0.1 < $1.1 }
+                .map { $0.0 }
+            }
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
@@ -244,7 +260,6 @@ class PlaygroundListContent: UIView, BottomSheetContent {
                 }
             }
             .disposed(by: disposeBag)
-
         // 놀이터 선택 바인딩
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] (indexPath: IndexPath) in
