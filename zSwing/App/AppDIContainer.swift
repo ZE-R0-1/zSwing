@@ -35,8 +35,7 @@ final class AppDIContainer {
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
             useCase: mapUseCase,
-            playgroundUseCase: playgroundUseCase,
-            rideUseCase: rideUseCase
+            playgroundUseCase: playgroundUseCase
         )
     }
     

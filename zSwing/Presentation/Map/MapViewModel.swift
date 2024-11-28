@@ -14,7 +14,6 @@ class MapViewModel {
     // MARK: - Properties
     private let useCase: MapUseCase
     private let playgroundUseCase: PlaygroundUseCase
-    private let rideUseCase: RideUseCase
     private let disposeBag = DisposeBag()
     
     // MARK: - Inputs
@@ -29,24 +28,21 @@ class MapViewModel {
     let locationTitle = BehaviorRelay<String>(value: "")
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
-    let categories = BehaviorRelay<[CategoryInfo]>(value: [])
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     let shouldShowBottomSheet = BehaviorRelay<Bool>(value: true)
     
     // MARK: - Private Properties
     private let allPlaygrounds = BehaviorRelay<[Playground]>(value: [])
     private let filteredPlaygrounds = BehaviorRelay<[Playground]>(value: [])
-    private let ridesByPlayground = BehaviorRelay<[String: [Ride]]>(value: [:])  // 놀이터별 놀이기구 데이터 저장
     
     // 필터링된 놀이터를 외부에 노출하는 computed property
     var playgrounds: BehaviorRelay<[Playground]> {
         return filteredPlaygrounds
     }
     
-    init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase, rideUseCase: RideUseCase) {
+    init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase) {
         self.useCase = useCase
         self.playgroundUseCase = playgroundUseCase
-        self.rideUseCase = rideUseCase
         setupBindings()
     }
     
@@ -116,7 +112,7 @@ class MapViewModel {
         searchButtonTapped
             .withLatestFrom(regionDidChange)
             .do(onNext: { [weak self] region in
-                self?.isLoading.accept(true)  // 로딩 시작
+                self?.isLoading.accept(true)
                 self?.shouldShowSearchButton.accept(false)
                 self?.updateLocationTitle(
                     latitude: region.center.latitude,
@@ -135,12 +131,7 @@ class MapViewModel {
                 }
             }
             .do(onNext: { [weak self] playgrounds in
-                self?.isLoading.accept(false)  // 로딩 완료
-                if playgrounds.isEmpty {
-                    self?.categories.accept([CategoryInfo(name: "전체", count: 0)])
-                } else {
-                    self?.loadRideCategories(for: playgrounds)
-                }
+                self?.isLoading.accept(false)
                 self?.shouldShowBottomSheet.accept(!playgrounds.isEmpty)
             })
             .subscribe(onNext: { [weak self] playgrounds in
@@ -158,69 +149,16 @@ class MapViewModel {
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
         
-        // 카테고리 선택에 따른 필터링 로직 수정
+        // 카테고리 선택에 따른 필터링
         categoriesSelected
-            .withLatestFrom(Observable.combineLatest(
-                allPlaygrounds,
-                ridesByPlayground
-            )) { (selectedCategories, combined) -> [Playground] in
-                let (playgrounds, ridesByPfctSn) = combined
-                
+            .withLatestFrom(allPlaygrounds) { (selectedCategories, playgrounds) -> [Playground] in
                 // "전체" 카테고리가 선택된 경우 모든 놀이터 표시
                 guard !selectedCategories.contains("전체") else {
                     return playgrounds
                 }
-                
-                // 선택된 카테고리의 놀이기구가 있는 놀이터만 필터링
-                return playgrounds.filter { playground in
-                    guard let rides = ridesByPfctSn[playground.pfctSn] else {
-                        return false
-                    }
-                    
-                    // 놀이터가 가진 놀이기구 중 하나라도 선택된 카테고리에 포함되는지 확인
-                    return rides.contains { ride in
-                        selectedCategories.contains(ride.rideNm)
-                    }
-                }
+                return []  // 현재는 실내/실외 필터링이 구현되지 않았으므로 빈 배열 반환
             }
             .bind(to: playgrounds)
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Private Methods
-    private func loadRideCategories(for playgrounds: [Playground]) {
-        var ridesByPlaygroundDict: [String: [Ride]] = [:]
-        var categoryCountMap: [String: Int] = [:]  // 카테고리별 수량 저장
-        
-        Observable.from(playgrounds)
-            .flatMap { [weak self] playground -> Observable<[Ride]> in
-                guard let self = self else { return .empty() }
-                return self.rideUseCase.fetchRides(for: playground.pfctSn)
-                    .do(onNext: { rides in
-                        ridesByPlaygroundDict[playground.pfctSn] = rides
-                        // 각 카테고리별 수량 계산
-                        rides.forEach { ride in
-                            categoryCountMap[ride.rideNm, default: 0] += 1
-                        }
-                    })
-            }
-            .map { _ in categoryCountMap }
-            .map { countMap -> [CategoryInfo] in
-                // "전체" 카테고리 추가
-                let totalCount = ridesByPlaygroundDict.values.reduce(0) { $0 + $1.count }
-                var categoryInfos = [CategoryInfo(name: "전체", count: totalCount)]
-                
-                // 나머지 카테고리 정보 추가
-                categoryInfos.append(contentsOf: countMap.map {
-                    CategoryInfo(name: $0.key, count: $0.value)
-                }.sorted { $0.name < $1.name })
-                
-                return categoryInfos
-            }
-            .do(onNext: { [weak self] _ in
-                self?.ridesByPlayground.accept(ridesByPlaygroundDict)
-            })
-            .bind(to: categories)
             .disposed(by: disposeBag)
     }
     
