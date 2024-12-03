@@ -94,12 +94,12 @@ class MapViewController: UIViewController {
         
         // 어노테이션 뷰 등록
         mapView.register(
-            EnhancedPlaygroundAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: EnhancedPlaygroundAnnotationView.identifier
+            PlaygroundAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
         )
         mapView.register(
-            EnhancedPlaygroundClusterAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier
+            PlaygroundClusterAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
         )
         
         mapView.delegate = self
@@ -312,21 +312,21 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let cluster = annotation as? MKClusterAnnotation {
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier,
+                withIdentifier: PlaygroundClusterAnnotationView.identifier,
                 for: cluster
-            ) as? EnhancedPlaygroundClusterAnnotationView ?? EnhancedPlaygroundClusterAnnotationView(
+            ) as? PlaygroundClusterAnnotationView ?? PlaygroundClusterAnnotationView(
                 annotation: cluster,
-                reuseIdentifier: EnhancedPlaygroundClusterAnnotationView.identifier
+                reuseIdentifier: PlaygroundClusterAnnotationView.identifier
             )
             annotationView.configure(with: cluster)
             return annotationView
         } else if let playground = annotation as? PlaygroundAnnotation {
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: EnhancedPlaygroundAnnotationView.identifier,
+                withIdentifier: PlaygroundAnnotationView.identifier,
                 for: playground
-            ) as? EnhancedPlaygroundAnnotationView ?? EnhancedPlaygroundAnnotationView(
+            ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
                 annotation: playground,
-                reuseIdentifier: EnhancedPlaygroundAnnotationView.identifier
+                reuseIdentifier: PlaygroundAnnotationView.identifier
             )
             annotationView.clusteringIdentifier = "playground"
             return annotationView
@@ -335,7 +335,7 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
+        if let clusterView = view as? PlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: true)
             
             // 클러스터에 포함된 놀이터들을 가져옴
@@ -350,7 +350,7 @@ extension MapViewController: MKMapViewDelegate {
             // 시트를 보여줌
             bottomSheetView.showSheet()
             
-        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView,
+        } else if let annotationView = view as? PlaygroundAnnotationView,
                   let playgroundAnnotation = annotationView.annotation as? PlaygroundAnnotation {
             annotationView.animateSelection(selected: true)
             bottomSheetView.transition(to: .playgroundDetail(playgroundAnnotation.playground))
@@ -358,11 +358,11 @@ extension MapViewController: MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        if let clusterView = view as? EnhancedPlaygroundClusterAnnotationView {
+        if let clusterView = view as? PlaygroundClusterAnnotationView {
             clusterView.animateSelection(selected: false)
             // 클러스터 선택 해제시 전체 놀이터 목록으로 복원
             viewModel.resetPlaygroundFilter()
-        } else if let annotationView = view as? EnhancedPlaygroundAnnotationView {
+        } else if let annotationView = view as? PlaygroundAnnotationView {
             annotationView.animateSelection(selected: false)
         }
     }

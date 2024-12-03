@@ -70,8 +70,8 @@
 		CEFA527E2CE7125300B4280B /* DefaultRideRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA527D2CE7125300B4280B /* DefaultRideRepository.swift */; };
 		CEFA52802CE7187300B4280B /* RideUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA527F2CE7187300B4280B /* RideUseCase.swift */; };
 		CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */; };
-		CEFA528C2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528B2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift */; };
-		CEFA528E2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528D2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift */; };
+		CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */; };
+		CEFA528E2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528D2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,8 +130,8 @@
 		CEFA527D2CE7125300B4280B /* DefaultRideRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultRideRepository.swift; sourceTree = "<group>"; };
 		CEFA527F2CE7187300B4280B /* RideUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideUseCase.swift; sourceTree = "<group>"; };
 		CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundAnnotation.swift; sourceTree = "<group>"; };
-		CEFA528B2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnhancedPlaygroundAnnotationView.swift; path = zSwing/Presentation/Map/Components/EnhancedPlaygroundAnnotationView.swift; sourceTree = SOURCE_ROOT; };
-		CEFA528D2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnhancedPlaygroundClusterAnnotationView.swift; path = zSwing/Presentation/Map/Components/EnhancedPlaygroundClusterAnnotationView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundAnnotationView.swift; path = zSwing/Presentation/Map/Components/PlaygroundAnnotationView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA528D2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundClusterAnnotationView.swift; path = zSwing/Presentation/Map/Components/PlaygroundClusterAnnotationView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,8 +373,8 @@
 			isa = PBXGroup;
 			children = (
 				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
-				CEFA528B2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift */,
-				CEFA528D2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift */,
+				CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */,
+				CEFA528D2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -492,8 +492,8 @@
 				CEFA527C2CE710B300B4280B /* RideRepository.swift in Sources */,
 				CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
-				CEFA528E2CEC605200B4280B /* EnhancedPlaygroundClusterAnnotationView.swift in Sources */,
-				CEFA528C2CEC5F4100B4280B /* EnhancedPlaygroundAnnotationView.swift in Sources */,
+				CEFA528E2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift in Sources */,
+				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */,
 				CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
 				CED477742CF58E61004659AA /* CategoryInfo.swift in Sources */,

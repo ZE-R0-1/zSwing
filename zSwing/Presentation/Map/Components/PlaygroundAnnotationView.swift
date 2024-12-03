@@ -8,7 +8,7 @@
 import UIKit
 import MapKit
 
-class EnhancedPlaygroundAnnotationView: MKAnnotationView {
+class PlaygroundAnnotationView: MKAnnotationView {
     static let identifier = "EnhancedPlaygroundAnnotationView"
     
     // MARK: - UI Components
