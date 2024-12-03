@@ -108,16 +108,19 @@ class LoginViewModel {
         case .success(let user):
             print("✅ Login - User signed in: \(user.email)")
             
+            // 닉네임 존재 여부 확인
             nicknameUseCase.checkNicknameExists()
                 .observe(on: MainScheduler.instance)
                 .subscribe(onNext: { [weak self] hasNickname in
-                    print("👤 Login - Nickname check result: \(hasNickname)")
+                    print("👤 Login - Nickname exists check: \(hasNickname)")
                     self?.isLoading.accept(false)
                     if hasNickname {
-                        print("➡️ Login - Navigating to main screen")
+                        // 닉네임이 있으면 메인화면으로
+                        print("➡️ Login - User has nickname, navigating to main screen")
                         self?.navigationEvent.accept(.mainScreen)
                     } else {
-                        print("➡️ Login - Navigating to nickname screen")
+                        // 닉네임이 없으면 닉네임 설정으로
+                        print("➡️ Login - User needs nickname, navigating to nickname screen")
                         self?.navigationEvent.accept(.nickname)
                     }
                 }, onError: { [weak self] error in

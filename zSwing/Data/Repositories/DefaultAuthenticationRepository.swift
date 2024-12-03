@@ -132,44 +132,60 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: user.accessToken.tokenString)
             
-            self?.firebaseAuth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    print("❌ Firebase auth error: \(error)")
-                    observer.onNext(.failure(error))
-                    return
-                }
-                
+            self?.firebaseAuth.signIn(with: credential) { [weak self] authResult, error in
                 guard let firebaseUser = authResult?.user else {
-                    print("❌ No Firebase user")
                     observer.onNext(.failure(AuthError.userNotFound))
                     return
                 }
                 
-                print("✅ Firebase auth successful, creating user document")
-                // Firestore에 사용자 문서 생성
-                let userData = UserDTO(
-                    id: firebaseUser.uid,
-                    email: firebaseUser.email ?? "",
-                    loginMethod: "google",
-                    createdAt: Timestamp(date: Date()),
-                    lastAccessDate: Timestamp(date: Date())
-                )
-                
-                self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                // 먼저 기존 문서가 있는지 확인
+                self?.firestore.collection("users").document(firebaseUser.uid).getDocument { document, error in
                     if let error = error {
-                        print("❌ Firestore error: \(error)")
                         observer.onNext(.failure(error))
                         return
                     }
                     
-                    print("✅ User document created successfully")
-                    let user = User(
-                        id: firebaseUser.uid,
-                        email: firebaseUser.email ?? "",
-                        loginMethod: .google
-                    )
-                    observer.onNext(.success(user))
-                    observer.onCompleted()
+                    if document?.exists == true {
+                        // 기존 문서가 있으면 lastAccessDate만 업데이트
+                        self?.firestore.collection("users").document(firebaseUser.uid).updateData([
+                            "lastAccessDate": Timestamp(date: Date())
+                        ]) { error in
+                            if let error = error {
+                                observer.onNext(.failure(error))
+                            } else {
+                                let user = User(
+                                    id: firebaseUser.uid,
+                                    email: firebaseUser.email ?? "",
+                                    loginMethod: .google
+                                )
+                                observer.onNext(.success(user))
+                            }
+                            observer.onCompleted()
+                        }
+                    } else {
+                        // 문서가 없을 때만 새로 생성
+                        let userData = UserDTO(
+                            id: firebaseUser.uid,
+                            email: firebaseUser.email ?? "",
+                            loginMethod: "google",
+                            createdAt: Timestamp(date: Date()),
+                            lastAccessDate: Timestamp(date: Date())
+                        )
+                        
+                        self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                            if let error = error {
+                                observer.onNext(.failure(error))
+                            } else {
+                                let user = User(
+                                    id: firebaseUser.uid,
+                                    email: firebaseUser.email ?? "",
+                                    loginMethod: .google
+                                )
+                                observer.onNext(.success(user))
+                            }
+                            observer.onCompleted()
+                        }
+                    }
                 }
             }
         }
@@ -204,30 +220,62 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
             
             print("✅ Apple Sign In Firebase auth successful")
             
-            // Create user document in Firestore
-            let userData = UserDTO(
-                id: firebaseUser.uid,
-                email: firebaseUser.email ?? "",
-                loginMethod: "apple",
-                createdAt: Timestamp(date: Date()),
-                lastAccessDate: Timestamp(date: Date())
-            )
-            
-            // Save to Firestore
-            self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+            // 먼저 기존 문서가 있는지 확인
+            self?.firestore.collection("users").document(firebaseUser.uid).getDocument { document, error in
                 if let error = error {
-                    print("❌ Firestore document creation error: \(error)")
+                    print("❌ Firestore document check error: \(error)")
                     observer.onNext(.failure(error))
+                    return
+                }
+                
+                if document?.exists == true {
+                    print("✅ Existing user document found, updating lastAccessDate")
+                    // 기존 문서가 있으면 lastAccessDate만 업데이트
+                    self?.firestore.collection("users").document(firebaseUser.uid).updateData([
+                        "lastAccessDate": Timestamp(date: Date())
+                    ]) { error in
+                        if let error = error {
+                            print("❌ Firestore update error: \(error)")
+                            observer.onNext(.failure(error))
+                        } else {
+                            print("✅ Document successfully updated")
+                            let user = User(
+                                id: firebaseUser.uid,
+                                email: firebaseUser.email ?? "",
+                                loginMethod: .apple
+                            )
+                            observer.onNext(.success(user))
+                        }
+                        observer.onCompleted()
+                    }
                 } else {
-                    print("✅ Firestore document created successfully for Apple Sign In")
-                    let user = User(
+                    print("🆕 Creating new user document")
+                    // 문서가 없을 때만 새로 생성
+                    let userData = UserDTO(
                         id: firebaseUser.uid,
                         email: firebaseUser.email ?? "",
-                        loginMethod: .apple
+                        loginMethod: "apple",
+                        createdAt: Timestamp(date: Date()),
+                        lastAccessDate: Timestamp(date: Date())
                     )
-                    observer.onNext(.success(user))
+                    
+                    // Save to Firestore
+                    self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                        if let error = error {
+                            print("❌ Firestore document creation error: \(error)")
+                            observer.onNext(.failure(error))
+                        } else {
+                            print("✅ New document created successfully")
+                            let user = User(
+                                id: firebaseUser.uid,
+                                email: firebaseUser.email ?? "",
+                                loginMethod: .apple
+                            )
+                            observer.onNext(.success(user))
+                        }
+                        observer.onCompleted()
+                    }
                 }
-                observer.onCompleted()
             }
         }
     }
@@ -259,13 +307,65 @@ class DefaultAuthenticationRepository: AuthenticationRepository {
                     observer.onNext(.failure(error))
                     observer.onCompleted()
                 }
-            } else if let email = authResult?.user.email {
+            } else if let firebaseUser = authResult?.user {
                 print("✅ Firebase sign in successful")
-                let user = User(id: authResult?.user.uid ?? "",
-                                email: email,
-                                loginMethod: loginMethod)
-                observer.onNext(.success(user))
-                observer.onCompleted()
+                
+                // 기존 문서 확인
+                self?.firestore.collection("users").document(firebaseUser.uid).getDocument { document, error in
+                    if let error = error {
+                        print("❌ Firestore document check error: \(error)")
+                        observer.onNext(.failure(error))
+                        return
+                    }
+                    
+                    if document?.exists == true {
+                        print("✅ Existing user document found, updating lastAccessDate")
+                        // 기존 문서가 있으면 lastAccessDate만 업데이트
+                        self?.firestore.collection("users").document(firebaseUser.uid).updateData([
+                            "lastAccessDate": Timestamp(date: Date())
+                        ]) { error in
+                            if let error = error {
+                                print("❌ Firestore update error: \(error)")
+                                observer.onNext(.failure(error))
+                            } else {
+                                print("✅ Document successfully updated")
+                                let user = User(
+                                    id: firebaseUser.uid,
+                                    email: firebaseUser.email ?? "",
+                                    loginMethod: loginMethod
+                                )
+                                observer.onNext(.success(user))
+                            }
+                            observer.onCompleted()
+                        }
+                    } else {
+                        // 문서가 없는 경우 새로 생성
+                        print("🆕 Creating new user document")
+                        let userData = UserDTO(
+                            id: firebaseUser.uid,
+                            email: firebaseUser.email ?? "",
+                            loginMethod: loginMethod.rawValue,
+                            createdAt: Timestamp(date: Date()),
+                            lastAccessDate: Timestamp(date: Date())
+                        )
+                        
+                        self?.firestore.collection("users").document(firebaseUser.uid).setData(userData.dictionary) { error in
+                            if let error = error {
+                                print("❌ Firestore document creation error: \(error)")
+                                observer.onNext(.failure(error))
+                            } else {
+                                print("✅ New document created successfully")
+                                let user = User(
+                                    id: firebaseUser.uid,
+                                    email: firebaseUser.email ?? "",
+                                    loginMethod: loginMethod
+                                )
+                                observer.onNext(.success(user))
+                            }
+                            observer.onCompleted()
+                        }
+                    }
+                }
             }
         }
     }

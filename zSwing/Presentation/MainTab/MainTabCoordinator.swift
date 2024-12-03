@@ -64,6 +64,10 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
                 navigationController: navigationController
             )
             
+            // coordinator 시작 전에 인스턴스 저장
+            self.authCoordinator = authCoordinator
+            
+            // coordinator 시작 (이 때 LoginViewController의 coordinator가 설정됨)
             authCoordinator.start()
             
             UIView.transition(with: window,
@@ -78,6 +82,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
             }
         }
     }
+    
     private func setupTabs() {
         // Home Tab
         let homeVC = diContainer.makeHomeViewController()

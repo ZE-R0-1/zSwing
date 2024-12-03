@@ -40,14 +40,21 @@ class DefaultAuthCoordinator: AuthCoordinator {
     }
     
     func showMainFlow() {
+        print("🔄 AuthCoordinator - Starting showMainFlow")
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
+            print("✅ AuthCoordinator - Found window")
             let mainTabCoordinator = diContainer.makeMainTabCoordinator(
                 navigationController: navigationController
             )
+            print("✅ AuthCoordinator - Created mainTabCoordinator")
             mainTabCoordinator.start()
+            print("📱 AuthCoordinator - Current window.rootViewController: \(String(describing: window.rootViewController))")
             window.rootViewController = mainTabCoordinator.tabBarController
+            print("📱 AuthCoordinator - Set new rootViewController")
             window.makeKeyAndVisible()
+            print("✅ AuthCoordinator - Completed showMainFlow")
+        } else {
+            print("❌ AuthCoordinator - Could not find window")
         }
-    }
-}
+    }}

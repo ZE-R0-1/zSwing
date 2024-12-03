@@ -33,7 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         checkAuthenticationState(window: window)
     }
     
-    private func checkAuthenticationState(window: UIWindow) {
+    func checkAuthenticationState(window: UIWindow) {
         firebaseAuthService.getCurrentUser()
             .delay(.milliseconds(800), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
