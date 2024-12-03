@@ -20,7 +20,7 @@ protocol ProfileCoordinator: Coordinator {
 class DefaultProfileCoordinator: ProfileCoordinator {
     let navigationController: UINavigationController
     private let diContainer: AppDIContainer
-    private weak var mainCoordinator: MainTabCoordinator?
+    private let mainCoordinator: MainTabCoordinator
     private let disposeBag = DisposeBag()
     
     init(navigationController: UINavigationController,
@@ -48,13 +48,16 @@ class DefaultProfileCoordinator: ProfileCoordinator {
     }
     
     func logout() {
+        print("🔄 Profile coordinator: Starting logout")
         UserDefaults.standard.set(true, forKey: "hasNickname")
-        mainCoordinator?.switchToAuth()
+        print("🔄 Profile coordinator: Calling switchToAuth")
+        mainCoordinator.switchToAuth()
+        print("🔄 Profile coordinator: switchToAuth called")
     }
     
     func withdraw() {
         UserDefaults.standard.removeObject(forKey: "hasNickname")
-        mainCoordinator?.switchToAuth()
+        mainCoordinator.switchToAuth()
     }
     
     func showAlert(title: String, message: String) {

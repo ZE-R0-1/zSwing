@@ -102,33 +102,33 @@ class LoginViewModel {
     }
     
     private func handleSignInResult(_ result: Result<User, Error>) {
-        print("🔄 Handling sign in result")
+        print("🔄 Login - handleSignInResult started")
         
         switch result {
         case .success(let user):
-            print("✅ Login successful for user: \(user.email)")
+            print("✅ Login - User signed in: \(user.email)")
             
-            // 닉네임 존재 여부 확인
             nicknameUseCase.checkNicknameExists()
                 .observe(on: MainScheduler.instance)
                 .subscribe(onNext: { [weak self] hasNickname in
+                    print("👤 Login - Nickname check result: \(hasNickname)")
                     self?.isLoading.accept(false)
                     if hasNickname {
-                        print("👤 User has nickname, navigating to main screen")
+                        print("➡️ Login - Navigating to main screen")
                         self?.navigationEvent.accept(.mainScreen)
                     } else {
-                        print("👤 User needs nickname, navigating to nickname screen")
+                        print("➡️ Login - Navigating to nickname screen")
                         self?.navigationEvent.accept(.nickname)
                     }
                 }, onError: { [weak self] error in
-                    print("❌ Error checking nickname: \(error)")
+                    print("❌ Login - Nickname check error: \(error)")
                     self?.isLoading.accept(false)
                     self?.error.accept(error)
                 })
                 .disposed(by: disposeBag)
             
         case .failure(let error):
-            print("❌ Login failed: \(error)")
+            print("❌ Login - Sign in failed: \(error)")
             self.isLoading.accept(false)
             self.error.accept(error)
         }

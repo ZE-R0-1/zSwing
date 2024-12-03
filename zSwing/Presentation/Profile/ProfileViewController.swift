@@ -88,6 +88,7 @@ class ProfileViewController: UIViewController {
     private func setupBindings() {
         // Input bindings
         logoutButton.rx.tap
+            .do(onNext: { print("🔵 Logout button tapped in VC") })
             .bind(to: viewModel.logoutTapped)
             .disposed(by: disposeBag)
         
@@ -108,10 +109,16 @@ class ProfileViewController: UIViewController {
         // Navigation request handling
         viewModel.navigationRequest
             .observe(on: MainScheduler.instance)
+            .do(onNext: { request in
+                print("📱 Navigation request received in VC: \(request)")
+            })
             .subscribe(onNext: { [weak self] request in
                 guard let self = self else { return }
+                
+                print("🚀 Processing navigation request: \(request)")
                 switch request {
                 case .logout:
+                    print("🔄 Calling coordinator logout")
                     self.coordinator?.logout()
                 case .withdraw:
                     self.coordinator?.withdraw()
@@ -131,6 +138,7 @@ class ProfileViewController: UIViewController {
         viewModel.error
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] error in
+                print("❌ Error received: \(error)")
                 self?.coordinator?.showAlert(title: "오류", message: error.localizedDescription)
             })
             .disposed(by: disposeBag)

@@ -40,6 +40,7 @@ class ProfileViewModel {
         // Handle logout
         logoutTapped
             .do(onNext: { [weak self] in
+                print("👆 Logout button tapped")
                 self?.isLoading.accept(true)
             })
             .flatMapLatest { [weak self] _ -> Observable<Result<Void, Error>> in
@@ -48,15 +49,20 @@ class ProfileViewModel {
             }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] result in
+                print("✅ Logout result received")
                 self?.isLoading.accept(false)
+                
                 switch result {
                 case .success:
+                    print("🔄 Emitting logout navigation request")
                     self?.navigationRequest.accept(.logout)
                 case .failure(let error):
+                    print("❌ Logout error: \(error)")
                     self?.error.accept(error)
                 }
             })
             .disposed(by: disposeBag)
+
         
         // Show withdraw confirmation
         withdrawTapped

@@ -25,6 +25,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
     private var homeCoordinator: Coordinator?
     private var mapCoordinator: MapCoordinator?
     private var profileCoordinator: ProfileCoordinator?
+    private var authCoordinator: AuthCoordinator?
     
     init(navigationController: UINavigationController, diContainer: AppDIContainer) {
         self.navigationController = navigationController
@@ -51,24 +52,32 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
     }
     
     func switchToAuth() {
+        print("🔄 MainTab coordinator: Starting switchToAuth")
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
+            print("📱 Current window hierarchy:")
+            print("- Root VC: \(String(describing: window.rootViewController))")
+            print("- Child VCs: \(String(describing: window.rootViewController?.children))")
+            
             let navigationController = UINavigationController()
-            let authCoordinator = DefaultAuthCoordinator(
-                navigationController: navigationController,
-                diContainer: diContainer
+            let authCoordinator = diContainer.makeAuthCoordinator(
+                navigationController: navigationController
             )
+            
             authCoordinator.start()
             
             UIView.transition(with: window,
-                            duration: 0.3,
-                            options: .transitionCrossDissolve,
-                            animations: {
+                             duration: 0.3,
+                             options: .transitionCrossDissolve,
+                             animations: {
                 window.rootViewController = navigationController
-            })
+            }) { completed in
+                print("📱 New window hierarchy:")
+                print("- Root VC: \(String(describing: window.rootViewController))")
+                print("- Child VCs: \(String(describing: window.rootViewController?.children))")
+            }
         }
     }
-    
     private func setupTabs() {
         // Home Tab
         let homeVC = diContainer.makeHomeViewController()

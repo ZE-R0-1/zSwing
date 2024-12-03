@@ -232,10 +232,13 @@ class LoginViewController: UIViewController {
     }
     
     private func handleNavigationEvent(_ event: NavigationEvent) {
+        print("🔄 LoginVC - Handling navigation event: \(event)")
         switch event {
         case .mainScreen:
+            print("➡️ LoginVC - Moving to main screen")
             coordinator?.showMainFlow()
         case .nickname:
+            print("➡️ LoginVC - Moving to nickname screen")
             coordinator?.showNickname()
         }
     }
