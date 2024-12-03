@@ -29,6 +29,10 @@
 		CE7BEE5A2CF557EB004F8915 /* BottomSheetProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */; };
 		CE7BEE5C2CF55933004F8915 /* PlaygroundListContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */; };
 		CE7BEE5E2CF55956004F8915 /* PlaygroundDetailContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */; };
+		CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */; };
+		CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */; };
+		CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */; };
+		CEC373162CFD810200D400D0 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373152CFD810200D400D0 /* Coordinator.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
@@ -50,7 +54,6 @@
 		CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */; };
 		CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */; };
 		CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */; };
-		CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */; };
 		CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */; };
 		CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */; };
 		CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */; };
@@ -89,6 +92,10 @@
 		CE7BEE592CF557EB004F8915 /* BottomSheetProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetProtocols.swift; sourceTree = "<group>"; };
 		CE7BEE5B2CF55933004F8915 /* PlaygroundListContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListContent.swift; sourceTree = "<group>"; };
 		CE7BEE5D2CF55956004F8915 /* PlaygroundDetailContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailContent.swift; sourceTree = "<group>"; };
+		CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
+		CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCoordinator.swift; sourceTree = "<group>"; };
+		CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
+		CEC373152CFD810200D400D0 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
@@ -108,7 +115,6 @@
 		CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDIContainer.swift; sourceTree = "<group>"; };
-		CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
@@ -208,6 +214,7 @@
 				CEFA52622CE34D8300B4280B /* Components */,
 				CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */,
 				CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */,
+				CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -217,8 +224,8 @@
 			children = (
 				CE2B97A22CC0913300FF532F /* AppDelegate.swift */,
 				CE2B97A42CC0913300FF532F /* SceneDelegate.swift */,
-				CEDF13C92CDA07E10090D9CE /* AppCoordinator.swift */,
 				CEDF13C72CDA04710090D9CE /* AppDIContainer.swift */,
+				CEC373152CFD810200D400D0 /* Coordinator.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -248,7 +255,7 @@
 			children = (
 				CEDF13D12CDC57590090D9CE /* MainTab */,
 				CEFA526A2CE490D100B4280B /* Loading */,
-				CEDF13BE2CD9FA3C0090D9CE /* Login */,
+				CEDF13BE2CD9FA3C0090D9CE /* Auth */,
 				CED42A7E2CE1ED3400A7AE7E /* Nickname */,
 				CED42AB22CE2E22500A7AE7E /* Map */,
 				CEDF13D72CDC5BEF0090D9CE /* Profile */,
@@ -317,13 +324,14 @@
 			path = Repositories;
 			sourceTree = "<group>";
 		};
-		CEDF13BE2CD9FA3C0090D9CE /* Login */ = {
+		CEDF13BE2CD9FA3C0090D9CE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */,
 				CEDF13C42CDA03C00090D9CE /* LoginViewController.swift */,
 				CEDF13C02CD9FA510090D9CE /* LoginViewModel.swift */,
 			);
-			path = Login;
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		CEDF13CB2CDA08380090D9CE /* Services */ = {
@@ -356,6 +364,7 @@
 			children = (
 				CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */,
 				CE7AA4ED2CDCA2D000EF4563 /* ProfileViewController.swift */,
+				CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -470,9 +479,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */,
-				CEDF13CA2CDA07E10090D9CE /* AppCoordinator.swift in Sources */,
 				CEDF13C12CD9FA510090D9CE /* LoginViewModel.swift in Sources */,
 				CEDF13C52CDA03C00090D9CE /* LoginViewController.swift in Sources */,
+				CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */,
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
 				CEFA527A2CE70E6400B4280B /* Ride.swift in Sources */,
 				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
@@ -498,9 +507,11 @@
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
 				CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */,
 				CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */,
+				CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */,
 				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,
 				CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
+				CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
 				CE7BEE5C2CF55933004F8915 /* PlaygroundListContent.swift in Sources */,
@@ -511,6 +522,7 @@
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
 				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
+				CEC373162CFD810200D400D0 /* Coordinator.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CEFA52642CE34DB500B4280B /* CustomBottomSheetView.swift in Sources */,
 				CEFA52722CE5D29900B4280B /* PlaygroundUseCase.swift in Sources */,

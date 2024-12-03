@@ -17,6 +17,7 @@ class MapViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private var bottomSheetView: CustomBottomSheetView!
     private var mapViewDelegate: MapViewDelegate?
+    weak var coordinator: MapCoordinator?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {

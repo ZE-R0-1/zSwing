@@ -27,3 +27,8 @@ enum AuthError: Error {
     case invalidToken
     case missingEmail
 }
+
+enum LoginResult {
+    case success(hasNickname: Bool)
+    case failure(Error)
+}

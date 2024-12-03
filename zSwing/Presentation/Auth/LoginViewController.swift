@@ -17,6 +17,7 @@ class LoginViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: LoginViewModel
     private let disposeBag = DisposeBag()
+    weak var coordinator: AuthCoordinator?
     
     // MARK: - UI Components
     private let containerStackView: UIStackView = {
@@ -112,7 +113,7 @@ class LoginViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("LoginViewController viewDidLoad") // 디버그 로그 추가
+        print("LoginViewController viewDidLoad")
         setupUI()
         setupBindings()
         viewModel.presentingViewController = self
@@ -120,13 +121,13 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("LoginViewController viewWillAppear") // 디버그 로그 추가
+        print("LoginViewController viewWillAppear")
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("LoginViewController viewDidAppear") // 디버그 로그 추가
+        print("LoginViewController viewDidAppear")
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
@@ -233,21 +234,9 @@ class LoginViewController: UIViewController {
     private func handleNavigationEvent(_ event: NavigationEvent) {
         switch event {
         case .mainScreen:
-            let mainTabCoordinator = AppDIContainer.shared.makeMainTabCoordinator(
-                navigationController: navigationController ?? UINavigationController()
-            )
-            mainTabCoordinator.start()
-            
-            // 윈도우의 루트 뷰컨트롤러를 변경
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = mainTabCoordinator.tabBarController
-                window.makeKeyAndVisible()
-            }
-            
+            coordinator?.showMainFlow()
         case .nickname:
-            let nicknameVC = AppDIContainer.shared.makeNicknameViewController()
-            navigationController?.pushViewController(nicknameVC, animated: false)
+            coordinator?.showNickname()
         }
     }
 }

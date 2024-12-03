@@ -14,6 +14,7 @@ class NicknameViewController: UIViewController {
     private let viewModel: NicknameViewModel
     private let disposeBag = DisposeBag()
     private let keyboardHeight = PublishRelay<CGFloat>()
+    weak var coordinator: AuthCoordinator?
     
     // MARK: - UI Components
     private let containerView: UIView = {
@@ -254,15 +255,7 @@ class NicknameViewController: UIViewController {
     private func handleNavigation(_ event: NicknameNavigationEvent) {
         switch event {
         case .mainScreen:
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                let mainTabCoordinator = AppDIContainer.shared.makeMainTabCoordinator(
-                    navigationController: UINavigationController()
-                )
-                mainTabCoordinator.start()
-                window.rootViewController = mainTabCoordinator.tabBarController
-                window.makeKeyAndVisible()
-            }
+            coordinator?.showMainFlow()
         }
     }
 }

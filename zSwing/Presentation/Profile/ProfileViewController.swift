@@ -13,6 +13,7 @@ class ProfileViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: ProfileViewModel
     private let disposeBag = DisposeBag()
+    weak var coordinator: ProfileCoordinator?
     
     // MARK: - UI Components
     private let logoutButton: UIButton = {
@@ -94,7 +95,7 @@ class ProfileViewController: UIViewController {
             .bind(to: viewModel.withdrawTapped)
             .disposed(by: disposeBag)
         
-        // Output bindings
+        // Loading state
         viewModel.isLoading
             .bind(to: activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
@@ -104,79 +105,34 @@ class ProfileViewController: UIViewController {
             .bind(to: logoutButton.rx.isEnabled, withdrawButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
+        // Navigation request handling
+        viewModel.navigationRequest
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] request in
+                guard let self = self else { return }
+                switch request {
+                case .logout:
+                    self.coordinator?.logout()
+                case .withdraw:
+                    self.coordinator?.withdraw()
+                case .showWithdrawConfirmation:
+                    self.coordinator?.showConfirmation(
+                        message: "정말로 탈퇴하시겠습니까?\n이 작업은 되돌릴 수 없으며 모든 데이터가 삭제됩니다."
+                    ) { [weak self] confirmed in
+                        if confirmed {
+                            self?.viewModel.withdrawConfirmed.accept(())
+                        }
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        // Error handling
         viewModel.error
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] error in
-                self?.showAlert(title: "오류", message: error.localizedDescription)
+                self?.coordinator?.showAlert(title: "오류", message: error.localizedDescription)
             })
             .disposed(by: disposeBag)
-        
-        viewModel.showConfirmation
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] message in
-                self?.showConfirmationAlert(message: message)
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.navigationEvent
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] event in
-                self?.handleNavigation(event)
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Helper Methods
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
-    
-    private func showConfirmationAlert(message: String) {
-        let alert = UIAlertController(title: "회원탈퇴",
-                                    message: message,
-                                    preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] _ in
-            self?.viewModel.withdrawConfirmed.accept(())
-        })
-        
-        present(alert, animated: true)
-    }
-
-    private func handleNavigation(_ event: ProfileNavigationEvent) {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            
-            switch event {
-            case .loginWithNickname:
-                let loginVC = AppDIContainer.shared.makeLoginViewController()
-                let navigationController = UINavigationController(rootViewController: loginVC)
-                
-                UIView.transition(with: window,
-                                duration: 0.3,
-                                options: .transitionCrossDissolve,
-                                animations: {
-                    window.rootViewController = navigationController
-                })
-                
-            case .loginWithoutNickname:
-                let loginVC = AppDIContainer.shared.makeLoginViewController()
-                // 로그아웃의 경우 닉네임 입력 화면을 스킵하도록 플래그 설정
-                UserDefaults.standard.set(true, forKey: "hasNickname")
-                let navigationController = UINavigationController(rootViewController: loginVC)
-                
-                UIView.transition(with: window,
-                                duration: 0.3,
-                                options: .transitionCrossDissolve,
-                                animations: {
-                    window.rootViewController = navigationController
-                })
-            }
-            
-            window.makeKeyAndVisible()
-        }
     }
 }

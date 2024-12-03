@@ -18,28 +18,14 @@ final class AppDIContainer {
     private lazy var locationRepository: MapRepository = DefaultMapRepository()
     private lazy var rideRepository: RideRepository = DefaultRideRepository()
     
-    // MARK: - UseCases
-    private lazy var playgroundUseCase: PlaygroundUseCase = DefaultPlaygroundUseCase(
-        repository: playgroundRepository
-    )
-    
-    private lazy var mapUseCase: MapUseCase = DefaultMapUseCase(
-        repository: locationRepository
-    )
-    
-    private lazy var rideUseCase: RideUseCase = DefaultRideUseCase(
-        repository: rideRepository
-    )
-    
-    // MARK: - ViewModels
-    private func makeMapViewModel() -> MapViewModel {
-        return MapViewModel(
-            useCase: mapUseCase,
-            playgroundUseCase: playgroundUseCase
+    // MARK: - Coordinators
+    func makeAuthCoordinator(navigationController: UINavigationController) -> AuthCoordinator {
+        return DefaultAuthCoordinator(
+            navigationController: navigationController,
+            diContainer: self
         )
     }
     
-    // MARK: - ViewControllers
     func makeMainTabCoordinator(navigationController: UINavigationController) -> MainTabCoordinator {
         return DefaultMainTabCoordinator(
             navigationController: navigationController,
@@ -47,26 +33,85 @@ final class AppDIContainer {
         )
     }
     
-    func makeLoadingViewController() -> LoadingViewController {
-        return LoadingViewController()
-    }
-
-    func makeLoginViewController() -> LoginViewController {
-        let signInUseCase = DefaultSignInUseCase(repository: authRepository)
-        let nicknameUseCase = DefaultNicknameUseCase(repository: DefaultNicknameRepository())
-        let viewModel = LoginViewModel(
-            signInUseCase: signInUseCase,
-            nicknameUseCase: nicknameUseCase
+    func makeMapCoordinator(navigationController: UINavigationController) -> MapCoordinator {
+        return DefaultMapCoordinator(
+            navigationController: navigationController,
+            diContainer: self
         )
-        return LoginViewController(viewModel: viewModel)
+    }
+    
+    func makeProfileCoordinator(
+        navigationController: UINavigationController,
+        mainCoordinator: MainTabCoordinator
+    ) -> ProfileCoordinator {
+        return DefaultProfileCoordinator(
+            navigationController: navigationController,
+            diContainer: self,
+            mainCoordinator: mainCoordinator
+        )
+    }
+    
+    // MARK: - UseCases
+    private func makeSignInUseCase() -> SignInUseCase {
+        return DefaultSignInUseCase(repository: authRepository)
+    }
+    
+    private func makeNicknameUseCase() -> NicknameUseCase {
+        return DefaultNicknameUseCase(repository: DefaultNicknameRepository())
+    }
+    
+    private func makeProfileUseCase() -> ProfileUseCase {
+        return DefaultProfileUseCase(
+            repository: DefaultProfileRepository(firebaseAuthService: authService)
+        )
+    }
+    
+    private func makeMapUseCase() -> MapUseCase {
+        return DefaultMapUseCase(repository: locationRepository)
+    }
+    
+    private func makePlaygroundUseCase() -> PlaygroundUseCase {
+        return DefaultPlaygroundUseCase(repository: playgroundRepository)
+    }
+    
+    // MARK: - ViewModels
+    private func makeLoginViewModel() -> LoginViewModel {
+        return LoginViewModel(
+            signInUseCase: makeSignInUseCase(),
+            nicknameUseCase: makeNicknameUseCase()
+        )
+    }
+    
+    private func makeNicknameViewModel() -> NicknameViewModel {
+        return NicknameViewModel(useCase: makeNicknameUseCase())
+    }
+    
+    private func makeMapViewModel() -> MapViewModel {
+        return MapViewModel(
+            useCase: makeMapUseCase(),
+            playgroundUseCase: makePlaygroundUseCase()
+        )
+    }
+    
+    private func makeProfileViewModel() -> ProfileViewModel {
+        return ProfileViewModel(useCase: makeProfileUseCase())
+    }
+    
+    // MARK: - ViewControllers
+    func makeLoginViewController() -> LoginViewController {
+        return LoginViewController(viewModel: makeLoginViewModel())
     }
     
     func makeNicknameViewController() -> NicknameViewController {
-        let nicknameUseCase = DefaultNicknameUseCase(
-            repository: DefaultNicknameRepository()
-        )
-        let viewModel = NicknameViewModel(useCase: nicknameUseCase)
-        return NicknameViewController(viewModel: viewModel)
+        return NicknameViewController(viewModel: makeNicknameViewModel())
+    }
+    
+    func makeMapViewController() -> MapViewController {
+        return MapViewController(viewModel: makeMapViewModel())
+    }
+    
+    func makeProfileViewController() -> ProfileViewController {
+        return ProfileViewController(viewModel: makeProfileViewModel())
     }
     
     func makeHomeViewController() -> UIViewController {
@@ -75,17 +120,7 @@ final class AppDIContainer {
         return vc
     }
     
-    func makeMapViewController() -> UIViewController {
-        return MapViewController(viewModel: makeMapViewModel())
-    }
-    
-    func makeProfileViewController() -> UIViewController {
-        return ProfileViewController(viewModel: ProfileViewModel(
-            useCase: DefaultProfileUseCase(
-                repository: DefaultProfileRepository(
-                    firebaseAuthService: authService
-                )
-            )
-        ))
+    func makeLoadingViewController() -> LoadingViewController {
+        return LoadingViewController()
     }
 }

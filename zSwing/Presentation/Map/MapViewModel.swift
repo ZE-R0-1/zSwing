@@ -30,22 +30,29 @@ class MapViewModel {
     let isLoading = BehaviorRelay<Bool>(value: false)
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     let shouldShowBottomSheet = BehaviorRelay<Bool>(value: true)
+    let navigationRequest = PublishRelay<MapNavigationRequest>()
     
-    // MARK: - Private Properties
+    // 기존 playgrounds 관련 프로퍼티들 유지
     private let allPlaygrounds = BehaviorRelay<[Playground]>(value: [])
     private let filteredPlaygrounds = BehaviorRelay<[Playground]>(value: [])
     
-    // 필터링된 놀이터를 외부에 노출하는 computed property
     var playgrounds: BehaviorRelay<[Playground]> {
         return filteredPlaygrounds
     }
     
+    enum MapNavigationRequest {
+        case showPlaygroundDetail(Playground)
+        case showPlaygroundList
+        case showSearchResult
+    }
+
+    // MARK: - Initialization
     init(useCase: MapUseCase, playgroundUseCase: PlaygroundUseCase) {
         self.useCase = useCase
         self.playgroundUseCase = playgroundUseCase
         setupBindings()
     }
-    
+
     // 클러스터의 놀이터들만 표시하도록 필터링
     func filterPlaygrounds(_ clusterPlaygrounds: [Playground]) {
         filteredPlaygrounds.accept(clusterPlaygrounds)

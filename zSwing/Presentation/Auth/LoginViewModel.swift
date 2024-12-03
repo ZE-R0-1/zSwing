@@ -13,15 +13,15 @@ import CryptoKit
 
 class LoginViewModel {
     private let signInUseCase: SignInUseCase
-    private let nicknameUseCase: NicknameUseCase // 추가
+    private let nicknameUseCase: NicknameUseCase
     private let disposeBag = DisposeBag()
     
-    // Outputs
+    // MARK: - Outputs
     let isLoading = BehaviorRelay<Bool>(value: false)
     let error = PublishRelay<Error>()
     let navigationEvent = PublishRelay<NavigationEvent>()
     
-    // Inputs
+    // MARK: - Inputs
     let kakaoLoginTapped = PublishRelay<Void>()
     let googleLoginTapped = PublishRelay<Void>()
     let appleLoginTapped = PublishRelay<Void>()
