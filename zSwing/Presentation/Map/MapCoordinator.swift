@@ -11,7 +11,6 @@ import MapKit
 
 protocol MapCoordinator: Coordinator {
     func showMap()
-    func showPlaygroundDetail(_ playground: Playground)
     func showPlaygroundList()
     func showSearchResult()
 }
@@ -21,8 +20,6 @@ class DefaultMapCoordinator: MapCoordinator {
     private let diContainer: AppDIContainer
     private let disposeBag = DisposeBag()
     
-    private weak var bottomSheetView: CustomBottomSheetView?
-    
     init(navigationController: UINavigationController, diContainer: AppDIContainer) {
         self.navigationController = navigationController
         self.diContainer = diContainer
@@ -30,6 +27,7 @@ class DefaultMapCoordinator: MapCoordinator {
     
     func start() {
         showMap()
+        showPlaygroundList()
     }
     
     func showMap() {
@@ -37,28 +35,28 @@ class DefaultMapCoordinator: MapCoordinator {
         navigationController.setViewControllers([mapVC], animated: false)
     }
     
-    func showPlaygroundDetail(_ playground: Playground) {
-        bottomSheetView?.transition(to: .playgroundDetail(playground), animated: true)
-    }
-    
     func showPlaygroundList() {
-        bottomSheetView?.transition(to: .playgroundList, animated: true)
+        guard let mapVC = navigationController.viewControllers.first as? MapViewController else { return }
+        
+        let playgroundListVC = diContainer.makePlaygroundListViewController()
+        mapVC.addChild(playgroundListVC)
+        mapVC.view.addSubview(playgroundListVC.view)
+        playgroundListVC.didMove(toParent: mapVC)
+        
+        // PlaygroundListVC의 view가 화면 전체를 차지하도록 제약조건 설정
+        playgroundListVC.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            playgroundListVC.view.leadingAnchor.constraint(equalTo: mapVC.view.leadingAnchor),
+            playgroundListVC.view.trailingAnchor.constraint(equalTo: mapVC.view.trailingAnchor),
+            playgroundListVC.view.bottomAnchor.constraint(equalTo: mapVC.view.bottomAnchor),
+            playgroundListVC.view.heightAnchor.constraint(equalTo: mapVC.view.heightAnchor)
+        ])
     }
     
     func showSearchResult() {
-        bottomSheetView?.showSheet()
     }
     
     private func makeMapViewController() -> MapViewController {
-        let useCase = DefaultMapUseCase(repository: DefaultMapRepository())
-        let playgroundUseCase = DefaultPlaygroundUseCase(repository: DefaultPlaygroundRepository())
-        let viewModel = MapViewModel(useCase: useCase, playgroundUseCase: playgroundUseCase)
-        let viewController = MapViewController(viewModel: viewModel)
-        viewController.coordinator = self
-        return viewController
-    }
-    
-    func setBottomSheetView(_ bottomSheet: CustomBottomSheetView) {
-        self.bottomSheetView = bottomSheet
+        return diContainer.makeMapViewController()
     }
 }

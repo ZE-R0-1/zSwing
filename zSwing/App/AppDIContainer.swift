@@ -11,12 +11,13 @@ final class AppDIContainer {
     static let shared = AppDIContainer()
     private init() {}
     
-    // MARK: - Repositories
+    // MARK: - Repositories & Services
     private lazy var authRepository = DefaultAuthenticationRepository()
     private lazy var authService: FirebaseAuthServiceProtocol = FirebaseAuthService()
-    private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository()
+    private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository(firebaseService: firebasePlaygroundService)
     private lazy var locationRepository: MapRepository = DefaultMapRepository()
     private lazy var rideRepository: RideRepository = DefaultRideRepository()
+    private lazy var firebasePlaygroundService: FirebasePlaygroundServiceProtocol = FirebasePlaygroundService()
     
     // MARK: - Coordinators
     func makeAuthCoordinator(navigationController: UINavigationController) -> AuthCoordinator {
@@ -70,8 +71,16 @@ final class AppDIContainer {
         return DefaultMapUseCase(repository: locationRepository)
     }
     
-    private func makePlaygroundUseCase() -> PlaygroundUseCase {
-        return DefaultPlaygroundUseCase(repository: playgroundRepository)
+//    private func makePlaygroundUseCase() -> PlaygroundUseCase {
+//        return DefaultPlaygroundUseCase(repository: playgroundRepository)
+//    }
+    
+    private func makePlaygroundListUseCase() -> PlaygroundListUseCase {
+        return DefaultPlaygroundListUseCase(
+            repository: DefaultPlaygroundRepository(
+                firebaseService: firebasePlaygroundService
+            )
+        )
     }
     
     // MARK: - ViewModels
@@ -88,13 +97,16 @@ final class AppDIContainer {
     
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
-            useCase: makeMapUseCase(),
-            playgroundUseCase: makePlaygroundUseCase()
+            useCase: makeMapUseCase()
         )
     }
     
     private func makeProfileViewModel() -> ProfileViewModel {
         return ProfileViewModel(useCase: makeProfileUseCase())
+    }
+    
+    private func makePlaygroundListViewModel() -> PlaygroundListViewModel {
+        return PlaygroundListViewModel(playgroundUseCase: makePlaygroundListUseCase())
     }
     
     // MARK: - ViewControllers
@@ -112,6 +124,10 @@ final class AppDIContainer {
     
     func makeProfileViewController() -> ProfileViewController {
         return ProfileViewController(viewModel: makeProfileViewModel())
+    }
+    
+    func makePlaygroundListViewController() -> PlaygroundListViewController {
+        return PlaygroundListViewController(viewModel: makePlaygroundListViewModel())
     }
     
     func makeHomeViewController() -> UIViewController {

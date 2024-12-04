@@ -9,6 +9,6 @@ import RxSwift
 import CoreLocation
 
 protocol PlaygroundRepository {
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
-    func fetchPlaygroundsNearby(coordinate: CLLocationCoordinate2D) -> Observable<[Playground]>
+    func fetchPlaygrounds() -> Observable<[Playground]>
+    func fetchFilteredPlaygrounds(categories: Set<String>) -> Observable<[Playground]>
 }
