@@ -10,6 +10,6 @@ import CoreLocation
 import MapKit
 
 protocol MapRepository {
-    func getCurrentLocation() -> Observable<Result<MapLocation, Error>>
+    func getCurrentLocation() -> Observable<Result<Location, Error>>
     func requestLocationPermission() -> Observable<Result<Bool, Error>>
 }

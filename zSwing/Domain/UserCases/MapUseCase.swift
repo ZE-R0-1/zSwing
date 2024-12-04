@@ -10,7 +10,7 @@ import CoreLocation
 import MapKit
 
 protocol MapUseCase {
-    func getCurrentLocation() -> Observable<Result<MapLocation, Error>>
+    func getCurrentLocation() -> Observable<Result<Location, Error>>
     func requestLocationPermission() -> Observable<Result<Bool, Error>>
 }
 
@@ -21,7 +21,7 @@ class DefaultMapUseCase: MapUseCase {
         self.repository = repository
     }
     
-    func getCurrentLocation() -> Observable<Result<MapLocation, Error>> {
+    func getCurrentLocation() -> Observable<Result<Location, Error>> {
         return repository.getCurrentLocation()
     }
     

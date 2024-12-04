@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct MapLocation {
+struct Location {
     let latitude: Double
     let longitude: Double
     
-    static let defaultLocation = MapLocation(
+    static let defaultLocation = Location(
         latitude: 37.5665,
         longitude: 126.9780
     )

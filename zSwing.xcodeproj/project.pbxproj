@@ -43,7 +43,7 @@
 		CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AAB2CE2DD4D00A7AE7E /* DefaultMapRepository.swift */; };
 		CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */; };
 		CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */; };
-		CED42ACC2CE3275800A7AE7E /* MapLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42ACB2CE3275800A7AE7E /* MapLocation.swift */; };
+		CED42ACC2CE3275800A7AE7E /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42ACB2CE3275800A7AE7E /* Location.swift */; };
 		CED477742CF58E61004659AA /* CategoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED477732CF58E61004659AA /* CategoryInfo.swift */; };
 		CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13AE2CD9F63B0090D9CE /* User.swift */; };
 		CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */; };
@@ -106,7 +106,7 @@
 		CED42AAB2CE2DD4D00A7AE7E /* DefaultMapRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultMapRepository.swift; sourceTree = "<group>"; };
 		CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		CED42ACB2CE3275800A7AE7E /* MapLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLocation.swift; sourceTree = "<group>"; };
+		CED42ACB2CE3275800A7AE7E /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		CED477732CF58E61004659AA /* CategoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryInfo.swift; sourceTree = "<group>"; };
 		CEDF13AE2CD9F63B0090D9CE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInUseCase.swift; sourceTree = "<group>"; };
@@ -276,10 +276,9 @@
 			isa = PBXGroup;
 			children = (
 				CEDF13AE2CD9F63B0090D9CE /* User.swift */,
-				CED42ACB2CE3275800A7AE7E /* MapLocation.swift */,
 				CEFA526D2CE5D22500B4280B /* Playground.swift */,
+				CED42ACB2CE3275800A7AE7E /* Location.swift */,
 				CEFA52792CE70E6400B4280B /* Ride.swift */,
-				CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */,
 				CED477732CF58E61004659AA /* CategoryInfo.swift */,
 			);
 			path = Entities;
@@ -289,8 +288,8 @@
 			isa = PBXGroup;
 			children = (
 				CEDF13B12CD9F66D0090D9CE /* SignInUseCase.swift */,
-				CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */,
 				CED42A832CE1EF5B00A7AE7E /* NicknameUseCase.swift */,
+				CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */,
 				CED42AA42CE2DBB000A7AE7E /* MapUseCase.swift */,
 				CEFA52712CE5D29900B4280B /* PlaygroundUseCase.swift */,
 				CEFA527F2CE7187300B4280B /* RideUseCase.swift */,
@@ -373,6 +372,7 @@
 			isa = PBXGroup;
 			children = (
 				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
+				CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */,
 				CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */,
 				CEFA528D2CEC605200B4280B /* PlaygroundClusterAnnotationView.swift */,
 			);
@@ -501,7 +501,7 @@
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
 				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
-				CED42ACC2CE3275800A7AE7E /* MapLocation.swift in Sources */,
+				CED42ACC2CE3275800A7AE7E /* Location.swift in Sources */,
 				CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */,
 				CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,

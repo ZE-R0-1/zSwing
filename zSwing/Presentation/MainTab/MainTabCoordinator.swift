@@ -88,6 +88,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         let homeVC = diContainer.makeHomeViewController()
         homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
         let homeNavController = UINavigationController(rootViewController: homeVC)
+        homeNavController.isNavigationBarHidden = true
         
         // Map Tab
         let mapNavController = UINavigationController()
@@ -98,6 +99,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         self.mapCoordinator = mapCoordinator
         mapCoordinator.start()
         mapNavController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 1)
+        mapNavController.isNavigationBarHidden = true
         
         // Profile Tab
         let profileNavController = UINavigationController()
@@ -109,6 +111,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
         self.profileCoordinator = profileCoordinator
         profileCoordinator.start()
         profileNavController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person"), tag: 2)
+        profileNavController.isNavigationBarHidden = true  
         
         // Set ViewControllers
         tabBarController.setViewControllers(

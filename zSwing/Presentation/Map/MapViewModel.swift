@@ -24,7 +24,7 @@ class MapViewModel {
     let categoriesSelected = PublishRelay<Set<String>>()
     
     // MARK: - Outputs
-    let currentLocation = BehaviorRelay<MapLocation>(value: .defaultLocation)
+    let currentLocation = BehaviorRelay<Location>(value: .defaultLocation)
     let locationTitle = BehaviorRelay<String>(value: "")
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
@@ -73,7 +73,7 @@ class MapViewModel {
                 guard let self = self else { return .empty() }
                 return self.useCase.requestLocationPermission()
             }
-            .flatMapLatest { [weak self] result -> Observable<Result<MapLocation, Error>> in
+            .flatMapLatest { [weak self] result -> Observable<Result<Location, Error>> in
                 guard let self = self else { return .empty() }
                 switch result {
                 case .success(true):
@@ -101,7 +101,7 @@ class MapViewModel {
             .do(onNext: { [weak self] _ in
                 self?.isLoading.accept(true)
             })
-            .flatMapLatest { [weak self] _ -> Observable<Result<MapLocation, Error>> in
+            .flatMapLatest { [weak self] _ -> Observable<Result<Location, Error>> in
                 guard let self = self else { return .empty() }
                 return self.useCase.getCurrentLocation()
             }

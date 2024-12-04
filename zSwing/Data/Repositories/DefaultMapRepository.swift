@@ -12,7 +12,7 @@ import CoreLocation
 
 class DefaultMapRepository: NSObject, MapRepository, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
-    private let locationSubject = PublishSubject<Result<MapLocation, Error>>()
+    private let locationSubject = PublishSubject<Result<Location, Error>>()
     private let permissionSubject = PublishSubject<Result<Bool, Error>>()
     
     override init() {
@@ -21,7 +21,7 @@ class DefaultMapRepository: NSObject, MapRepository, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    func getCurrentLocation() -> Observable<Result<MapLocation, Error>> {
+    func getCurrentLocation() -> Observable<Result<Location, Error>> {
         locationManager.startUpdatingLocation()
         return locationSubject.asObservable()
     }
@@ -45,7 +45,7 @@ class DefaultMapRepository: NSObject, MapRepository, CLLocationManagerDelegate {
     // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        locationSubject.onNext(.success(MapLocation(
+        locationSubject.onNext(.success(Location(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )))

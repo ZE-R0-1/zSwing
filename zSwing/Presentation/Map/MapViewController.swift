@@ -241,7 +241,7 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
-    private func updateMapRegion(with location: MapLocation) {
+    private func updateMapRegion(with location: Location) {
         let coordinate = CLLocationCoordinate2D(
             latitude: location.latitude,
             longitude: location.longitude
