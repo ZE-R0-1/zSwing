@@ -11,7 +11,6 @@ import RxCocoa
 
 class BottomSheetViewController: UIViewController {
     // MARK: - Types
-    
     enum SheetHeight {
         case min, mid, max
         
@@ -58,11 +57,9 @@ class BottomSheetViewController: UIViewController {
     private var heightConstraint: NSLayoutConstraint?
     
     // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear // 배경을 투명하게 설정
-
+        view.backgroundColor = .clear
         setupUI()
         setupConstraints()
         setupGestures()
@@ -75,12 +72,10 @@ class BottomSheetViewController: UIViewController {
     }
 
     // MARK: - Setup
-    
-    private func setupUI() {        
+    private func setupUI() {
         view.addSubview(containerView)
         containerView.addSubview(dragIndicator)
         containerView.addSubview(contentView)
-        
         contentView.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -111,11 +106,6 @@ class BottomSheetViewController: UIViewController {
         containerView.addGestureRecognizer(panGesture)
         
         panGesture.rx.event
-            .do(onNext: { gesture in
-                print("Pan gesture state: \(gesture.state.rawValue)")
-                print("Translation: \(gesture.translation(in: nil))")
-                print("Current height: \(self.heightConstraint?.constant ?? 0)")
-            })
             .bind { [weak self] gesture in
                 self?.handlePanGesture(gesture)
             }
@@ -133,7 +123,6 @@ class BottomSheetViewController: UIViewController {
     }
     
     // MARK: - Height Management
-    
     private func updateHeight(to height: SheetHeight) {
         currentHeight = height
         let newHeight = UIScreen.main.bounds.height * height.heightPercentage
@@ -187,7 +176,6 @@ class BottomSheetViewController: UIViewController {
 }
 
 // MARK: - ScrollView Integration
-
 extension BottomSheetViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if currentHeight != .max {
@@ -198,7 +186,6 @@ extension BottomSheetViewController: UIScrollViewDelegate {
 
 class BottomSheetView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        // containerView 영역에 대해서만 터치 이벤트 처리
         if let containerView = subviews.first(where: { $0.layer.cornerRadius == 20 }) {
             let containerPoint = convert(point, to: containerView)
             return containerView.bounds.contains(containerPoint)

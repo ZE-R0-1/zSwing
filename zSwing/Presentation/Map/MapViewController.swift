@@ -80,17 +80,6 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBindings()
-        
-        mapView.register(
-            PlaygroundAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
-        )
-        mapView.register(
-            PlaygroundClusterAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
-        )
-        
-        mapView.delegate = self
         viewModel.initialRegion.accept(mapView.region)
         viewModel.viewDidLoad.accept(())
     }
@@ -139,7 +128,7 @@ class MapViewController: UIViewController {
             let delegate = MapViewDelegate { region in
                 observer.onNext(region)
             }
-            self?.mapView.delegate = delegate            
+            self?.mapView.delegate = delegate
             return Disposables.create()
         }
         .bind(to: viewModel.regionDidChange)
@@ -213,34 +202,6 @@ class MapViewController: UIViewController {
         )
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
-    }
-}
-
-// MARK: - MapView Delegate
-extension MapViewController: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if let cluster = annotation as? MKClusterAnnotation {
-            let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundClusterAnnotationView.identifier,
-                for: cluster
-            ) as? PlaygroundClusterAnnotationView ?? PlaygroundClusterAnnotationView(
-                annotation: cluster,
-                reuseIdentifier: PlaygroundClusterAnnotationView.identifier
-            )
-            annotationView.configure(with: cluster)
-            return annotationView
-        } else if let playground = annotation as? PlaygroundAnnotation {
-            let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundAnnotationView.identifier,
-                for: playground
-            ) as? PlaygroundAnnotationView ?? PlaygroundAnnotationView(
-                annotation: playground,
-                reuseIdentifier: PlaygroundAnnotationView.identifier
-            )
-            annotationView.clusteringIdentifier = "playground"
-            return annotationView
-        }
-        return nil
     }
 }
 

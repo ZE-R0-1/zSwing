@@ -40,6 +40,7 @@
 		CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E482D0048BE00AA6B68 /* MapRegion.swift */; };
 		CECC4E4C2D00504A00AA6B68 /* RxCoreLocation in Frameworks */ = {isa = PBXBuildFile; productRef = CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */; };
 		CECC4E4E2D012E1E00AA6B68 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */; };
+		CECC4E502D01998F00AA6B68 /* MapViewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E4F2D01998F00AA6B68 /* MapViewService.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
@@ -108,6 +109,7 @@
 		CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListViewController.swift; sourceTree = "<group>"; };
 		CECC4E482D0048BE00AA6B68 /* MapRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRegion.swift; sourceTree = "<group>"; };
 		CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		CECC4E4F2D01998F00AA6B68 /* MapViewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewService.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */,
 				CECC4E3C2D000E9000AA6B68 /* FirebasePlaygroundService.swift */,
 				CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */,
+				CECC4E4F2D01998F00AA6B68 /* MapViewService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
 				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
+				CECC4E502D01998F00AA6B68 /* MapViewService.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
 				CEC373162CFD810200D400D0 /* Coordinator.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
