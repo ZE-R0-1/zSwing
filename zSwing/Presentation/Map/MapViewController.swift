@@ -16,6 +16,7 @@ class MapViewController: UIViewController {
     private let viewModel: MapViewModel
     private let disposeBag = DisposeBag()
     weak var coordinator: MapCoordinator?
+    private var bottomSheetVC: PlaygroundListViewController?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -90,11 +91,8 @@ class MapViewController: UIViewController {
         )
         
         mapView.delegate = self
-        // 초기 보이는 영역을 전달
         viewModel.initialRegion.accept(mapView.region)
         viewModel.viewDidLoad.accept(())
-        
-        coordinator?.showPlaygroundList()
     }
     
     // MARK: - UI Setup
@@ -172,6 +170,28 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
+    func addBottomSheet(_ bottomSheetVC: PlaygroundListViewController) {
+        self.bottomSheetVC = bottomSheetVC
+        addChild(bottomSheetVC)
+        view.addSubview(bottomSheetVC.view)
+        bottomSheetVC.didMove(toParent: self)
+        
+        setupBottomSheetConstraints()
+    }
+    
+    private func setupBottomSheetConstraints() {
+        guard let bottomSheetVC = bottomSheetVC else { return }
+        
+        bottomSheetVC.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            bottomSheetVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSheetVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSheetVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomSheetVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.9)
+        ])
+    }
+    
     private func updateMapRegion(with location: Location) {
         let coordinate = CLLocationCoordinate2D(
             latitude: location.latitude,

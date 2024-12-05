@@ -34,7 +34,6 @@ class BottomSheetViewController: UIViewController {
     private(set) var currentHeight: SheetHeight = .mid
     
     // MARK: - UI Components
-    
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -62,17 +61,22 @@ class BottomSheetViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .clear // 배경을 투명하게 설정
+
         setupUI()
         setupConstraints()
         setupGestures()
         bindHeight()
     }
     
+    override func loadView() {
+        view = BottomSheetView()
+        view.backgroundColor = .clear
+    }
+
     // MARK: - Setup
     
-    private func setupUI() {
-        view.backgroundColor = .clear
-        
+    private func setupUI() {        
         view.addSubview(containerView)
         containerView.addSubview(dragIndicator)
         containerView.addSubview(contentView)
@@ -107,12 +111,17 @@ class BottomSheetViewController: UIViewController {
         containerView.addGestureRecognizer(panGesture)
         
         panGesture.rx.event
+            .do(onNext: { gesture in
+                print("Pan gesture state: \(gesture.state.rawValue)")
+                print("Translation: \(gesture.translation(in: nil))")
+                print("Current height: \(self.heightConstraint?.constant ?? 0)")
+            })
             .bind { [weak self] gesture in
                 self?.handlePanGesture(gesture)
             }
             .disposed(by: disposeBag)
     }
-    
+
     private func bindHeight() {
         bottomSheetHeight
             .distinctUntilChanged()
@@ -184,5 +193,16 @@ extension BottomSheetViewController: UIScrollViewDelegate {
         if currentHeight != .max {
             scrollView.contentOffset.y = 0
         }
+    }
+}
+
+class BottomSheetView: UIView {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        // containerView 영역에 대해서만 터치 이벤트 처리
+        if let containerView = subviews.first(where: { $0.layer.cornerRadius == 20 }) {
+            let containerPoint = convert(point, to: containerView)
+            return containerView.bounds.contains(containerPoint)
+        }
+        return super.point(inside: point, with: event)
     }
 }

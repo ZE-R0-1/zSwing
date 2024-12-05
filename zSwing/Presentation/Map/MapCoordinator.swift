@@ -39,18 +39,7 @@ class DefaultMapCoordinator: MapCoordinator {
         guard let mapVC = navigationController.viewControllers.first as? MapViewController else { return }
         
         let playgroundListVC = diContainer.makePlaygroundListViewController()
-        mapVC.addChild(playgroundListVC)
-        mapVC.view.addSubview(playgroundListVC.view)
-        playgroundListVC.didMove(toParent: mapVC)
-        
-        // PlaygroundListVC의 view가 화면 전체를 차지하도록 제약조건 설정
-        playgroundListVC.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            playgroundListVC.view.leadingAnchor.constraint(equalTo: mapVC.view.leadingAnchor),
-            playgroundListVC.view.trailingAnchor.constraint(equalTo: mapVC.view.trailingAnchor),
-            playgroundListVC.view.bottomAnchor.constraint(equalTo: mapVC.view.bottomAnchor),
-            playgroundListVC.view.heightAnchor.constraint(equalTo: mapVC.view.heightAnchor)
-        ])
+        mapVC.addBottomSheet(playgroundListVC) // 수정된 부분
     }
     
     func showSearchResult() {
