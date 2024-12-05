@@ -15,7 +15,6 @@ class MapViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: MapViewModel
     private let disposeBag = DisposeBag()
-    private var mapViewDelegate: MapViewDelegate?
     weak var coordinator: MapCoordinator?
     
     // MARK: - UI Components
@@ -91,6 +90,8 @@ class MapViewController: UIViewController {
         )
         
         mapView.delegate = self
+        // 초기 보이는 영역을 전달
+        viewModel.initialRegion.accept(mapView.region)
         viewModel.viewDidLoad.accept(())
         
         coordinator?.showPlaygroundList()
@@ -140,9 +141,7 @@ class MapViewController: UIViewController {
             let delegate = MapViewDelegate { region in
                 observer.onNext(region)
             }
-            self?.mapView.delegate = delegate
-            self?.mapViewDelegate = delegate
-            
+            self?.mapView.delegate = delegate            
             return Disposables.create()
         }
         .bind(to: viewModel.regionDidChange)
@@ -222,10 +221,6 @@ extension MapViewController: MKMapViewDelegate {
             return annotationView
         }
         return nil
-    }
-    
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        mapViewDelegate?.mapView(mapView, regionDidChangeAnimated: animated)
     }
 }
 

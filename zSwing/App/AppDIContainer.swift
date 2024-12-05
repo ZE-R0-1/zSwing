@@ -97,7 +97,8 @@ final class AppDIContainer {
     
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
-            useCase: makeMapUseCase()
+            useCase: makeMapUseCase(),
+            playgroundListViewModel: makePlaygroundListViewModel()
         )
     }
     

@@ -1,5 +1,5 @@
 {
-  "originHash" : "f2eea8539002ba6f2ab3b3365378f517cf1d6b300f688e71a3965b58c606e047",
+  "originHash" : "f0b84ec81686e51d0f245a52214fe5340fa3cfc3a50c60861debea6e34e3384d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -152,6 +152,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "rxcorelocation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxCoreLocation.git",
+      "state" : {
+        "revision" : "8b26b77851c09689c2fb6ba9cd875c203ff79797",
+        "version" : "1.5.1"
       }
     },
     {

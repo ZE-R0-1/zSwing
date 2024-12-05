@@ -37,6 +37,9 @@
 		CECC4E412D00135400AA6B68 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E402D00135400AA6B68 /* BottomSheetViewController.swift */; };
 		CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E422D0013F700AA6B68 /* PlaygroundListViewModel.swift */; };
 		CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */; };
+		CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E482D0048BE00AA6B68 /* MapRegion.swift */; };
+		CECC4E4C2D00504A00AA6B68 /* RxCoreLocation in Frameworks */ = {isa = PBXBuildFile; productRef = CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */; };
+		CECC4E4E2D012E1E00AA6B68 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
@@ -103,6 +106,8 @@
 		CECC4E402D00135400AA6B68 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
 		CECC4E422D0013F700AA6B68 /* PlaygroundListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListViewModel.swift; sourceTree = "<group>"; };
 		CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListViewController.swift; sourceTree = "<group>"; };
+		CECC4E482D0048BE00AA6B68 /* MapRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRegion.swift; sourceTree = "<group>"; };
+		CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
@@ -147,6 +152,7 @@
 			files = (
 				CEDF13B52CD9F6B50090D9CE /* RxCocoa in Frameworks */,
 				CE2B97CC2CC0FF7900FF532F /* KakaoSDKAuth in Frameworks */,
+				CECC4E4C2D00504A00AA6B68 /* RxCoreLocation in Frameworks */,
 				CEDF13B72CD9F6B50090D9CE /* RxSwift in Frameworks */,
 				CE2B97C32CC0F9EB00FF532F /* GoogleSignInSwift in Frameworks */,
 				CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */,
@@ -277,6 +283,7 @@
 				CED42ACB2CE3275800A7AE7E /* Location.swift */,
 				CEFA52792CE70E6400B4280B /* Ride.swift */,
 				CED477732CF58E61004659AA /* CategoryInfo.swift */,
+				CECC4E482D0048BE00AA6B68 /* MapRegion.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -337,6 +344,7 @@
 			children = (
 				CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */,
 				CECC4E3C2D000E9000AA6B68 /* FirebasePlaygroundService.swift */,
+				CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -416,6 +424,7 @@
 				CEDF13B42CD9F6B50090D9CE /* RxCocoa */,
 				CEDF13B62CD9F6B50090D9CE /* RxSwift */,
 				CEFA52682CE34F0500B4280B /* RxGesture */,
+				CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */,
 			);
 			productName = zSwing;
 			productReference = CE2B979F2CC0913300FF532F /* zSwing.app */;
@@ -451,6 +460,7 @@
 				CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */,
 				CEFA52672CE34F0500B4280B /* XCRemoteSwiftPackageReference "RxGesture" */,
+				CECC4E4A2D00504A00AA6B68 /* XCRemoteSwiftPackageReference "RxCoreLocation" */,
 			);
 			productRefGroup = CE2B97A02CC0913300FF532F /* Products */;
 			projectDirPath = "";
@@ -501,6 +511,7 @@
 				CED477742CF58E61004659AA /* CategoryInfo.swift in Sources */,
 				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
+				CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */,
 				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,
 				CECC4E332CFFE82D00AA6B68 /* BottomSheetUseCase.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
@@ -520,6 +531,7 @@
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CEFA52802CE7187300B4280B /* RideUseCase.swift in Sources */,
+				CECC4E4E2D012E1E00AA6B68 /* LocationService.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
@@ -783,6 +795,14 @@
 				minimumVersion = 2.23.0;
 			};
 		};
+		CECC4E4A2D00504A00AA6B68 /* XCRemoteSwiftPackageReference "RxCoreLocation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxCoreLocation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 		CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
@@ -841,6 +861,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CECC4E4A2D00504A00AA6B68 /* XCRemoteSwiftPackageReference "RxCoreLocation" */;
+			productName = RxCoreLocation;
 		};
 		CEDF13B42CD9F6B50090D9CE /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;

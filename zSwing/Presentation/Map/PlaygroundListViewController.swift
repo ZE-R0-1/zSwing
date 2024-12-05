@@ -182,9 +182,11 @@ final class PlaygroundListViewController: BottomSheetViewController {
             .bind(to: tableView.rx.items(
                 cellIdentifier: PlaygroundCell.identifier,
                 cellType: PlaygroundCell.self
-            )) { [weak self] _, playground, cell in
-                let distance = self?.viewModel.calculateDistance(for: playground)
-                cell.configure(with: playground, distance: distance)
+            )) { _, playgroundWithDistance, cell in
+                cell.configure(
+                    with: playgroundWithDistance.playground,
+                    distance: playgroundWithDistance.distance
+                )
             }
             .disposed(by: disposeBag)
         

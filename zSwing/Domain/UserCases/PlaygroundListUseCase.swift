@@ -7,12 +7,11 @@
 
 import RxSwift
 import CoreLocation
-
-// MARK: - Domain/UseCases/PlaygroundListUseCase.swift
+import MapKit
 
 protocol PlaygroundListUseCase {
-    func fetchPlaygrounds() -> Observable<[Playground]>
-    func filterPlaygrounds(by categories: Set<String>) -> Observable<[Playground]>
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
+    func filterPlaygrounds(by categories: Set<String>, in region: MapRegion) -> Observable<[Playground]>
     func sortPlaygroundsByDistance(playgrounds: [Playground], userLocation: CLLocation?) -> [Playground]
 }
 
@@ -25,8 +24,8 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
         self.locationManager = locationManager
     }
     
-    func fetchPlaygrounds() -> Observable<[Playground]> {
-        return repository.fetchPlaygrounds()
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
+        return repository.fetchPlaygrounds(in: region)
             .map { [weak self] playgrounds in
                 self?.sortPlaygroundsByDistance(
                     playgrounds: playgrounds,
@@ -39,8 +38,8 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
             }
     }
     
-    func filterPlaygrounds(by categories: Set<String>) -> Observable<[Playground]> {
-        return repository.fetchPlaygrounds()
+    func filterPlaygrounds(by categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
+        return repository.fetchFilteredPlaygrounds(categories: categories, in: region)
             .map { playgrounds in
                 guard !categories.contains("전체") else { return playgrounds }
                 // 현재는 필터링 로직이 제거된 상태입니다.

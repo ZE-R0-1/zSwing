@@ -172,7 +172,6 @@ class BottomSheetViewController: UIViewController {
     }
     
     // MARK: - Public Methods
-    
     func moveSheet(to height: SheetHeight) {
         bottomSheetHeight.accept(height)
     }

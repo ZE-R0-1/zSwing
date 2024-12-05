@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 class PlaygroundCell: UITableViewCell {
     static let identifier = "PlaygroundCell"
@@ -56,6 +57,8 @@ class PlaygroundCell: UITableViewCell {
     }()
     
     private var photoImageViews: [UIImageView] = []
+    
+    var disposeBag = DisposeBag()
     
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -157,5 +160,7 @@ class PlaygroundCell: UITableViewCell {
         photoImageViews.forEach { imageView in
             imageView.image = UIImage(systemName: "photo")
         }
+        // cell이 재사용될 때 disposeBag을 새로 생성
+        disposeBag = DisposeBag()
     }
 }
