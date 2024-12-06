@@ -9,7 +9,7 @@ import UIKit
 import MapKit
 
 class PlaygroundClusterAnnotationView: MKAnnotationView {
-    static let identifier = "EnhancedPlaygroundClusterAnnotationView"
+    static let identifier = "PlaygroundClusterAnnotationView"
     
     // MARK: - UI Components
     private let containerView: UIView = {

@@ -39,7 +39,6 @@
 		CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */; };
 		CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E482D0048BE00AA6B68 /* MapRegion.swift */; };
 		CECC4E4C2D00504A00AA6B68 /* RxCoreLocation in Frameworks */ = {isa = PBXBuildFile; productRef = CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */; };
-		CECC4E4E2D012E1E00AA6B68 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */; };
 		CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */; };
 		CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */; };
 		CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */; };
@@ -103,7 +102,6 @@
 		CECC4E422D0013F700AA6B68 /* PlaygroundListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListViewModel.swift; sourceTree = "<group>"; };
 		CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListViewController.swift; sourceTree = "<group>"; };
 		CECC4E482D0048BE00AA6B68 /* MapRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRegion.swift; sourceTree = "<group>"; };
-		CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		CED42A7C2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNicknameRepository.swift; sourceTree = "<group>"; };
 		CED42A7F2CE1ED4900A7AE7E /* NicknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewModel.swift; sourceTree = "<group>"; };
 		CED42A812CE1ED5500A7AE7E /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
@@ -332,7 +330,6 @@
 			children = (
 				CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */,
 				CECC4E3C2D000E9000AA6B68 /* FirebasePlaygroundService.swift */,
-				CECC4E4D2D012E1E00AA6B68 /* LocationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -516,7 +513,6 @@
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
-				CECC4E4E2D012E1E00AA6B68 /* LocationService.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,

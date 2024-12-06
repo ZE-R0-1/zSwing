@@ -10,11 +10,16 @@ import RxRelay
 import MapKit
 import CoreLocation
 
+import RxSwift
+import RxRelay
+import MapKit
+import CoreLocation
+
 class MapViewModel {
     // MARK: - Properties
     private let useCase: MapUseCase
     private let disposeBag = DisposeBag()
-    private let playgroundListViewModel: PlaygroundListViewModel
+    let playgroundListViewModel: PlaygroundListViewModel
     
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
@@ -37,8 +42,9 @@ class MapViewModel {
     }
     
     private func setupBindings() {
-        // 초기 진입 시
+        // 초기 진입 시 한 번만 실행
         viewDidLoad
+            .take(1)
             .withLatestFrom(initialRegion)
             .do(onNext: { [weak self] region in
                 self?.isLoading.accept(true)
@@ -94,8 +100,26 @@ class MapViewModel {
         // 지도 이동 시 검색 버튼 표시/숨김 처리
         mapRegionDidChange
             .skip(1)
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            .distinctUntilChanged { old, new in
+                // 중요한 변화가 있을 때만 처리
+                let latDiff = abs(old.center.latitude - new.center.latitude)
+                let lonDiff = abs(old.center.longitude - new.center.longitude)
+                let spanLatDiff = abs(old.span.latitudeDelta - new.span.latitudeDelta)
+                let spanLonDiff = abs(old.span.longitudeDelta - new.span.longitudeDelta)
+                
+                return latDiff < 0.01 && lonDiff < 0.01 &&
+                spanLatDiff < 0.01 && spanLonDiff < 0.01
+            }
             .map { _ in true }
             .bind(to: shouldShowSearchButton)
+            .disposed(by: disposeBag)
+        
+        // 검색 버튼 탭 처리
+        searchButtonTapped
+            .subscribe(onNext: { [weak self] region in
+                self?.playgroundListViewModel.searchButtonTapped.accept(region)
+            })
             .disposed(by: disposeBag)
     }
 }

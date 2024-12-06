@@ -11,13 +11,19 @@ import RxCocoa
 import MapKit
 import CoreLocation
 
+import UIKit
+import RxSwift
+import RxCocoa
+import MapKit
+import CoreLocation
+
 class MapViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: MapViewModel
     private let disposeBag = DisposeBag()
     weak var coordinator: MapCoordinator?
     private var bottomSheetVC: PlaygroundListViewController?
-    private var mapViewDelegate: MapViewDelegate?
+    private var currentAnnotations: [PlaygroundAnnotation] = []
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -80,12 +86,13 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupMapView()
         setupBindings()
         viewModel.initialRegion.accept(mapView.region)
         viewModel.viewDidLoad.accept(())
     }
     
-    // MARK: - UI Setup
+    // MARK: - Setup Methods
     private func setupUI() {
         view.backgroundColor = .systemBackground
         
@@ -114,16 +121,20 @@ class MapViewController: UIViewController {
             activityIndicator.centerYAnchor.constraint(equalTo: locationButton.centerYAnchor)
         ])
     }
+
+    private func setupMapView() {
+        mapView.delegate = self
+        mapView.register(
+            PlaygroundAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
+        )
+        mapView.register(
+            PlaygroundClusterAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
+        )
+    }
     
-    // MARK: - Bindings
     private func setupBindings() {
-        // 지도 델리게이트 설정
-        mapViewDelegate = MapViewDelegate { [weak self] region in
-            print("지도 영역 변경 감지됨")
-            self?.viewModel.mapRegionDidChange.accept(region)
-        }
-        mapView.delegate = mapViewDelegate
-        
         locationButton.rx.tap
             .bind(to: viewModel.locationButtonTapped)
             .disposed(by: disposeBag)
@@ -166,9 +177,60 @@ class MapViewController: UIViewController {
             .map { show in !show }
             .bind(to: searchButton.rx.isHidden)
             .disposed(by: disposeBag)
+        
+        // 놀이터 데이터 바인딩
+        viewModel.playgroundListViewModel.playgrounds
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] playgroundsWithDistance in
+                self?.updateAnnotations(with: playgroundsWithDistance.map { $0.playground })
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Helper Methods
+    private func updateMapRegion(with location: Location) {
+        let coordinate = CLLocationCoordinate2D(
+            latitude: location.latitude,
+            longitude: location.longitude
+        )
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            latitudinalMeters: 1000,
+            longitudinalMeters: 1000
+        )
+        mapView.setRegion(region, animated: true)
+    }
+    
+    private func updateAnnotations(with playgrounds: [Playground]) {
+        // 기존 어노테이션 제거
+        mapView.removeAnnotations(currentAnnotations)
+        currentAnnotations.removeAll()
+        
+        // 새로운 어노테이션 추가
+        let annotations = playgrounds.map { playground -> PlaygroundAnnotation in
+            let annotation = PlaygroundAnnotation(playground: playground)
+            annotation.coordinate = playground.coordinate
+            annotation.title = playground.pfctNm
+            // 클러스터링을 위한 식별자 설정
+            annotation.clusteringIdentifier = "playground"
+            return annotation
+        }
+        
+        currentAnnotations = annotations
+        mapView.addAnnotations(annotations)
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: "오류",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Public Methods
     func addBottomSheet(_ bottomSheetVC: PlaygroundListViewController) {
         self.bottomSheetVC = bottomSheetVC
         addChild(bottomSheetVC)
@@ -190,41 +252,62 @@ class MapViewController: UIViewController {
             bottomSheetVC.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.9)
         ])
     }
-    
-    private func updateMapRegion(with location: Location) {
-        let coordinate = CLLocationCoordinate2D(
-            latitude: location.latitude,
-            longitude: location.longitude
-        )
-        let region = MKCoordinateRegion(
-            center: coordinate,
-            latitudinalMeters: 1000,
-            longitudinalMeters: 1000
-        )
-        mapView.setRegion(region, animated: true)
-    }
-    
-    private func showAlert(message: String) {
-        let alert = UIAlertController(
-            title: "오류",
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
 }
 
-// MARK: - Map Region Delegate
-private class MapViewDelegate: NSObject, MKMapViewDelegate {
-    private let regionDidChange: (MKCoordinateRegion) -> Void
+// MARK: - MKMapViewDelegate
+extension MapViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        switch annotation {
+        case is MKClusterAnnotation:
+            let cluster = annotation as! MKClusterAnnotation
+            let annotationView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: PlaygroundClusterAnnotationView.identifier,
+                for: annotation
+            ) as! PlaygroundClusterAnnotationView
+            
+            annotationView.configure(with: cluster)
+            return annotationView
+            
+        case is PlaygroundAnnotation:
+            let playground = annotation as! PlaygroundAnnotation
+            let annotationView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: PlaygroundAnnotationView.identifier,
+                for: annotation
+            ) as! PlaygroundAnnotationView
+            
+            annotationView.configure(with: playground)
+            return annotationView
+            
+        default:
+            return nil
+        }
+    }
     
-    init(regionDidChange: @escaping (MKCoordinateRegion) -> Void) {
-        self.regionDidChange = regionDidChange
-        super.init()
+    func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        if let cluster = annotation as? MKClusterAnnotation,
+           let clusterView = mapView.view(for: annotation) as? PlaygroundClusterAnnotationView {
+            clusterView.animateSelection(selected: true)
+            
+            // 클러스터에 포함된 놀이터 목록 처리
+            let playgrounds = clusterView.getPlaygrounds()
+            // TODO: 클러스터 선택 시 처리 (예: 목록 표시)
+            
+        } else if let playgroundAnnotation = annotation as? PlaygroundAnnotation,
+                  let annotationView = mapView.view(for: annotation) as? PlaygroundAnnotationView {
+            annotationView.animateSelection(selected: true)
+            // TODO: 단일 놀이터 선택 시 처리
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect annotation: MKAnnotation) {
+        if let clusterView = mapView.view(for: annotation) as? PlaygroundClusterAnnotationView {
+            clusterView.animateSelection(selected: false)
+        } else if let annotationView = mapView.view(for: annotation) as? PlaygroundAnnotationView {
+            annotationView.animateSelection(selected: false)
+        }
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        regionDidChange(mapView.region)
+        viewModel.mapRegionDidChange.accept(mapView.region)
     }
 }

@@ -7,13 +7,17 @@
 
 import MapKit
 
-class PlaygroundAnnotation: MKPointAnnotation {
-    var playground: Playground
+class PlaygroundAnnotation: NSObject, MKAnnotation {
+    let playground: Playground
+    var coordinate: CLLocationCoordinate2D
+    var title: String?
+    var clusteringIdentifier: String?
     
     init(playground: Playground) {
         self.playground = playground
-        super.init()
         self.coordinate = playground.coordinate
         self.title = playground.pfctNm
+        self.clusteringIdentifier = "playground"
+        super.init()
     }
 }
