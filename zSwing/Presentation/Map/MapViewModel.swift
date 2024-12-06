@@ -19,8 +19,8 @@ class MapViewModel {
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
     let locationButtonTapped = PublishRelay<Void>()
-    let regionDidChange = PublishRelay<MKCoordinateRegion>()
-    let searchButtonTapped = PublishRelay<Void>()
+    let searchButtonTapped = PublishRelay<MapRegion>()
+    let mapRegionDidChange = PublishRelay<MKCoordinateRegion>()
     let initialRegion = PublishRelay<MKCoordinateRegion>()
     
     // MARK: - Outputs
@@ -46,7 +46,7 @@ class MapViewModel {
                     center: region.center,
                     span: region.span
                 )
-                self?.playgroundListViewModel.regionChanged.accept(mapRegion)
+                self?.playgroundListViewModel.searchButtonTapped.accept(mapRegion)
             })
             .flatMapLatest { [weak self] _ -> Observable<Result<Bool, Error>> in
                 guard let self = self else { return .empty() }
@@ -66,7 +66,6 @@ class MapViewModel {
             .do(onNext: { [weak self] result in
                 if case .success(let location) = result {
                     self?.currentLocation.accept(location)
-                    self?.searchButtonTapped.accept(())
                 }
                 self?.isLoading.accept(false)
             })
@@ -92,47 +91,11 @@ class MapViewModel {
             })
             .disposed(by: disposeBag)
         
-        // 검색 버튼 탭 처리
-        searchButtonTapped
-            .withLatestFrom(regionDidChange)
-            .do(onNext: { [weak self] region in
-                self?.isLoading.accept(true)
-                self?.shouldShowSearchButton.accept(false)
-                self?.updateLocationTitle(
-                    latitude: region.center.latitude,
-                    longitude: region.center.longitude
-                )
-                let mapRegion = MapRegion(
-                    center: region.center,
-                    span: region.span
-                )
-                self?.playgroundListViewModel.regionChanged.accept(mapRegion)
-            })
-            .do(onNext: { [weak self] _ in
-                self?.isLoading.accept(false)
-            })
-            .subscribe()
-            .disposed(by: disposeBag)
-        
         // 지도 이동 시 검색 버튼 표시/숨김 처리
-        regionDidChange
+        mapRegionDidChange
             .skip(1)
-            .withLatestFrom(isLoading) { (region, isLoading) in
-                return !isLoading
-            }
+            .map { _ in true }
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
-    }
-    
-    private func updateLocationTitle(latitude: Double, longitude: Double) {
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        let geocoder = CLGeocoder()
-        
-        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
-            if let error = error {
-                self?.error.accept(error)
-                return
-            }
-        }
     }
 }

@@ -82,41 +82,14 @@ final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 초기 로딩 상태 표시
-        setupLoadingState()
-        
-        // 데이터 로딩 후 UI 설정
-        viewModel.playgrounds
-            .observe(on: MainScheduler.instance)
-            .take(1) // 첫 번째 데이터 로딩만 처리
-            .subscribe(onNext: { [weak self] _ in
-                self?.setupUI()
-                self?.setupConstraints()
-                self?.bindViewModel()
-            })
-            .disposed(by: disposeBag)
-        
-        // 데이터 로딩 시작
+        setupUI()
+        setupConstraints()
+        bindViewModel()
         viewModel.viewDidLoad.accept(())
-    }
-    
-    private func setupLoadingState() {
-        view.addSubview(loadingIndicator)
-        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-        
-        loadingIndicator.startAnimating()
     }
     
     // MARK: - Setup
     private func setupUI() {
-        loadingIndicator.removeFromSuperview()
-        
         contentView.addSubview(headerView)
         headerView.addSubview(locationStackView)
         locationStackView.addArrangedSubview(locationIconImageView)
@@ -134,33 +107,27 @@ final class PlaygroundListViewController: BottomSheetViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Header
             headerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             headerView.heightAnchor.constraint(equalToConstant: 100),
             
-            // Location Stack
             locationStackView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 16),
             locationStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
             
-            // Location Icon
             locationIconImageView.widthAnchor.constraint(equalToConstant: 16),
             locationIconImageView.heightAnchor.constraint(equalToConstant: 16),
             
-            // Segmented Control
             segmentedControl.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -8),
             segmentedControl.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
             segmentedControl.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
             segmentedControl.heightAnchor.constraint(equalToConstant: 32),
             
-            // Table View
             tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
-            // Loading Indicator
             loadingIndicator.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: tableView.centerYAnchor)
         ])
@@ -203,12 +170,16 @@ final class PlaygroundListViewController: BottomSheetViewController {
             .bind(to: viewModel.categorySelected)
             .disposed(by: disposeBag)
     }
+    
+    // MARK: - Public Methods
+    func fetchPlaygrounds(for region: MapRegion) {
+        viewModel.searchButtonTapped.accept(region)
+    }
 }
 
 // MARK: - UITableViewDelegate
 extension PlaygroundListViewController: UITableViewDelegate {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // 부모 클래스의 스크롤 처리도 호출
         super.scrollViewDidScroll(scrollView)
     }
 }

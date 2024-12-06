@@ -16,7 +16,6 @@ final class AppDIContainer {
     private lazy var authService: FirebaseAuthServiceProtocol = FirebaseAuthService()
     private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository(firebaseService: firebasePlaygroundService)
     private lazy var locationRepository: MapRepository = DefaultMapRepository()
-    private lazy var rideRepository: RideRepository = DefaultRideRepository()
     private lazy var firebasePlaygroundService: FirebasePlaygroundServiceProtocol = FirebasePlaygroundService()
     
     // MARK: - Coordinators

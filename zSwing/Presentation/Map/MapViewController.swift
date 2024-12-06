@@ -17,6 +17,7 @@ class MapViewController: UIViewController {
     private let disposeBag = DisposeBag()
     weak var coordinator: MapCoordinator?
     private var bottomSheetVC: PlaygroundListViewController?
+    private var mapViewDelegate: MapViewDelegate?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -116,23 +117,32 @@ class MapViewController: UIViewController {
     
     // MARK: - Bindings
     private func setupBindings() {
+        // 지도 델리게이트 설정
+        mapViewDelegate = MapViewDelegate { [weak self] region in
+            print("지도 영역 변경 감지됨")
+            self?.viewModel.mapRegionDidChange.accept(region)
+        }
+        mapView.delegate = mapViewDelegate
+        
         locationButton.rx.tap
             .bind(to: viewModel.locationButtonTapped)
             .disposed(by: disposeBag)
         
         searchButton.rx.tap
-            .bind(to: viewModel.searchButtonTapped)
-            .disposed(by: disposeBag)
-        
-        Observable.create { [weak self] observer -> Disposable in
-            let delegate = MapViewDelegate { region in
-                observer.onNext(region)
+            .map { [weak self] _ -> MapRegion in
+                guard let region = self?.mapView.region else { return .defaultRegion }
+                return MapRegion(
+                    center: region.center,
+                    span: region.span
+                )
             }
-            self?.mapView.delegate = delegate
-            return Disposables.create()
-        }
-        .bind(to: viewModel.regionDidChange)
-        .disposed(by: disposeBag)
+            .do(onNext: { [weak self] region in
+                self?.viewModel.searchButtonTapped.accept(region)
+            })
+            .subscribe(onNext: { [weak self] region in
+                self?.bottomSheetVC?.fetchPlaygrounds(for: region)
+            })
+            .disposed(by: disposeBag)
         
         viewModel.currentLocation
             .observe(on: MainScheduler.instance)
@@ -153,7 +163,7 @@ class MapViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.shouldShowSearchButton
-            .map { !$0 }
+            .map { show in !show }
             .bind(to: searchButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
