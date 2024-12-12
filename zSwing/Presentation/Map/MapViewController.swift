@@ -11,12 +11,6 @@ import RxCocoa
 import MapKit
 import CoreLocation
 
-import UIKit
-import RxSwift
-import RxCocoa
-import MapKit
-import CoreLocation
-
 class MapViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: MapViewModel
@@ -24,6 +18,7 @@ class MapViewController: UIViewController {
     weak var coordinator: MapCoordinator?
     private var bottomSheetVC: PlaygroundListViewController?
     private var currentAnnotations: [PlaygroundAnnotation] = []
+    private var lastSearchedRegion: MKCoordinateRegion?
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -124,13 +119,17 @@ class MapViewController: UIViewController {
 
     private func setupMapView() {
         mapView.delegate = self
+        
+        // 일반 어노테이션 뷰를 먼저 등록
         mapView.register(
             PlaygroundAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: PlaygroundAnnotationView.identifier
         )
+        
+        // 그 다음 클러스터 어노테이션 뷰 등록
         mapView.register(
             PlaygroundClusterAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: PlaygroundClusterAnnotationView.identifier
+            forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier
         )
     }
     
@@ -140,15 +139,26 @@ class MapViewController: UIViewController {
             .disposed(by: disposeBag)
         
         searchButton.rx.tap
-            .map { [weak self] _ -> MapRegion in
-                guard let region = self?.mapView.region else { return .defaultRegion }
+            .map { [weak self] _ -> MapRegion? in
+                guard let self = self else { return nil }
+                let currentRegion = self.mapView.region
+                
+                // 마지막 검색 영역과 현재 영역이 크게 다를 때만 검색 실행
+                if let lastRegion = self.lastSearchedRegion,
+                   self.isRegionSimilar(lastRegion, currentRegion) {
+                    return nil
+                }
+                
+                self.lastSearchedRegion = currentRegion
                 return MapRegion(
-                    center: region.center,
-                    span: region.span
+                    center: currentRegion.center,
+                    span: currentRegion.span
                 )
             }
+            .compactMap { $0 }  // nil 값 필터링
             .do(onNext: { [weak self] region in
                 self?.viewModel.searchButtonTapped.accept(region)
+                self?.searchButton.isHidden = true
             })
             .subscribe(onNext: { [weak self] region in
                 self?.bottomSheetVC?.fetchPlaygrounds(for: region)
@@ -202,22 +212,41 @@ class MapViewController: UIViewController {
     }
     
     private func updateAnnotations(with playgrounds: [Playground]) {
-        // 기존 어노테이션 제거
-        mapView.removeAnnotations(currentAnnotations)
-        currentAnnotations.removeAll()
-        
-        // 새로운 어노테이션 추가
-        let annotations = playgrounds.map { playground -> PlaygroundAnnotation in
+        // 기존 어노테이션과 새로운 어노테이션 비교를 위한 집합 생성
+        let existingAnnotations = Set(currentAnnotations)
+        let newAnnotations = Set(playgrounds.map { playground -> PlaygroundAnnotation in
             let annotation = PlaygroundAnnotation(playground: playground)
-            annotation.coordinate = playground.coordinate
-            annotation.title = playground.pfctNm
-            // 클러스터링을 위한 식별자 설정
-            annotation.clusteringIdentifier = "playground"
             return annotation
-        }
+        })
         
-        currentAnnotations = annotations
-        mapView.addAnnotations(annotations)
+        // 제거해야 할 어노테이션과 추가해야 할 어노테이션 계산
+        let annotationsToRemove = existingAnnotations.subtracting(newAnnotations)
+        let annotationsToAdd = newAnnotations.subtracting(existingAnnotations)
+        
+        // 제거할 어노테이션만 제거
+        mapView.removeAnnotations(Array(annotationsToRemove))
+        
+        // 새로운 어노테이션만 추가
+        mapView.addAnnotations(Array(annotationsToAdd))
+        
+        // currentAnnotations 업데이트
+        currentAnnotations = Array(newAnnotations)
+    }
+
+    // 두 지도 영역이 유사한지 확인하는 헬퍼 메서드
+    private func isRegionSimilar(_ region1: MKCoordinateRegion, _ region2: MKCoordinateRegion) -> Bool {
+        let centerThreshold = 0.01  // 약 1km
+        let spanThreshold = 0.01    // 약 1km
+        
+        let latDiff = abs(region1.center.latitude - region2.center.latitude)
+        let lonDiff = abs(region1.center.longitude - region2.center.longitude)
+        let spanLatDiff = abs(region1.span.latitudeDelta - region2.span.latitudeDelta)
+        let spanLonDiff = abs(region1.span.longitudeDelta - region2.span.longitudeDelta)
+        
+        return latDiff < centerThreshold &&
+               lonDiff < centerThreshold &&
+               spanLatDiff < spanThreshold &&
+               spanLonDiff < spanThreshold
     }
     
     private func showAlert(message: String) {
@@ -257,30 +286,33 @@ class MapViewController: UIViewController {
 // MARK: - MKMapViewDelegate
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        switch annotation {
-        case is MKClusterAnnotation:
-            let cluster = annotation as! MKClusterAnnotation
+        if annotation is MKUserLocation {
+            return nil
+        }
+        
+        if let cluster = annotation as? MKClusterAnnotation {
+            let identifier = MKMapViewDefaultClusterAnnotationViewReuseIdentifier
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundClusterAnnotationView.identifier,
+                withIdentifier: identifier,
                 for: annotation
             ) as! PlaygroundClusterAnnotationView
             
             annotationView.configure(with: cluster)
             return annotationView
-            
-        case is PlaygroundAnnotation:
-            let playground = annotation as! PlaygroundAnnotation
+        }
+        
+        if let playground = annotation as? PlaygroundAnnotation {
+            let identifier = PlaygroundAnnotationView.identifier
             let annotationView = mapView.dequeueReusableAnnotationView(
-                withIdentifier: PlaygroundAnnotationView.identifier,
+                withIdentifier: identifier,
                 for: annotation
             ) as! PlaygroundAnnotationView
             
             annotationView.configure(with: playground)
             return annotationView
-            
-        default:
-            return nil
         }
+        
+        return nil
     }
     
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {

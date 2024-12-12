@@ -47,6 +47,9 @@ class PlaygroundAnnotationView: MKAnnotationView {
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         setupUI()
+        
+        // 클러스터링 식별자 설정
+        clusteringIdentifier = "playground.cluster"
     }
     
     required init?(coder aDecoder: NSCoder) {

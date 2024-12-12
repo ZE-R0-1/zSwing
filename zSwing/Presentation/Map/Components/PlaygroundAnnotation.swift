@@ -9,15 +9,27 @@ import MapKit
 
 class PlaygroundAnnotation: NSObject, MKAnnotation {
     let playground: Playground
-    var coordinate: CLLocationCoordinate2D
-    var title: String?
-    var clusteringIdentifier: String?
+    let coordinate: CLLocationCoordinate2D
+    let title: String?
+    
+    override var hash: Int {
+        return playground.pfctSn.hash
+    }
+    
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? PlaygroundAnnotation else { return false }
+        return playground.pfctSn == other.playground.pfctSn
+    }
+    
+    // 클러스터링 식별자를 computed property로 변경
+    var clusteringIdentifier: String? {
+        return "playground.cluster"
+    }
     
     init(playground: Playground) {
         self.playground = playground
         self.coordinate = playground.coordinate
         self.title = playground.pfctNm
-        self.clusteringIdentifier = "playground"
         super.init()
     }
 }
