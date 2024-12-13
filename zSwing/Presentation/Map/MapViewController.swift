@@ -150,19 +150,17 @@ class MapViewController: UIViewController {
                 }
                 
                 self.lastSearchedRegion = currentRegion
-                return MapRegion(
+                let mapRegion = MapRegion(
                     center: currentRegion.center,
                     span: currentRegion.span
                 )
+                
+                self.bottomSheetVC?.fetchPlaygrounds(for: mapRegion)
+                
+                return mapRegion
             }
-            .compactMap { $0 }  // nil 값 필터링
-            .do(onNext: { [weak self] region in
-                self?.viewModel.searchButtonTapped.accept(region)
-                self?.searchButton.isHidden = true
-            })
-            .subscribe(onNext: { [weak self] region in
-                self?.bottomSheetVC?.fetchPlaygrounds(for: region)
-            })
+            .compactMap { $0 }
+            .bind(to: viewModel.searchButtonTapped)
             .disposed(by: disposeBag)
         
         viewModel.currentLocation

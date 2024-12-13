@@ -173,6 +173,8 @@ final class PlaygroundListViewController: BottomSheetViewController {
     
     // MARK: - Public Methods
     func fetchPlaygrounds(for region: MapRegion) {
+        // 검색 버튼 탭 시 목록을 위로 올려서 보여줌
+        moveSheet(to: .mid)
         viewModel.searchButtonTapped.accept(region)
     }
 }

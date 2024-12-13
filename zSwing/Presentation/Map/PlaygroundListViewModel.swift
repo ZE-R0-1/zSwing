@@ -37,12 +37,57 @@ final class PlaygroundListViewModel {
     }
     
     private func bind() {
-        // 검색 이벤트 처리
+        // 검색 버튼 탭 이벤트 처리 시 위치 제목도 함께 업데이트
         searchButtonTapped
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .bind(to: searchSubject)
+            .do(onNext: { [weak self] region in
+                // 위치 제목 업데이트
+                self?.updateLocationTitle(for: region.center)
+                self?.isLoading.accept(true)
+            })
+            .withLatestFrom(categorySelected) { (region: $0, categories: $1) }
+            .flatMapLatest { [weak self] params -> Observable<[PlaygroundWithDistance]> in
+                guard let self = self else { return .empty() }
+                
+                let currentLocation = CLLocation(
+                    latitude: params.region.center.latitude,
+                    longitude: params.region.center.longitude
+                )
+                
+                // 현재 지도 영역에 있는 놀이터만 필터링
+                return self.playgroundUseCase
+                    .fetchPlaygrounds(in: params.region)
+                    .map { playgrounds in
+                        playgrounds
+                            .filter { playground in
+                                if params.categories.contains("전체") { return true }
+                                return true // 추후 카테고리 필터링 로직 추가
+                            }
+                            .map { playground in
+                                let distance = currentLocation.distance(
+                                    from: CLLocation(
+                                        latitude: playground.coordinate.latitude,
+                                        longitude: playground.coordinate.longitude
+                                    )
+                                ) / 1000.0
+                                return PlaygroundWithDistance(
+                                    playground: playground,
+                                    distance: distance
+                                )
+                            }
+                            .sorted { $0.distance ?? .infinity < $1.distance ?? .infinity }
+                    }
+            }
+            .do(onNext: { [weak self] _ in
+                self?.isLoading.accept(false)
+            })
+            .catch { [weak self] error in
+                self?.error.accept(error)
+                return .empty()
+            }
+            .bind(to: playgrounds)
             .disposed(by: disposeBag)
-            
+        
         // 검색과 카테고리 결합 처리
         Observable.combineLatest(
             searchSubject,
@@ -96,14 +141,6 @@ final class PlaygroundListViewModel {
         }
         .bind(to: playgrounds)
         .disposed(by: disposeBag)
-        
-        // 위치 제목 업데이트
-        searchSubject
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] region in
-                self?.updateLocationTitle(for: region.center)
-            })
-            .disposed(by: disposeBag)
     }
     
     private func updateLocationTitle(for coordinate: CLLocationCoordinate2D) {
