@@ -12,7 +12,6 @@ import MapKit
 protocol MapCoordinator: Coordinator {
     func showMap()
     func showPlaygroundList()
-    func showSearchResult()
 }
 
 class DefaultMapCoordinator: MapCoordinator {
@@ -39,13 +38,10 @@ class DefaultMapCoordinator: MapCoordinator {
         guard let mapVC = navigationController.viewControllers.first as? MapViewController else { return }
         
         let playgroundListVC = diContainer.makePlaygroundListViewController()
-        mapVC.addBottomSheet(playgroundListVC) // 수정된 부분
-    }
-    
-    func showSearchResult() {
+        mapVC.addBottomSheet(playgroundListVC)
     }
     
     private func makeMapViewController() -> MapViewController {
-        return diContainer.makeMapViewController()
+        return diContainer.makeMapViewController(coordinator: self)
     }
 }

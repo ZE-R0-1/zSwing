@@ -16,6 +16,7 @@ class MapViewController: UIViewController {
     private let viewModel: MapViewModel
     private let disposeBag = DisposeBag()
     weak var coordinator: MapCoordinator?
+    private let diContainer: AppDIContainer
     private var bottomSheetVC: PlaygroundListViewController?
     private var currentAnnotations: [PlaygroundAnnotation] = []
     private var lastSearchedRegion: MKCoordinateRegion?
@@ -68,8 +69,10 @@ class MapViewController: UIViewController {
     }()
     
     // MARK: - Initialization
-    init(viewModel: MapViewModel) {
+    init(viewModel: MapViewModel, coordinator: MapCoordinator, diContainer: AppDIContainer) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
+        self.diContainer = diContainer
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -339,5 +342,27 @@ extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         viewModel.mapRegionDidChange.accept(mapView.region)
+    }
+}
+
+extension MapViewController {
+    func presentPlaygroundView(_ playgroundView: PlaygroundView) {
+        // 기존 bottomSheet를 제거하고 새로운 playgroundView를 표시
+        bottomSheetVC?.willMove(toParent: nil)
+        bottomSheetVC?.view.removeFromSuperview()
+        bottomSheetVC?.removeFromParent()
+        
+        addChild(playgroundView)
+        view.addSubview(playgroundView.view)
+        playgroundView.didMove(toParent: self)
+        
+        // constraint 설정
+        playgroundView.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            playgroundView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playgroundView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playgroundView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            playgroundView.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.9)
+        ])
     }
 }

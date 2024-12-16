@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class AppDIContainer {
     static let shared = AppDIContainer()
@@ -17,6 +18,9 @@ final class AppDIContainer {
     private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository(firebaseService: firebasePlaygroundService)
     private lazy var locationRepository: MapRepository = DefaultMapRepository()
     private lazy var firebasePlaygroundService: FirebasePlaygroundServiceProtocol = FirebasePlaygroundService()
+    private lazy var playgroundDetailRepository: PlaygroundDetailRepository = DefaultPlaygroundDetailRepository()
+    private lazy var favoriteRepository: FavoriteRepository = DefaultFavoriteRepository()
+    private lazy var reviewRepository: ReviewRepository = DefaultReviewRepository()
     
     // MARK: - Coordinators
     func makeAuthCoordinator(navigationController: UINavigationController) -> AuthCoordinator {
@@ -70,15 +74,31 @@ final class AppDIContainer {
         return DefaultMapUseCase(repository: locationRepository)
     }
     
-//    private func makePlaygroundUseCase() -> PlaygroundUseCase {
-//        return DefaultPlaygroundUseCase(repository: playgroundRepository)
-//    }
-    
     private func makePlaygroundListUseCase() -> PlaygroundListUseCase {
         return DefaultPlaygroundListUseCase(
             repository: DefaultPlaygroundRepository(
                 firebaseService: firebasePlaygroundService
             )
+        )
+    }
+    
+    private func makePlaygroundDetailUseCase() -> PlaygroundDetailUseCase {
+        return DefaultPlaygroundDetailUseCase(
+            playgroundRepository: playgroundDetailRepository,
+            favoriteRepository: favoriteRepository,
+            reviewRepository: reviewRepository
+        )
+    }
+    
+    private func makeFavoriteUseCase() -> FavoriteUseCase {
+        return DefaultFavoriteUseCase(
+            favoriteRepository: favoriteRepository
+        )
+    }
+    
+    private func makeReviewUseCase() -> ReviewUseCase {
+        return DefaultReviewUseCase(
+            reviewRepository: reviewRepository
         )
     }
     
@@ -109,6 +129,16 @@ final class AppDIContainer {
         return PlaygroundListViewModel(playgroundUseCase: makePlaygroundListUseCase())
     }
     
+    private func makePlaygroundViewModel(playground: Playground, currentLocation: CLLocation?) -> PlaygroundViewModel {
+        return PlaygroundViewModel(
+            playground: playground,
+            currentLocation: currentLocation,
+            playgroundDetailUseCase: makePlaygroundDetailUseCase(),
+            favoriteUseCase: makeFavoriteUseCase(),
+            reviewUseCase: makeReviewUseCase()
+        )
+    }
+    
     // MARK: - ViewControllers
     func makeLoginViewController() -> LoginViewController {
         return LoginViewController(viewModel: makeLoginViewModel())
@@ -118,8 +148,12 @@ final class AppDIContainer {
         return NicknameViewController(viewModel: makeNicknameViewModel())
     }
     
-    func makeMapViewController() -> MapViewController {
-        return MapViewController(viewModel: makeMapViewModel())
+    func makeMapViewController(coordinator: MapCoordinator) -> MapViewController {
+        return MapViewController(
+            viewModel: makeMapViewModel(),
+            coordinator: coordinator,
+            diContainer: self
+        )
     }
     
     func makeProfileViewController() -> ProfileViewController {
@@ -128,6 +162,15 @@ final class AppDIContainer {
     
     func makePlaygroundListViewController() -> PlaygroundListViewController {
         return PlaygroundListViewController(viewModel: makePlaygroundListViewModel())
+    }
+    
+    func makePlaygroundView(playground: Playground, currentLocation: CLLocation?) -> PlaygroundView {
+        return PlaygroundView(
+            viewModel: makePlaygroundViewModel(
+                playground: playground,
+                currentLocation: currentLocation
+            )
+        )
     }
     
     func makeHomeViewController() -> UIViewController {

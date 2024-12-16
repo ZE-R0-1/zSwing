@@ -5,9 +5,9 @@
 //  Created by USER on 12/4/24.
 //
 
-import UIKit
 import RxSwift
-import RxCocoa
+import UIKit
+import CoreLocation
 
 final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Properties
@@ -88,7 +88,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
         viewModel.viewDidLoad.accept(())
     }
     
-    // MARK: - Setup
+    // MARK: - Setup Methods
     private func setupUI() {
         contentView.addSubview(headerView)
         headerView.addSubview(locationStackView)
@@ -171,9 +171,58 @@ final class PlaygroundListViewController: BottomSheetViewController {
             .disposed(by: disposeBag)
     }
     
+    func showPlaygroundView(_ playground: Playground) {
+        // Repository 및 UseCase 생성
+        let playgroundDetailRepository = DefaultPlaygroundDetailRepository()
+        let favoriteRepository = DefaultFavoriteRepository()
+        let reviewRepository = DefaultReviewRepository()
+        
+        let playgroundDetailUseCase = DefaultPlaygroundDetailUseCase(
+            playgroundRepository: playgroundDetailRepository,
+            favoriteRepository: favoriteRepository,
+            reviewRepository: reviewRepository
+        )
+        let favoriteUseCase = DefaultFavoriteUseCase(
+            favoriteRepository: favoriteRepository
+        )
+        let reviewUseCase = DefaultReviewUseCase(
+            reviewRepository: reviewRepository
+        )
+        
+        // ViewModel 생성
+        let viewModel = PlaygroundViewModel(
+            playground: playground,
+            currentLocation: CLLocationManager().location,
+            playgroundDetailUseCase: playgroundDetailUseCase,
+            favoriteUseCase: favoriteUseCase,
+            reviewUseCase: reviewUseCase
+        )
+        
+        // PlaygroundView 생성 및 표시
+        let playgroundView = PlaygroundView(viewModel: viewModel)
+        playgroundView.delegate = self
+        
+        // 현재 콘텐츠를 숨기고
+        let currentContentViews = contentView.subviews
+        currentContentViews.forEach { $0.isHidden = true }
+        
+        // PlaygroundView를 추가
+        addChild(playgroundView)
+        contentView.addSubview(playgroundView.view)
+        playgroundView.didMove(toParent: self)
+        
+        // 제약조건 설정
+        playgroundView.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            playgroundView.view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            playgroundView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            playgroundView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            playgroundView.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
     // MARK: - Public Methods
     func fetchPlaygrounds(for region: MapRegion) {
-        // 검색 버튼 탭 시 목록을 위로 올려서 보여줌
         moveSheet(to: .mid)
         viewModel.searchButtonTapped.accept(region)
     }
@@ -183,5 +232,18 @@ final class PlaygroundListViewController: BottomSheetViewController {
 extension PlaygroundListViewController: UITableViewDelegate {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         super.scrollViewDidScroll(scrollView)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let playground = viewModel.playgrounds.value[indexPath.row].playground
+        showPlaygroundView(playground)
+    }
+}
+
+// MARK: - PlaygroundViewDelegate
+extension PlaygroundListViewController: PlaygroundViewDelegate {
+    func playgroundViewDidDismiss(_ playgroundView: PlaygroundView) {
+        // 숨겨둔 콘텐츠들을 다시 표시
+        contentView.subviews.forEach { $0.isHidden = false }
     }
 }
