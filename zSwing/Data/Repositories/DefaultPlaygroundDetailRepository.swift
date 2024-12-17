@@ -21,16 +21,12 @@ final class DefaultPlaygroundDetailRepository: PlaygroundDetailRepository {
             
             docRef.getDocument { snapshot, error in
                 if let error = error {
+                    print("❌ Error fetching playground detail:", error)
                     observer.onError(error)
                     return
                 }
                 
-                guard let data = snapshot?.data(),
-                      let address = data["address"] as? String else {
-                    observer.onError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid data"]))
-                    return
-                }
-                
+                let address = snapshot?.data()?["ronaAddr"] as? String ?? ""
                 let detail = PlaygroundDetailDTO(address: address)
                 observer.onNext(detail)
                 observer.onCompleted()

@@ -36,18 +36,31 @@ final class PlaygroundView: UIViewController {
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 16
+        stack.spacing = 10
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private let headerStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.alignment = .top  // 상단 정렬
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)  // 너비 늘어나도록
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)  // 필요시 압축 허용
         return label
     }()
-    
+
     private let addressLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -98,7 +111,8 @@ final class PlaygroundView: UIViewController {
         button.setImage(image, for: .normal)
         button.tintColor = .darkGray
         button.backgroundColor = .clear
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)  // 크기 유지
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)  // 압축 방지
         return button
     }()
     
@@ -118,7 +132,7 @@ final class PlaygroundView: UIViewController {
         setupUI()
         setupConstraints()
         setupBindings()
-        viewModel.viewDidLoad.accept(())
+        viewModel.viewDidLoad.accept(())  // 이 부분이 실행되는지 확인
     }
     
     // MARK: - Setup
@@ -126,9 +140,13 @@ final class PlaygroundView: UIViewController {
         view.addSubview(containerView)
         containerView.addSubview(scrollView)
         scrollView.addSubview(stackView)
-        containerView.addSubview(closeButton)
         
-        [nameLabel, addressLabel, distanceLabel, favoriteButton,
+        // headerStackView에 레이블과 버튼 추가
+        headerStackView.addArrangedSubview(nameLabel)
+        headerStackView.addArrangedSubview(closeButton)
+        
+        // 기존 스택뷰에 헤더스택뷰 추가
+        [headerStackView, addressLabel, distanceLabel, favoriteButton,
          reviewsCollectionView, writeReviewButton].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -161,8 +179,11 @@ final class PlaygroundView: UIViewController {
             
             writeReviewButton.heightAnchor.constraint(equalToConstant: 44),
             
-            closeButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
-            closeButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            // headerStackView 제약조건
+            headerStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            headerStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            
+            // closeButton 크기 제약조건
             closeButton.widthAnchor.constraint(equalToConstant: 30),
             closeButton.heightAnchor.constraint(equalToConstant: 30)
         ])

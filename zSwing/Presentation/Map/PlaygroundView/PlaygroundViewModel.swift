@@ -48,6 +48,21 @@ class PlaygroundViewModel {
         self.favoriteUseCase = favoriteUseCase
         self.reviewUseCase = reviewUseCase
         
+        // 초기값 설정
+        self.pfctNm.accept(playground.pfctNm)
+        
+        // distance 초기값 설정
+        if let currentLocation = currentLocation {
+            let playgroundLocation = CLLocation(
+                latitude: playground.coordinate.latitude,
+                longitude: playground.coordinate.longitude
+            )
+            let distanceInKm = currentLocation.distance(from: playgroundLocation) / 1000.0
+            self.distance.accept(String(format: "%.1fkm · 게시물 \(Int.random(in: 10...100))+", distanceInKm))
+        } else {
+            self.distance.accept("거리 정보 없음 · 게시물 \(Int.random(in: 10...100))+")
+        }
+        
         setupBindings()
     }
     
