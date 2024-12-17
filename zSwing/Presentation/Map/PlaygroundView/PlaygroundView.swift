@@ -83,6 +83,23 @@ final class PlaygroundView: UIViewController {
         return button
     }()
     
+    private let emptyReviewView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.layer.cornerRadius = 8
+        return view
+    }()
+
+    private let emptyReviewLabel: UILabel = {
+        let label = UILabel()
+        label.text = "아직 리뷰가 없어요\n첫 번째 리뷰를 작성해보세요!"
+        label.textColor = .gray
+        label.font = .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+    
     private let reviewsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -145,9 +162,12 @@ final class PlaygroundView: UIViewController {
         headerStackView.addArrangedSubview(nameLabel)
         headerStackView.addArrangedSubview(closeButton)
         
-        // 기존 스택뷰에 헤더스택뷰 추가
+        emptyReviewView.addSubview(emptyReviewLabel)
+        [emptyReviewView, emptyReviewLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        
+        // stackView에 emptyReviewView 추가
         [headerStackView, addressLabel, distanceLabel, favoriteButton,
-         reviewsCollectionView, writeReviewButton].forEach {
+         emptyReviewView, reviewsCollectionView, writeReviewButton].forEach {
             stackView.addArrangedSubview($0)
         }
         
@@ -176,14 +196,15 @@ final class PlaygroundView: UIViewController {
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32),
             
             reviewsCollectionView.heightAnchor.constraint(equalToConstant: 120),
-            
             writeReviewButton.heightAnchor.constraint(equalToConstant: 44),
+            emptyReviewView.heightAnchor.constraint(equalToConstant: 120),
             
-            // headerStackView 제약조건
             headerStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             headerStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             
-            // closeButton 크기 제약조건
+            emptyReviewLabel.centerXAnchor.constraint(equalTo: emptyReviewView.centerXAnchor),
+            emptyReviewLabel.centerYAnchor.constraint(equalTo: emptyReviewView.centerYAnchor),
+            
             closeButton.widthAnchor.constraint(equalToConstant: 30),
             closeButton.heightAnchor.constraint(equalToConstant: 30)
         ])
@@ -226,12 +247,16 @@ final class PlaygroundView: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.reviews
-            .bind(to: reviewsCollectionView.rx.items(
-                cellIdentifier: ReviewCell.identifier,
-                cellType: ReviewCell.self
-            )) { _, review, cell in
-                cell.configure(with: review)
-            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] reviews in
+                if reviews.isEmpty {
+                    self?.reviewsCollectionView.isHidden = true
+                    self?.emptyReviewView.isHidden = false
+                } else {
+                    self?.reviewsCollectionView.isHidden = false
+                    self?.emptyReviewView.isHidden = true
+                }
+            })
             .disposed(by: disposeBag)
     }
     
