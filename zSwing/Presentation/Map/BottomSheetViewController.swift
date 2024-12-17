@@ -103,7 +103,8 @@ class BottomSheetViewController: UIViewController {
     
     private func setupGestures() {
         let panGesture = UIPanGestureRecognizer()
-        containerView.addGestureRecognizer(panGesture)
+        panGesture.delegate = self
+        contentView.addGestureRecognizer(panGesture)
         
         panGesture.rx.event
             .bind { [weak self] gesture in
@@ -128,16 +129,24 @@ class BottomSheetViewController: UIViewController {
         let newHeight = UIScreen.main.bounds.height * height.heightPercentage
         
         UIView.animate(
-            withDuration: 0.5, // 애니메이션 시간
+            withDuration: 0.5,
             delay: 0,
-            usingSpringWithDamping: 0.8, // 스프링 감쇠 (0~1, 작을수록 더 탄력적)
-            initialSpringVelocity: 0.5, // 초기 스프링 속도
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 0.5,
             options: .curveEaseInOut,
             animations: {
                 self.heightConstraint?.constant = newHeight
                 self.view.layoutIfNeeded()
             }
-        )
+        ) { _ in
+            // 애니메이션이 완료된 후 콜백
+            if height == .max {
+                // 최대 높이일 때 스크롤 바운스 활성화
+                if let scrollView = self.contentView.subviews.first(where: { $0 is UIScrollView }) as? UIScrollView {
+                    scrollView.bounces = true
+                }
+            }
+        }
     }
     
     private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -205,6 +214,24 @@ extension BottomSheetViewController: UIScrollViewDelegate {
         }
     }
 }
+
+extension BottomSheetViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        let isScrollView = otherGestureRecognizer.view is UIScrollView
+        if isScrollView {
+            let scrollView = otherGestureRecognizer.view as! UIScrollView
+            // 스크롤뷰가 맨 위에 있고 아래로 드래그하는 경우에만 시트 제스처 허용
+            if scrollView.contentOffset.y <= 0 {
+                scrollView.bounces = false
+                return true
+            }
+            scrollView.bounces = true
+            return false
+        }
+        return false
+    }
+}
+
 
 class BottomSheetView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
