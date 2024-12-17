@@ -16,7 +16,7 @@ class BottomSheetViewController: UIViewController {
         
         var heightPercentage: CGFloat {
             switch self {
-            case .min: return 0.1
+            case .min: return 0.2
             case .mid: return 0.465
             case .max: return 0.9
             }
@@ -127,10 +127,17 @@ class BottomSheetViewController: UIViewController {
         currentHeight = height
         let newHeight = UIScreen.main.bounds.height * height.heightPercentage
         
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
-            self.heightConstraint?.constant = newHeight
-            self.view.layoutIfNeeded()
-        }
+        UIView.animate(
+            withDuration: 0.5, // 애니메이션 시간
+            delay: 0,
+            usingSpringWithDamping: 0.8, // 스프링 감쇠 (0~1, 작을수록 더 탄력적)
+            initialSpringVelocity: 0.5, // 초기 스프링 속도
+            options: .curveEaseInOut,
+            animations: {
+                self.heightConstraint?.constant = newHeight
+                self.view.layoutIfNeeded()
+            }
+        )
     }
     
     private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -150,15 +157,30 @@ class BottomSheetViewController: UIViewController {
             
         case .ended:
             let currentHeightPercentage = (heightConstraint?.constant ?? 0) / UIScreen.main.bounds.height
+            let velocity = gesture.velocity(in: view).y
             
-            if abs(velocity) > 1500 {
-                bottomSheetHeight.accept(velocity > 0 ? .min : .max)
+            // 속도 기준을 낮추고, mid 상태를 고려하도록 수정
+            if abs(velocity) > 1000 {
+                if velocity > 0 { // 아래로 스와이프
+                    if currentHeight == .max {
+                        bottomSheetHeight.accept(.mid)
+                    } else {
+                        bottomSheetHeight.accept(.min)
+                    }
+                } else { // 위로 스와이프
+                    if currentHeight == .min {
+                        bottomSheetHeight.accept(.mid)
+                    } else {
+                        bottomSheetHeight.accept(.max)
+                    }
+                }
                 return
             }
             
-            if currentHeightPercentage < 0.3 {
+            // 위치 기반 판단 기준도 수정
+            if currentHeightPercentage < 0.25 {
                 bottomSheetHeight.accept(.min)
-            } else if currentHeightPercentage < 0.75 {
+            } else if currentHeightPercentage < 0.6 {
                 bottomSheetHeight.accept(.mid)
             } else {
                 bottomSheetHeight.accept(.max)
