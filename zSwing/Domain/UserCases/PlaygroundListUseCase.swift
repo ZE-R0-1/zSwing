@@ -11,7 +11,7 @@ import MapKit
 
 protocol PlaygroundListUseCase {
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
-    func filterPlaygrounds(by categories: Set<String>, in region: MapRegion) -> Observable<[Playground]>
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]>
     func sortPlaygroundsByDistance(playgrounds: [Playground], userLocation: CLLocation?) -> [Playground]
 }
 
@@ -38,13 +38,14 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
             }
     }
     
-    func filterPlaygrounds(by categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
+        print("🔍 Fetching filtered playgrounds with categories: \(categories)") // 디버그 로그 추가
         return repository.fetchFilteredPlaygrounds(categories: categories, in: region)
-            .map { playgrounds in
-                guard !categories.contains("전체") else { return playgrounds }
-                // 현재는 필터링 로직이 제거된 상태입니다.
-                // 필터링 기준이 결정되면 여기에 구현하면 됩니다.
-                return playgrounds
+            .map { [weak self] playgrounds in
+                self?.sortPlaygroundsByDistance(
+                    playgrounds: playgrounds,
+                    userLocation: self?.locationManager.location
+                ) ?? playgrounds
             }
             .catch { error in
                 print("Error filtering playgrounds: \(error)")

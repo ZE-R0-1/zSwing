@@ -45,8 +45,8 @@ final class PlaygroundListViewController: BottomSheetViewController {
     }()
     
     private lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["전체", "실내", "실외"])
-        control.selectedSegmentIndex = 0
+        let control = UISegmentedControl(items: PlaygroundType.allTypes.map { $0.rawValue })
+        control.selectedSegmentIndex = PlaygroundType.all.segmentIndex
         control.backgroundColor = .systemGray6
         control.selectedSegmentTintColor = .white
         control.setTitleTextAttributes([.foregroundColor: UIColor.systemGray], for: .normal)
@@ -144,6 +144,22 @@ final class PlaygroundListViewController: BottomSheetViewController {
             .bind(to: loadingIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
+        // 카테고리 필터 바인딩 수정 및 디버그 로그 추가
+        segmentedControl.rx.selectedSegmentIndex
+            .do(onNext: { index in
+                print("✏️ Segment selected: \(index)") // 세그먼트 선택 로그
+            })
+            .map { index -> PlaygroundType in
+                let type = PlaygroundType.fromSegmentIndex(index)
+                print("🔄 Converting to PlaygroundType: \(type.rawValue)") // 변환 로그
+                return type
+            }
+            .do(onNext: { type in
+                print("📲 Category changed to: \(type.rawValue)") // 최종 카테고리 로그
+            })
+            .bind(to: viewModel.categorySelected)
+            .disposed(by: disposeBag)
+        
         // 테이블뷰 데이터 바인딩
         viewModel.playgrounds
             .bind(to: tableView.rx.items(
@@ -156,19 +172,12 @@ final class PlaygroundListViewController: BottomSheetViewController {
                 )
             }
             .disposed(by: disposeBag)
-        
-        // 카테고리 필터 바인딩
-        segmentedControl.rx.selectedSegmentIndex
-            .map { index -> Set<String> in
-                switch index {
-                case 0: return ["전체"]
-                case 1: return ["실내"]
-                case 2: return ["실외"]
-                default: return ["전체"]
-                }
-            }
-            .bind(to: viewModel.categorySelected)
-            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Public Methods
+    func fetchPlaygrounds(for region: MapRegion) {
+        moveSheet(to: .mid)
+        viewModel.searchButtonTapped.accept(region)
     }
     
     func showPlaygroundView(_ playground: Playground) {
@@ -219,12 +228,6 @@ final class PlaygroundListViewController: BottomSheetViewController {
             playgroundView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             playgroundView.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
-    }
-    
-    // MARK: - Public Methods
-    func fetchPlaygrounds(for region: MapRegion) {
-        moveSheet(to: .mid)
-        viewModel.searchButtonTapped.accept(region)
     }
 }
 

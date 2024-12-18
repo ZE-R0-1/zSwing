@@ -21,15 +21,27 @@ final class DefaultPlaygroundRepository: PlaygroundRepository {
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
         return firebaseService.fetchPlaygrounds(in: region)
             .catch { error in
-                print("Repository error fetching playgrounds in region: \(error)")
                 return .empty()
             }
     }
     
     func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
-        // 놀이터 유형에 따른 필터링이 필요한 경우,
-        // Playground 엔티티에 type 필드를 추가하거나
-        // rides 배열의 정보를 기반으로 필터링 로직을 구현해야 합니다
         return fetchPlaygrounds(in: region)
+            .do(onNext: { playgrounds in
+                print("📊 Total playgrounds before filtering: \(playgrounds.count)") // 디버그 로그 추가
+            })
+            .map { playgrounds in
+                guard !categories.contains(PlaygroundType.all.rawValue) else {
+                    print("👉 Returning all playgrounds: \(playgrounds.count)") // 디버그 로그 추가
+                    return playgrounds
+                }
+                
+                let filtered = playgrounds.filter { playground in
+                    print("🏷 Playground type: \(playground.idrodrCdNm)") // 디버그 로그 추가
+                    return categories.contains(playground.idrodrCdNm)
+                }
+                print("📊 Filtered playgrounds: \(filtered.count)") // 디버그 로그 추가
+                return filtered
+            }
     }
 }

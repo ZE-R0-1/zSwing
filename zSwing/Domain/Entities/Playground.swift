@@ -9,8 +9,14 @@ import Foundation
 import CoreLocation
 
 struct Playground {
-    let pfctSn: String
-    let pfctNm: String
+    let pfctSn: String       // 놀이시설일련번호
+    let pfctNm: String       // 놀이시설명
     let coordinate: CLLocationCoordinate2D
-    var rides: [Ride] = []  // 놀이기구 정보 추가
+    let idrodrCdNm: String   // 실내/실외 구분
+    var rides: [Ride] = []   // 놀이기구 정보
+    
+    // 편의를 위한 계산 프로퍼티 추가
+    var isIndoor: Bool {
+        return idrodrCdNm == "실내"
+    }
 }
