@@ -92,9 +92,6 @@ final class PlaygroundListViewModel {
             }
             return playground.playground.idrodrCdNm == currentCategory.rawValue
         }
-        print("📊 Filtering with category: \(currentCategory.rawValue)")
-        print("📊 Original count: \(originalPlaygrounds.value.count)")
-        print("📊 Filtered count: \(filtered.count)")
         playgrounds.accept(filtered)
     }
 

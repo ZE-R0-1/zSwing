@@ -27,20 +27,14 @@ final class DefaultPlaygroundRepository: PlaygroundRepository {
     
     func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
         return fetchPlaygrounds(in: region)
-            .do(onNext: { playgrounds in
-                print("📊 Total playgrounds before filtering: \(playgrounds.count)") // 디버그 로그 추가
-            })
             .map { playgrounds in
                 guard !categories.contains(PlaygroundType.all.rawValue) else {
-                    print("👉 Returning all playgrounds: \(playgrounds.count)") // 디버그 로그 추가
                     return playgrounds
                 }
                 
                 let filtered = playgrounds.filter { playground in
-                    print("🏷 Playground type: \(playground.idrodrCdNm)") // 디버그 로그 추가
                     return categories.contains(playground.idrodrCdNm)
                 }
-                print("📊 Filtered playgrounds: \(filtered.count)") // 디버그 로그 추가
                 return filtered
             }
     }

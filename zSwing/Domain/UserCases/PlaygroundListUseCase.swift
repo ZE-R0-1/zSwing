@@ -39,7 +39,6 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
     }
     
     func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
-        print("🔍 Fetching filtered playgrounds with categories: \(categories)") // 디버그 로그 추가
         return repository.fetchFilteredPlaygrounds(categories: categories, in: region)
             .map { [weak self] playgrounds in
                 self?.sortPlaygroundsByDistance(
@@ -48,7 +47,6 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
                 ) ?? playgrounds
             }
             .catch { error in
-                print("Error filtering playgrounds: \(error)")
                 return .empty()
             }
     }
