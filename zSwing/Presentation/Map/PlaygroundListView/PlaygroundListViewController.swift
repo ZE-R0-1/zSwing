@@ -185,6 +185,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
         let playgroundDetailRepository = DefaultPlaygroundDetailRepository()
         let favoriteRepository = DefaultFavoriteRepository()
         let reviewRepository = DefaultReviewRepository()
+        let storageService = FirebaseStorageService()
         
         let playgroundDetailUseCase = DefaultPlaygroundDetailUseCase(
             playgroundRepository: playgroundDetailRepository,
@@ -195,7 +196,8 @@ final class PlaygroundListViewController: BottomSheetViewController {
             favoriteRepository: favoriteRepository
         )
         let reviewUseCase = DefaultReviewUseCase(
-            reviewRepository: reviewRepository
+            reviewRepository: reviewRepository,
+            storageService: storageService
         )
         
         // ViewModel 생성
@@ -220,7 +222,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
         contentView.addSubview(playgroundView.view)
         playgroundView.didMove(toParent: self)
         
-        // 제약조건 설정
+        // constraint 설정
         playgroundView.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             playgroundView.view.topAnchor.constraint(equalTo: contentView.topAnchor),

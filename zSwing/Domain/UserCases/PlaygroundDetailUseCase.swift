@@ -27,12 +27,38 @@ final class DefaultPlaygroundDetailUseCase: PlaygroundDetailUseCase {
     }
     
     func getPlaygroundDetail(id: String) -> Observable<PlaygroundDetail> {
-        // 동시에 여러 데이터를 가져와서 결합
+        print("UseCase - Getting playground detail for ID:", id)
+        
+        // 각 Observable에 디버깅 추가
+        let detailObservable = playgroundRepository.getPlaygroundDetail(id: id)
+            .do(onNext: { detail in
+                print("UseCase - Received playground detail with address:", detail.address)
+            })
+        
+        let favoriteObservable = favoriteRepository.isFavorite(playgroundId: id)
+            .do(onNext: { isFavorite in
+                print("UseCase - Received favorite status:", isFavorite)
+            })
+        
+        let reviewsObservable = reviewRepository.fetchReviews(
+            playgroundId: id,
+            sortBy: .latest,
+            page: 0,
+            pageSize: 10
+        ).do(onNext: { reviews in
+            print("UseCase - Received reviews count:", reviews.count)
+        })
+        
         return Observable.combineLatest(
-            playgroundRepository.getPlaygroundDetail(id: id),
-            favoriteRepository.isFavorite(playgroundId: id),
-            reviewRepository.getReviews(playgroundId: id)
-        ).map { detail, isFavorite, reviews in
+            detailObservable,
+            favoriteObservable,
+            reviewsObservable
+        ).do(onNext: { detail, isFavorite, reviews in
+            print("UseCase - Combined data:")
+            print("- Address:", detail.address)
+            print("- Is Favorite:", isFavorite)
+            print("- Reviews count:", reviews.count)
+        }).map { detail, isFavorite, reviews in
             PlaygroundDetail(
                 address: detail.address,
                 isFavorite: isFavorite,

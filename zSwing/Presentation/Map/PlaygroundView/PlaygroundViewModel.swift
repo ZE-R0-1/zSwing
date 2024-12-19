@@ -15,15 +15,17 @@ class PlaygroundViewModel {
     let favoriteButtonTapped = PublishRelay<Void>()
     let writeReviewButtonTapped = PublishRelay<Void>()
     let showAllReviewsButtonTapped = PublishRelay<Void>()
+    let refreshReviewsTrigger = PublishRelay<Void>()
     
     // MARK: - Outputs
     let pfctNm = BehaviorRelay<String>(value: "?")
     let address = BehaviorRelay<String>(value: "?")
     let distance = BehaviorRelay<String>(value: "?")
     let isFavorite = BehaviorRelay<Bool>(value: false)
-    let reviews = BehaviorRelay<[PlaygroundReview]>(value: [])
+    let reviews = BehaviorRelay<[Review]>(value: [])
     let isLoading = BehaviorRelay<Bool>(value: false)
     let error = PublishRelay<Error>()
+    let showReviewWrite = PublishRelay<Playground>()
     
     // MARK: - Dependencies
     private let playgroundDetailUseCase: PlaygroundDetailUseCase
@@ -86,6 +88,15 @@ class PlaygroundViewModel {
             })
             .disposed(by: disposeBag)
         
+        // 리뷰 작성 버튼 탭 처리
+        writeReviewButtonTapped
+            .map { [weak self] _ -> Playground in
+                guard let self = self else { fatalError("Self is nil") }
+                return self.playground
+            }
+            .bind(to: showReviewWrite)
+            .disposed(by: disposeBag)
+        
         // Favorite toggle
         favoriteButtonTapped
             .flatMapLatest { [weak self] _ -> Observable<Bool> in
@@ -93,6 +104,26 @@ class PlaygroundViewModel {
                 return self.favoriteUseCase.toggleFavorite(playgroundId: self.playground.pfctSn)
             }
             .bind(to: isFavorite)
+            .disposed(by: disposeBag)
+        
+        // 리뷰 새로고침
+        refreshReviewsTrigger
+            .do(onNext: { _ in
+                print("Refresh reviews triggered")
+            })
+            .flatMapLatest { [weak self] _ -> Observable<PlaygroundDetail> in
+                guard let self = self else { return .empty() }
+                print("Fetching updated playground detail for ID:", self.playground.pfctSn)
+                return self.playgroundDetailUseCase.getPlaygroundDetail(id: self.playground.pfctSn)
+            }
+            .do(onNext: { detail in
+                print("Received updated reviews count:", detail.reviews.count)
+            })
+            .subscribe(onNext: { [weak self] detail in
+                self?.reviews.accept(detail.reviews)
+            }, onError: { error in
+                print("Error refreshing reviews:", error.localizedDescription)
+            })
             .disposed(by: disposeBag)
     }
     
@@ -119,11 +150,5 @@ class PlaygroundViewModel {
 struct PlaygroundDetail {
     let address: String
     let isFavorite: Bool
-    let reviews: [PlaygroundReview]
-}
-
-struct PlaygroundReview {
-    let id: String
-    let imageUrl: String
-    let createdAt: Date
+    let reviews: [Review]
 }

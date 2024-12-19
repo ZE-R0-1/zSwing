@@ -7,7 +7,20 @@
 
 import RxSwift
 
+enum ReviewSortOption {
+    case latest
+    case rating
+}
+
 protocol ReviewRepository {
-    func getReviews(playgroundId: String) -> Observable<[PlaygroundReview]>
-    func writeReview(playgroundId: String, review: PlaygroundReview) -> Observable<Void>
+    func createReview(review: Review) -> Observable<Void>
+    func fetchReviews(
+        playgroundId: String,
+        sortBy: ReviewSortOption,
+        page: Int,
+        pageSize: Int
+    ) -> Observable<[Review]>
+    func updateReview(review: Review) -> Observable<Void>
+    func deleteReview(reviewId: String) -> Observable<Void>
+    func toggleLike(reviewId: String) -> Observable<Bool>
 }

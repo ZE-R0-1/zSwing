@@ -7,12 +7,14 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
+import CoreLocation
 
 protocol PlaygroundViewDelegate: AnyObject {
     func playgroundViewDidDismiss(_ playgroundView: PlaygroundView)
 }
 
-final class PlaygroundView: UIViewController {
+final class PlaygroundView: UIViewController, ReviewWriteDelegate {
     // MARK: - Properties
     private let viewModel: PlaygroundViewModel
     private let disposeBag = DisposeBag()
@@ -45,7 +47,7 @@ final class PlaygroundView: UIViewController {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 12
-        stack.alignment = .top  // 상단 정렬
+        stack.alignment = .top
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -56,11 +58,11 @@ final class PlaygroundView: UIViewController {
         label.textColor = .black
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)  // 너비 늘어나도록
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)  // 필요시 압축 허용
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }()
-
+    
     private let addressLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -89,7 +91,7 @@ final class PlaygroundView: UIViewController {
         view.layer.cornerRadius = 8
         return view
     }()
-
+    
     private let emptyReviewLabel: UILabel = {
         let label = UILabel()
         label.text = "아직 리뷰가 없어요\n첫 번째 리뷰를 작성해보세요!"
@@ -128,8 +130,8 @@ final class PlaygroundView: UIViewController {
         button.setImage(image, for: .normal)
         button.tintColor = .darkGray
         button.backgroundColor = .clear
-        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)  // 크기 유지
-        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)  // 압축 방지
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
@@ -149,7 +151,7 @@ final class PlaygroundView: UIViewController {
         setupUI()
         setupConstraints()
         setupBindings()
-        viewModel.viewDidLoad.accept(())  // 이 부분이 실행되는지 확인
+        viewModel.viewDidLoad.accept(())
     }
     
     // MARK: - Setup
@@ -158,14 +160,12 @@ final class PlaygroundView: UIViewController {
         containerView.addSubview(scrollView)
         scrollView.addSubview(stackView)
         
-        // headerStackView에 레이블과 버튼 추가
         headerStackView.addArrangedSubview(nameLabel)
         headerStackView.addArrangedSubview(closeButton)
         
         emptyReviewView.addSubview(emptyReviewLabel)
         [emptyReviewView, emptyReviewLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
-        // stackView에 emptyReviewView 추가
         [headerStackView, addressLabel, distanceLabel, favoriteButton,
          emptyReviewView, reviewsCollectionView, writeReviewButton].forEach {
             stackView.addArrangedSubview($0)
@@ -258,6 +258,45 @@ final class PlaygroundView: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+        
+        // 리뷰 작성 화면 표시
+        viewModel.showReviewWrite
+            .subscribe(onNext: { [weak self] playground in
+                self?.showReviewWriteViewController(for: playground)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func showReviewWriteViewController(for playground: Playground) {
+        let reviewUseCase = DefaultReviewUseCase(
+            reviewRepository: DefaultReviewRepository(),
+            storageService: FirebaseStorageService()
+        )
+        
+        let reviewWriteViewModel = ReviewWriteViewModel(
+            reviewUseCase: reviewUseCase,
+            playgroundId: playground.pfctSn
+        )
+        
+        let reviewWriteVC = ReviewWriteViewController(viewModel: reviewWriteViewModel)
+        reviewWriteVC.delegate = self
+        let navigationController = UINavigationController(rootViewController: reviewWriteVC)
+        
+        let doneButton = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: nil,
+            action: nil
+        )
+        
+        reviewWriteVC.navigationItem.leftBarButtonItem = doneButton
+        
+        doneButton.rx.tap
+            .subscribe(onNext: { [weak navigationController] in
+                navigationController?.dismiss(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        present(navigationController, animated: true)
     }
     
     private func dismiss() {
@@ -270,5 +309,10 @@ final class PlaygroundView: UIViewController {
             self.removeFromParent()
             self.delegate?.playgroundViewDidDismiss(self)
         }
+    }
+    
+    // MARK: - ReviewWriteDelegate
+    func reviewWriteDidComplete() {
+        viewModel.refreshReviewsTrigger.accept(())
     }
 }

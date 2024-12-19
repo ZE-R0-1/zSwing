@@ -21,6 +21,7 @@ final class AppDIContainer {
     private lazy var playgroundDetailRepository: PlaygroundDetailRepository = DefaultPlaygroundDetailRepository()
     private lazy var favoriteRepository: FavoriteRepository = DefaultFavoriteRepository()
     private lazy var reviewRepository: ReviewRepository = DefaultReviewRepository()
+    private lazy var storageService: StorageServiceProtocol = FirebaseStorageService()
     
     // MARK: - Coordinators
     func makeAuthCoordinator(navigationController: UINavigationController) -> AuthCoordinator {
@@ -98,7 +99,8 @@ final class AppDIContainer {
     
     private func makeReviewUseCase() -> ReviewUseCase {
         return DefaultReviewUseCase(
-            reviewRepository: reviewRepository
+            reviewRepository: reviewRepository,
+            storageService: storageService
         )
     }
     

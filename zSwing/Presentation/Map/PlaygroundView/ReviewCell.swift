@@ -44,24 +44,8 @@ final class ReviewCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
-    func configure(with review: PlaygroundReview) {
+    func configure(with review: Review) {
         // TODO: 이미지 로딩 로직 구현
-        // Firebase Storage나 다른 이미지 소스에서 이미지를 로드
-        if let url = URL(string: review.imageUrl) {
-            // URLSession을 사용한 기본적인 이미지 로딩
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-                if let error = error {
-                    print("Error loading image: \(error)")
-                    return
-                }
-                
-                if let data = data, let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.imageView.image = image
-                    }
-                }
-            }.resume()
-        }
     }
     
     // MARK: - Reuse
