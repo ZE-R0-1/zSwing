@@ -118,11 +118,6 @@ class ReviewWriteViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupCollectionView()
-        
-        // 버튼 초기 상태 확인
-        print("Initial submit button state - enabled: \(submitButton.isEnabled)")
-        print("Initial submit button state - isUserInteractionEnabled: \(submitButton.isUserInteractionEnabled)")
-        
         setupBindings()
         setupKeyboardDismiss()
     }
@@ -181,14 +176,14 @@ class ReviewWriteViewController: UIViewController {
     }
     
     private func setupBindings() {
-        // 이미지 추가 버튼 (기존 코드)
+        // 이미지 추가 버튼 바인딩
         addImageButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.showImagePicker()
             })
             .disposed(by: disposeBag)
         
-        // 선택된 이미지 표시 (기존 코드)
+        // 선택된 이미지 표시
         viewModel.selectedImages
             .bind(to: imageCollectionView.rx.items(
                 cellIdentifier: ReviewImageCell.identifier,
@@ -200,8 +195,8 @@ class ReviewWriteViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
-            
-        // 별점 변경 (디버깅 추가)
+        
+        // 별점 변경
         ratingView.ratingChanged
             .do(onNext: { rating in
                 print("Rating changed to: \(rating)")
@@ -209,7 +204,7 @@ class ReviewWriteViewController: UIViewController {
             .bind(to: viewModel.ratingChanged)
             .disposed(by: disposeBag)
         
-        // 텍스트 변경 (디버깅 추가)
+        // 텍스트 변경
         textView.rx.text.orEmpty
             .do(onNext: { text in
                 print("Text changed. Length: \(text.count)")
@@ -217,7 +212,7 @@ class ReviewWriteViewController: UIViewController {
             .bind(to: viewModel.textChanged)
             .disposed(by: disposeBag)
         
-        // 제출 버튼 활성화/비활성화 상태 (디버깅 추가)
+        // 제출 버튼 활성화/비활성화
         viewModel.isSubmitEnabled
             .do(onNext: { isEnabled in
                 print("Submit button enabled: \(isEnabled)")
@@ -225,7 +220,7 @@ class ReviewWriteViewController: UIViewController {
             .bind(to: submitButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
-        // 제출 버튼 탭 (디버깅 추가)
+        // 제출 버튼 탭
         submitButton.rx.tap
             .do(onNext: { _ in
                 print("Submit button tapped!")
@@ -243,6 +238,13 @@ class ReviewWriteViewController: UIViewController {
             .subscribe(onNext: { [weak self] in
                 print("Submit completed!")
                 self?.delegate?.reviewWriteDidComplete()
+                
+                // PlaygroundListViewModel의 데이터 새로고침 트리거
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("RefreshPlaygroundList"),
+                    object: nil
+                )
+                
                 self?.dismiss(animated: true)
             })
             .disposed(by: disposeBag)
@@ -254,27 +256,6 @@ class ReviewWriteViewController: UIViewController {
                 self?.showError(error)
             })
             .disposed(by: disposeBag)
-    }
-
-    // MARK: - Helper Methods
-    private func showImagePicker() {
-        var config = PHPickerConfiguration()
-        config.selectionLimit = viewModel.canAddMoreImages.value ? 5 : 0
-        config.filter = .images
-        
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = self
-        present(picker, animated: true)
-    }
-    
-    private func showError(_ error: Error) {
-        let alert = UIAlertController(
-            title: "오류",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
     }
     
     private func setupKeyboardDismiss() {
@@ -315,6 +296,27 @@ class ReviewWriteViewController: UIViewController {
                 self.scrollView.scrollIndicatorInsets = contentInset
             })
             .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Helper Methods
+    private func showImagePicker() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = viewModel.canAddMoreImages.value ? 5 : 0
+        config.filter = .images
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "오류",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
 }
 

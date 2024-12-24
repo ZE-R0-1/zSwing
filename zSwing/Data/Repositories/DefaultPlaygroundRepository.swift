@@ -21,6 +21,7 @@ final class DefaultPlaygroundRepository: PlaygroundRepository {
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
         return firebaseService.fetchPlaygrounds(in: region)
             .catch { error in
+                print("Error fetching playgrounds:", error)
                 return .empty()
             }
     }

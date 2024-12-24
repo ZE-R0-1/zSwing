@@ -70,7 +70,7 @@ class PlaygroundCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - UI Setup
+    // MARK: - Setup
     private func setupUI() {
         backgroundColor = .white
         selectionStyle = .none
@@ -140,16 +140,44 @@ class PlaygroundCell: UITableViewCell {
             ])
         }
     }
-
+    
     // MARK: - Configuration
     func configure(with playground: Playground, distance: Double?) {
         nameLabel.text = playground.pfctNm
         
         if let distance = distance {
             let distanceText = String(format: "%.1fkm", distance)
-            distanceLabel.text = "\(distanceText) · 게시물 \(Int.random(in: 10...100))+"
+            distanceLabel.text = "\(distanceText) · 게시물 \(playground.reviews.count)"
         } else {
-            distanceLabel.text = "거리 정보 없음 · 게시물 \(Int.random(in: 10...100))+"
+            distanceLabel.text = "거리 정보 없음 · 게시물 \(playground.reviews.count)"
+        }
+        
+        // 리뷰 이미지 로드
+        loadReviewImages(for: playground)
+    }
+    
+    private func loadReviewImages(for playground: Playground) {
+        // 최근 3개의 리뷰 이미지만 표시
+        let recentImageUrls = playground.reviews
+            .flatMap { $0.imageUrls }
+            .prefix(3)
+        
+        // 기존 이미지 초기화
+        photoImageViews.forEach { $0.image = UIImage(systemName: "photo") }
+        
+        // 새 이미지 로드
+        for (index, urlString) in recentImageUrls.enumerated() {
+            guard index < photoImageViews.count,
+                  let url = URL(string: urlString) else { continue }
+            
+            URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+                DispatchQueue.main.async {
+                    if let data = data,
+                       let image = UIImage(data: data) {
+                        self?.photoImageViews[index].image = image
+                    }
+                }
+            }.resume()
         }
     }
     

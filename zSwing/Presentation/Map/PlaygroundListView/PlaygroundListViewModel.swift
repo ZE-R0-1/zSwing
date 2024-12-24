@@ -20,6 +20,7 @@ final class PlaygroundListViewModel {
     private let disposeBag = DisposeBag()
     private let searchSubject = PublishSubject<MapRegion>()
     private let originalPlaygrounds = BehaviorRelay<[PlaygroundWithDistance]>(value: [])
+    private let reviewRepository: ReviewRepository
     
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
@@ -32,8 +33,9 @@ final class PlaygroundListViewModel {
     let error = PublishRelay<Error>()
     let locationTitle = BehaviorRelay<String>(value: "")
     
-    init(playgroundUseCase: PlaygroundListUseCase) {
+    init(playgroundUseCase: PlaygroundListUseCase, reviewRepository: ReviewRepository = DefaultReviewRepository()) {
         self.playgroundUseCase = playgroundUseCase
+        self.reviewRepository = reviewRepository
         bind()
     }
     
@@ -53,7 +55,7 @@ final class PlaygroundListViewModel {
             })
             .withLatestFrom(categorySelected) { (region: $0, category: $1) }
             .flatMapLatest { [weak self] params in
-                self?.fetchFilteredPlaygrounds(region: params.region, category: params.category) ?? .empty()
+                self?.fetchPlaygroundWithReviews(region: params.region, category: params.category) ?? .empty()
             }
             .do(onNext: { [weak self] playgrounds in
                 self?.isLoading.accept(false)
@@ -94,8 +96,8 @@ final class PlaygroundListViewModel {
         }
         playgrounds.accept(filtered)
     }
-
-    private func fetchFilteredPlaygrounds(region: MapRegion, category: PlaygroundType) -> Observable<[PlaygroundWithDistance]> {
+    
+    private func fetchPlaygroundWithReviews(region: MapRegion, category: PlaygroundType) -> Observable<[PlaygroundWithDistance]> {
         let currentLocation = CLLocation(
             latitude: region.center.latitude,
             longitude: region.center.longitude
@@ -107,6 +109,23 @@ final class PlaygroundListViewModel {
                 categories: Set([category.rawValue]),
                 in: region
             )
+            .flatMap { [weak self] playgrounds -> Observable<[Playground]> in
+                guard let self = self else { return .empty() }
+                // 각 놀이터의 리뷰를 가져옴
+                let reviewObservables = playgrounds.map { playground -> Observable<Playground> in
+                    return self.reviewRepository.fetchReviews(
+                        playgroundId: playground.pfctSn,
+                        sortBy: .latest,
+                        page: 0,
+                        pageSize: 10
+                    ).map { reviews in
+                        var updatedPlayground = playground
+                        updatedPlayground.reviews = reviews
+                        return updatedPlayground
+                    }
+                }
+                return Observable.zip(reviewObservables)
+            }
             // 2. 거리 계산과 정렬을 별도의 메서드로 분리합니다
             .map { [weak self] playgrounds in
                 self?.calculateDistances(playgrounds: playgrounds, from: currentLocation) ?? []
@@ -152,9 +171,4 @@ final class PlaygroundListViewModel {
             }
         }
     }
-}
-
-struct PlaygroundWithDistance {
-    let playground: Playground
-    let distance: Double?
 }

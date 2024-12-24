@@ -28,7 +28,7 @@ struct PlaygroundDTO {
     }
 }
 
-// 필터링을 위한 PlaygroundType enum 추가
+// 필터링을 위한 PlaygroundType
 enum PlaygroundType: String {
     case all = "전체"
     case indoor = "실내"

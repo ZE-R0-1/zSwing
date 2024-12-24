@@ -45,12 +45,44 @@ final class ReviewCell: UICollectionViewCell {
     
     // MARK: - Configuration
     func configure(with review: Review) {
-        // TODO: 이미지 로딩 로직 구현
+        print("Configuring ReviewCell with review:", review)
+        if let firstImageUrl = review.imageUrls.first {
+            print("Loading image from URL:", firstImageUrl)
+            loadImage(from: firstImageUrl)
+        } else {
+            print("No image URLs available for review")
+            imageView.image = UIImage(systemName: "photo")
+            imageView.tintColor = .systemGray4
+        }
+    }
+    
+    private func loadImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL string:", urlString)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            if let error = error {
+                print("Error loading image:", error.localizedDescription)
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("Failed to create image from data")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                print("Successfully loaded image")
+                self?.imageView.image = image
+            }
+        }.resume()
     }
     
     // MARK: - Reuse
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        imageView.image = UIImage(systemName: "photo")
     }
 }

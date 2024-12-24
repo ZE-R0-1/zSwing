@@ -38,7 +38,7 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 10
+        stack.spacing = 16
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -104,13 +104,14 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
     
     private let reviewsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 8
-        layout.itemSize = CGSize(width: 120, height: 120)
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 1
+        layout.minimumLineSpacing = 1
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.backgroundColor = .clear
-        collection.showsHorizontalScrollIndicator = false
+        collection.showsVerticalScrollIndicator = false
+        collection.isScrollEnabled = false
         return collection
     }()
     
@@ -150,11 +151,13 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        setupCollectionViewLayout()
         setupBindings()
+        setupNotifications()
         viewModel.viewDidLoad.accept(())
     }
     
-    // MARK: - Setup
+    // MARK: - Setup Methods
     private func setupUI() {
         view.addSubview(containerView)
         containerView.addSubview(scrollView)
@@ -195,9 +198,9 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32),
             
-            reviewsCollectionView.heightAnchor.constraint(equalToConstant: 120),
+            reviewsCollectionView.heightAnchor.constraint(equalTo: reviewsCollectionView.widthAnchor),
             writeReviewButton.heightAnchor.constraint(equalToConstant: 44),
-            emptyReviewView.heightAnchor.constraint(equalToConstant: 120),
+            emptyReviewView.heightAnchor.constraint(equalTo: emptyReviewView.widthAnchor),
             
             headerStackView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             headerStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
@@ -208,6 +211,20 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
             closeButton.widthAnchor.constraint(equalToConstant: 30),
             closeButton.heightAnchor.constraint(equalToConstant: 30)
         ])
+    }
+    
+    private func setupCollectionViewLayout() {
+        guard let layout = reviewsCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        
+        let spacing: CGFloat = 1
+        let numberOfItemsPerRow: CGFloat = 3
+        
+        let totalSpacing = (numberOfItemsPerRow - 1) * spacing
+        let itemWidth = (UIScreen.main.bounds.width - 32 - totalSpacing) / numberOfItemsPerRow
+        
+        layout.itemSize = CGSize(width: itemWidth, height: itemWidth)
+        layout.minimumInteritemSpacing = spacing
+        layout.minimumLineSpacing = spacing
     }
     
     private func setupBindings() {
@@ -246,6 +263,7 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
             .bind(to: favoriteButton.rx.image())
             .disposed(by: disposeBag)
         
+        // Reviews Empty State
         viewModel.reviews
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] reviews in
@@ -259,10 +277,29 @@ final class PlaygroundView: UIViewController, ReviewWriteDelegate {
             })
             .disposed(by: disposeBag)
         
+        // Reviews Collection View Binding
+        viewModel.reviews
+            .bind(to: reviewsCollectionView.rx.items(
+                cellIdentifier: ReviewCell.identifier,
+                cellType: ReviewCell.self
+            )) { _, review, cell in
+                print("Binding review to cell:", review)
+                cell.configure(with: review)
+            }
+            .disposed(by: disposeBag)
+        
         // 리뷰 작성 화면 표시
         viewModel.showReviewWrite
             .subscribe(onNext: { [weak self] playground in
                 self?.showReviewWriteViewController(for: playground)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.rx.notification(NSNotification.Name("RefreshPlaygroundList"))
+            .subscribe(onNext: { [weak self] _ in
+                self?.viewModel.refreshReviewsTrigger.accept(())
             })
             .disposed(by: disposeBag)
     }

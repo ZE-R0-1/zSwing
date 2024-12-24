@@ -25,15 +25,13 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
         return Observable.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
-            let totalStartTime = Date()
-            
             let query = self.db.collection("playgrounds")
                 .whereField("latCrtsVl", isGreaterThanOrEqualTo: String(region.center.latitude - region.span.latitudeDelta/2))
                 .whereField("latCrtsVl", isLessThanOrEqualTo: String(region.center.latitude + region.span.latitudeDelta/2))
             
             query.getDocuments { snapshot, error in
                 if let error = error {
-                    print("❌ Firestore 에러: \(error.localizedDescription)")
+                    print("❌ Firestore 에러:", error.localizedDescription)
                     observer.onError(error)
                     return
                 }
@@ -44,7 +42,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                     guard let pfctNm = data["pfctNm"] as? String,
                           let latString = data["latCrtsVl"] as? String,
                           let lonString = data["lotCrtsVl"] as? String,
-                          let idrodrCdNm = data["idrodrCdNm"] as? String,  // 실내/실외 필드 추가
+                          let idrodrCdNm = data["idrodrCdNm"] as? String,
                           !latString.isEmpty,
                           !lonString.isEmpty,
                           let latitude = Double(latString.trimmingCharacters(in: .whitespacesAndNewlines)),
@@ -53,7 +51,6 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                         return nil
                     }
                     
-                    // 경도 범위 체크
                     let minLon = region.center.longitude - region.span.longitudeDelta/2
                     let maxLon = region.center.longitude + region.span.longitudeDelta/2
                     guard longitude >= minLon && longitude <= maxLon else {

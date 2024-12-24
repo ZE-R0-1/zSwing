@@ -8,11 +8,13 @@
 import RxSwift
 import UIKit
 import CoreLocation
+import MapKit
 
 final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Properties
     private let viewModel: PlaygroundListViewModel
     private let disposeBag = DisposeBag()
+    private var lastSearchedRegion: MapRegion?
     
     // MARK: - UI Components
     private lazy var headerView: UIView = {
@@ -144,18 +146,18 @@ final class PlaygroundListViewController: BottomSheetViewController {
             .bind(to: loadingIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
-        // 카테고리 필터 바인딩 수정 및 디버그 로그 추가
+        // 카테고리 필터 바인딩
         segmentedControl.rx.selectedSegmentIndex
             .do(onNext: { index in
-                print("✏️ Segment selected: \(index)") // 세그먼트 선택 로그
+                print("✏️ Segment selected: \(index)")
             })
             .map { index -> PlaygroundType in
                 let type = PlaygroundType.fromSegmentIndex(index)
-                print("🔄 Converting to PlaygroundType: \(type.rawValue)") // 변환 로그
+                print("🔄 Converting to PlaygroundType: \(type.rawValue)")
                 return type
             }
             .do(onNext: { type in
-                print("📲 Category changed to: \(type.rawValue)") // 최종 카테고리 로그
+                print("📲 Category changed to: \(type.rawValue)")
             })
             .bind(to: viewModel.categorySelected)
             .disposed(by: disposeBag)
@@ -172,11 +174,21 @@ final class PlaygroundListViewController: BottomSheetViewController {
                 )
             }
             .disposed(by: disposeBag)
+            
+        // 리뷰 작성 완료 노티피케이션 처리
+        NotificationCenter.default.rx.notification(NSNotification.Name("RefreshPlaygroundList"))
+            .subscribe(onNext: { [weak self] _ in
+                if let region = self?.lastSearchedRegion {
+                    self?.fetchPlaygrounds(for: region)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Public Methods
     func fetchPlaygrounds(for region: MapRegion) {
         moveSheet(to: .mid)
+        lastSearchedRegion = region  // region을 저장
         viewModel.searchButtonTapped.accept(region)
     }
     
