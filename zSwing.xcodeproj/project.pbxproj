@@ -35,6 +35,9 @@
 		CE5320B82D0FE8F000CCAC15 /* ReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */; };
 		CE64A9CB2D1A6ECC00FF6740 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE64A9CA2D1A6ECC00FF6740 /* GoogleService-Info.plist */; };
 		CE64A9CD2D1A781300FF6740 /* PlaygroundDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9CC2D1A781300FF6740 /* PlaygroundDetail.swift */; };
+		CE64A9D22D22654400FF6740 /* ReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D12D22654400FF6740 /* ReviewViewModel.swift */; };
+		CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D32D2265C100FF6740 /* ReviewController.swift */; };
+		CE64A9D62D2275DB00FF6740 /* ReviewDetailImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D52D2275DB00FF6740 /* ReviewDetailImageCell.swift */; };
 		CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */; };
 		CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */; };
 		CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */; };
@@ -120,6 +123,9 @@
 		CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCell.swift; sourceTree = "<group>"; };
 		CE64A9CA2D1A6ECC00FF6740 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE64A9CC2D1A781300FF6740 /* PlaygroundDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetail.swift; sourceTree = "<group>"; };
+		CE64A9D12D22654400FF6740 /* ReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewModel.swift; sourceTree = "<group>"; };
+		CE64A9D32D2265C100FF6740 /* ReviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewController.swift; sourceTree = "<group>"; };
+		CE64A9D52D2275DB00FF6740 /* ReviewDetailImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDetailImageCell.swift; sourceTree = "<group>"; };
 		CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUseCase.swift; sourceTree = "<group>"; };
 		CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModel.swift; path = zSwing/Presentation/Profile/ProfileViewModel.swift; sourceTree = SOURCE_ROOT; };
@@ -248,7 +254,18 @@
 			path = PlaygroundView;
 			sourceTree = "<group>";
 		};
-		CE9B2F5A2D13E0D700EE9831 /* Review */ = {
+		CE64A9CE2D22651B00FF6740 /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				CE9B2F5A2D13E0D700EE9831 /* WriteReview */,
+				CE64A9D12D22654400FF6740 /* ReviewViewModel.swift */,
+				CE64A9D32D2265C100FF6740 /* ReviewController.swift */,
+				CE64A9D52D2275DB00FF6740 /* ReviewDetailImageCell.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
+		CE9B2F5A2D13E0D700EE9831 /* WriteReview */ = {
 			isa = PBXGroup;
 			children = (
 				CE9B2F5F2D13E83D00EE9831 /* ReviewWriteViewController.swift */,
@@ -256,7 +273,7 @@
 				CE9B2F5D2D13E6E100EE9831 /* RatingView.swift */,
 				CE9B2F612D13E86500EE9831 /* ReviewImageCell.swift */,
 			);
-			path = Review;
+			path = WriteReview;
 			sourceTree = "<group>";
 		};
 		CED42A7E2CE1ED3400A7AE7E /* Nickname */ = {
@@ -321,7 +338,7 @@
 				CEDF13BE2CD9FA3C0090D9CE /* Auth */,
 				CED42A7E2CE1ED3400A7AE7E /* Nickname */,
 				CED42AB22CE2E22500A7AE7E /* Map */,
-				CE9B2F5A2D13E0D700EE9831 /* Review */,
+				CE64A9CE2D22651B00FF6740 /* Review */,
 				CEDF13D72CDC5BEF0090D9CE /* Profile */,
 			);
 			path = Presentation;
@@ -590,8 +607,10 @@
 				CE5320A62D0FE59900CCAC15 /* PlaygroundDetailRepository.swift in Sources */,
 				CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */,
 				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,
+				CE64A9D62D2275DB00FF6740 /* ReviewDetailImageCell.swift in Sources */,
 				CECC4E332CFFE82D00AA6B68 /* BottomSheetUseCase.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
+				CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */,
 				CE9B2F5E2D13E6E100EE9831 /* RatingView.swift in Sources */,
 				CE9B2F622D13E86500EE9831 /* ReviewImageCell.swift in Sources */,
 				CE9B2F5C2D13E0F900EE9831 /* ReviewWriteViewModel.swift in Sources */,
@@ -627,6 +646,7 @@
 				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
 				CEC373162CFD810200D400D0 /* Coordinator.swift in Sources */,
+				CE64A9D22D22654400FF6740 /* ReviewViewModel.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CE9B2F552D13DC6900EE9831 /* Review.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,

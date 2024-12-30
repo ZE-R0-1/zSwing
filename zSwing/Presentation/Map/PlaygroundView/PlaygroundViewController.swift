@@ -243,6 +243,15 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
             })
             .disposed(by: disposeBag)
         
+        reviewsCollectionView.rx.itemSelected
+            .withLatestFrom(viewModel.reviews) { indexPath, reviews in
+                return reviews[indexPath.row]
+            }
+            .subscribe(onNext: { [weak self] review in
+                self?.showReviewDetail(for: review)
+            })
+            .disposed(by: disposeBag)
+        
         // Outputs
         viewModel.pfctNm
             .bind(to: nameLabel.rx.text)
@@ -336,6 +345,23 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         present(navigationController, animated: true)
     }
     
+    private func showReviewDetail(for review: Review) {
+        let reviewUseCase = DefaultReviewUseCase(
+            reviewRepository: DefaultReviewRepository(),
+            storageService: FirebaseStorageService()
+        )
+        
+        let viewModel = ReviewViewModel(
+            review: review,
+            reviewUseCase: reviewUseCase
+        )
+        
+        let reviewController = ReviewController(viewModel: viewModel)
+        let navigationController = UINavigationController(rootViewController: reviewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true)
+    }
+
     private func dismiss() {
         UIView.animate(withDuration: 0.3) {
             self.view.alpha = 0
