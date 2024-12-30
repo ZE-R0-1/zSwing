@@ -231,8 +231,8 @@
 		CE53209B2D0C2A6F00CCAC15 /* PlaygroundListView */ = {
 			isa = PBXGroup;
 			children = (
-				CECC4E422D0013F700AA6B68 /* PlaygroundListViewModel.swift */,
 				CECC4E442D0018FE00AA6B68 /* PlaygroundListViewController.swift */,
+				CECC4E422D0013F700AA6B68 /* PlaygroundListViewModel.swift */,
 				CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */,
 			);
 			path = PlaygroundListView;
@@ -241,8 +241,8 @@
 		CE53209C2D0C2CA500CCAC15 /* PlaygroundView */ = {
 			isa = PBXGroup;
 			children = (
-				CE53209D2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift */,
 				CE5320B52D0FE88000CCAC15 /* PlaygroundView.swift */,
+				CE53209D2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift */,
 				CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */,
 			);
 			path = PlaygroundView;
@@ -271,13 +271,13 @@
 		CED42AB22CE2E22500A7AE7E /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				CECC4E402D00135400AA6B68 /* BottomSheetViewController.swift */,
-				CE53209C2D0C2CA500CCAC15 /* PlaygroundView */,
-				CE53209B2D0C2A6F00CCAC15 /* PlaygroundListView */,
-				CEFA52622CE34D8300B4280B /* PlaygroundAnnotation */,
 				CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */,
 				CED42AB32CE2E23700A7AE7E /* MapViewModel.swift */,
 				CED42AB82CE2E2DE00A7AE7E /* MapViewController.swift */,
+				CECC4E402D00135400AA6B68 /* BottomSheetViewController.swift */,
+				CEFA52622CE34D8300B4280B /* PlaygroundAnnotation */,
+				CE53209B2D0C2A6F00CCAC15 /* PlaygroundListView */,
+				CE53209C2D0C2CA500CCAC15 /* PlaygroundView */,
 			);
 			path = Map;
 			sourceTree = "<group>";

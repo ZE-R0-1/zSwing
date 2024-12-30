@@ -122,7 +122,7 @@ class PlaygroundCell: UITableViewCell {
         
         for i in 0..<imageCount {
             let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFit
+            imageView.contentMode = .scaleToFill
             imageView.clipsToBounds = true
             imageView.image = UIImage(systemName: "photo")
             imageView.tintColor = .systemGray3
