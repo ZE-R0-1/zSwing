@@ -166,8 +166,8 @@ final class AppDIContainer {
         return PlaygroundListViewController(viewModel: makePlaygroundListViewModel())
     }
     
-    func makePlaygroundView(playground: Playground, currentLocation: CLLocation?) -> PlaygroundView {
-        return PlaygroundView(
+    func makePlaygroundView(playground: Playground, currentLocation: CLLocation?) -> PlaygroundViewController {
+        return PlaygroundViewController(
             viewModel: makePlaygroundViewModel(
                 playground: playground,
                 currentLocation: currentLocation

@@ -31,7 +31,7 @@
 		CE5320B02D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320AF2D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift */; };
 		CE5320B22D0FE7FA00CCAC15 /* DefaultReviewRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B12D0FE7FA00CCAC15 /* DefaultReviewRepository.swift */; };
 		CE5320B42D0FE84600CCAC15 /* PlaygroundDetailDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B32D0FE84600CCAC15 /* PlaygroundDetailDTO.swift */; };
-		CE5320B62D0FE88000CCAC15 /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B52D0FE88000CCAC15 /* PlaygroundView.swift */; };
+		CE5320B62D0FE88000CCAC15 /* PlaygroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B52D0FE88000CCAC15 /* PlaygroundViewController.swift */; };
 		CE5320B82D0FE8F000CCAC15 /* ReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */; };
 		CE64A9CB2D1A6ECC00FF6740 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE64A9CA2D1A6ECC00FF6740 /* GoogleService-Info.plist */; };
 		CE64A9CD2D1A781300FF6740 /* PlaygroundDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9CC2D1A781300FF6740 /* PlaygroundDetail.swift */; };
@@ -116,7 +116,7 @@
 		CE5320AF2D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultFavoriteRepository.swift; sourceTree = "<group>"; };
 		CE5320B12D0FE7FA00CCAC15 /* DefaultReviewRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReviewRepository.swift; sourceTree = "<group>"; };
 		CE5320B32D0FE84600CCAC15 /* PlaygroundDetailDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailDTO.swift; sourceTree = "<group>"; };
-		CE5320B52D0FE88000CCAC15 /* PlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundView.swift; sourceTree = "<group>"; };
+		CE5320B52D0FE88000CCAC15 /* PlaygroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundViewController.swift; sourceTree = "<group>"; };
 		CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCell.swift; sourceTree = "<group>"; };
 		CE64A9CA2D1A6ECC00FF6740 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE64A9CC2D1A781300FF6740 /* PlaygroundDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetail.swift; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 		CE53209C2D0C2CA500CCAC15 /* PlaygroundView */ = {
 			isa = PBXGroup;
 			children = (
-				CE5320B52D0FE88000CCAC15 /* PlaygroundView.swift */,
+				CE5320B52D0FE88000CCAC15 /* PlaygroundViewController.swift */,
 				CE53209D2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift */,
 				CE5320B72D0FE8F000CCAC15 /* ReviewCell.swift */,
 			);
@@ -617,7 +617,7 @@
 				CE5320B42D0FE84600CCAC15 /* PlaygroundDetailDTO.swift in Sources */,
 				CE9B2F602D13E83D00EE9831 /* ReviewWriteViewController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
-				CE5320B62D0FE88000CCAC15 /* PlaygroundView.swift in Sources */,
+				CE5320B62D0FE88000CCAC15 /* PlaygroundViewController.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CE53209E2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift in Sources */,

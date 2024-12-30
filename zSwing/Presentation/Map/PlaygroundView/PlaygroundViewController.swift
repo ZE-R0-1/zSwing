@@ -11,10 +11,10 @@ import RxCocoa
 import CoreLocation
 
 protocol PlaygroundViewDelegate: AnyObject {
-    func playgroundViewDidDismiss(_ playgroundView: PlaygroundView)
+    func playgroundViewDidDismiss(_ playgroundView: PlaygroundViewController)
 }
 
-final class PlaygroundView: UIViewController, ReviewWriteDelegate {
+final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
     // MARK: - Properties
     private let viewModel: PlaygroundViewModel
     private let disposeBag = DisposeBag()

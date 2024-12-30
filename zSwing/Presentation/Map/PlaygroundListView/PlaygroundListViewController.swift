@@ -222,7 +222,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
         )
         
         // PlaygroundView 생성 및 표시
-        let playgroundView = PlaygroundView(viewModel: viewModel)
+        let playgroundView = PlaygroundViewController(viewModel: viewModel)
         playgroundView.delegate = self
         
         // 현재 콘텐츠를 숨기고
@@ -259,7 +259,7 @@ extension PlaygroundListViewController: UITableViewDelegate {
 
 // MARK: - PlaygroundViewDelegate
 extension PlaygroundListViewController: PlaygroundViewDelegate {
-    func playgroundViewDidDismiss(_ playgroundView: PlaygroundView) {
+    func playgroundViewDidDismiss(_ playgroundView: PlaygroundViewController) {
         // 숨겨둔 콘텐츠들을 다시 표시
         contentView.subviews.forEach { $0.isHidden = false }
     }

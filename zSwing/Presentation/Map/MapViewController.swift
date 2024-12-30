@@ -346,7 +346,7 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 extension MapViewController {
-    func presentPlaygroundView(_ playgroundView: PlaygroundView) {
+    func presentPlaygroundView(_ playgroundView: PlaygroundViewController) {
         // 기존 bottomSheet를 제거하고 새로운 playgroundView를 표시
         bottomSheetVC?.willMove(toParent: nil)
         bottomSheetVC?.view.removeFromSuperview()
