@@ -283,6 +283,7 @@ class ReviewController: UIViewController, UIScrollViewDelegate {
                 
                 // 시간 포맷팅
                 let formatter = RelativeDateTimeFormatter()
+                formatter.locale = Locale(identifier: "ko_KR")
                 formatter.unitsStyle = .short
                 let relativeDate = formatter.localizedString(for: review.createdAt, relativeTo: Date())
                 self?.timeLabel.text = relativeDate
