@@ -176,7 +176,7 @@ class ReviewController: UIViewController, UIScrollViewDelegate {
     }
     
     private func setupConstraints() {
-        let imageHeight = UIScreen.main.bounds.width // 정사각형 이미지
+        let imageHeight = UIScreen.main.bounds.width
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -190,36 +190,40 @@ class ReviewController: UIViewController, UIScrollViewDelegate {
             contentStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
+            // 이미지 컬렉션뷰는 전체 너비 사용
+            imageCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageCollectionView.heightAnchor.constraint(equalToConstant: imageHeight),
             
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: -20),
-            
-            profileView.heightAnchor.constraint(equalToConstant: 60),
-            
+            // Profile View 제약조건
             profileImageView.leadingAnchor.constraint(equalTo: profileView.leadingAnchor, constant: 16),
             profileImageView.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 32),
             profileImageView.heightAnchor.constraint(equalToConstant: 32),
             
+            // username과 rating은 profileImageView 기준으로 배치
             usernameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
-            usernameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            usernameLabel.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 16),
             
             timeLabel.leadingAnchor.constraint(equalTo: usernameLabel.trailingAnchor, constant: 8),
             timeLabel.centerYAnchor.constraint(equalTo: usernameLabel.centerYAnchor),
             
             ratingView.leadingAnchor.constraint(equalTo: usernameLabel.leadingAnchor),
             ratingView.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            ratingView.heightAnchor.constraint(equalToConstant: 12),
+            ratingView.bottomAnchor.constraint(equalTo: profileView.bottomAnchor, constant: -16),
             
+            // 좋아요 버튼과 카운트 수정: centerY 사용
             likeButton.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -16),
             likeButton.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
             
             likeCountLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -8),
-            likeCountLabel.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor),
+            likeCountLabel.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
             
             contentLabel.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor, constant: 16),
-            contentLabel.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor, constant: -16)
+            contentLabel.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor, constant: -16),
+            
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pageControl.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: -20)
         ])
     }
     
@@ -326,8 +330,9 @@ class ReviewController: UIViewController, UIScrollViewDelegate {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension ReviewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
-    }
+   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+       return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
+   }
 }
