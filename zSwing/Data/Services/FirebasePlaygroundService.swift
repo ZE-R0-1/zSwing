@@ -22,6 +22,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
     }
     
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
+        print("🔥 [Firebase Call] Starting playground fetch for region: lat \(region.center.latitude), lon \(region.center.longitude)")
         return Observable.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
@@ -29,12 +30,16 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                 .whereField("latCrtsVl", isGreaterThanOrEqualTo: String(region.center.latitude - region.span.latitudeDelta/2))
                 .whereField("latCrtsVl", isLessThanOrEqualTo: String(region.center.latitude + region.span.latitudeDelta/2))
             
+            print("🔥 [Firebase Query] Executing with bounds: \(region.center.latitude - region.span.latitudeDelta/2) to \(region.center.latitude + region.span.latitudeDelta/2)")
+
             query.getDocuments { snapshot, error in
                 if let error = error {
-                    print("❌ Firestore 에러:", error.localizedDescription)
+                    print("❌ [Firebase Error] Fetch failed:", error.localizedDescription)
                     observer.onError(error)
                     return
                 }
+                
+                print("✅ [Firebase Success] Fetched \(snapshot?.documents.count ?? 0) documents")
                 
                 let playgrounds = snapshot?.documents.compactMap { document -> Playground? in
                     let data = document.data()
@@ -68,6 +73,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                     )
                 } ?? []
                 
+                print("📍 [Processed] Mapped \(playgrounds.count) valid playgrounds")
                 observer.onNext(playgrounds)
                 observer.onCompleted()
             }

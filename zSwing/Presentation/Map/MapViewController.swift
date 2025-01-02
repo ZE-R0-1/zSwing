@@ -146,7 +146,6 @@ class MapViewController: UIViewController {
                 guard let self = self else { return nil }
                 let currentRegion = self.mapView.region
                 
-                // 마지막 검색 영역과 현재 영역이 크게 다를 때만 검색 실행
                 if let lastRegion = self.lastSearchedRegion,
                    self.isRegionSimilar(lastRegion, currentRegion) {
                     return nil
@@ -158,12 +157,13 @@ class MapViewController: UIViewController {
                     span: currentRegion.span
                 )
                 
+                // PlaygroundListView 업데이트는 여기서 수행
                 self.bottomSheetVC?.fetchPlaygrounds(for: mapRegion)
                 
                 return mapRegion
             }
             .compactMap { $0 }
-            .bind(to: viewModel.searchButtonTapped)
+            .subscribe()
             .disposed(by: disposeBag)
         
         viewModel.currentLocation

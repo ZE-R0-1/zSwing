@@ -20,18 +20,11 @@ final class DefaultReviewRepository: ReviewRepository {
     
     func createReview(review: Review) -> Observable<Void> {
         return Observable.create { [weak self] observer in
-            print("Repository - Attempting to create review")
             guard let self = self,
                   let currentUserId = self.auth.currentUser?.uid else {
-                print("Repository - No user logged in")
                 observer.onError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]))
                 return Disposables.create()
             }
-            
-            print("Repository - Creating review with data:")
-            print("PlaygroundId:", review.playgroundId)
-            print("Content:", review.content)
-            print("Rating:", review.rating)
             
             // Get user data
             self.auth.currentUser?.reload()
@@ -52,14 +45,10 @@ final class DefaultReviewRepository: ReviewRepository {
                 "userName": userName
             ]
             
-            print("Repository - Saving review data:", reviewData)
-            
             reviewRef.setData(reviewData) { error in
                 if let error = error {
-                    print("Repository - Error saving review:", error.localizedDescription)
                     observer.onError(error)
                 } else {
-                    print("Repository - Review successfully saved with ID:", reviewRef.documentID)
                     observer.onNext(())
                     observer.onCompleted()
                 }
@@ -75,9 +64,7 @@ final class DefaultReviewRepository: ReviewRepository {
         page: Int,
         pageSize: Int
     ) -> Observable<[Review]> {
-        return Observable.create { [weak self] observer in
-            print("Repository - Fetching reviews for playground:", playgroundId)
-            
+        return Observable.create { [weak self] observer in            
             guard let self = self else { return Disposables.create() }
             
             // 기본 쿼리 생성
@@ -95,22 +82,15 @@ final class DefaultReviewRepository: ReviewRepository {
             // 페이지네이션 적용 (offset 방식으로 변경)
             query = query.limit(to: pageSize)
             
-            print("Repository - Executing query for reviews")
-            
             query.getDocuments { snapshot, error in
                 if let error = error {
-                    print("Repository - Error fetching reviews:", error.localizedDescription)
                     observer.onError(error)
                     return
                 }
                 
-                print("Repository - Retrieved documents count:", snapshot?.documents.count ?? 0)
-                
                 let reviews = snapshot?.documents.compactMap { document -> Review? in
-                    print("Repository - Processing document:", document.documentID)
                     
                     let data = document.data()
-                    print("Repository - Document data:", data)
                     
                     return Review(
                         id: document.documentID,
@@ -128,7 +108,6 @@ final class DefaultReviewRepository: ReviewRepository {
                     )
                 } ?? []
                 
-                print("Repository - Final processed reviews count:", reviews.count)
                 observer.onNext(reviews)
                 observer.onCompleted()
             }

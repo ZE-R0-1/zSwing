@@ -50,14 +50,19 @@ final class PlaygroundListViewModel {
         searchButtonTapped
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .do(onNext: { [weak self] region in
+                print("📱 [PlaygroundList] Search initiated for region")
                 self?.updateLocationTitle(for: region.center)
                 self?.isLoading.accept(true)
             })
             .withLatestFrom(categorySelected) { (region: $0, category: $1) }
+            .do(onNext: { params in
+                print("🏷️ [Category] Using filter: \(params.category.rawValue)")
+            })
             .flatMapLatest { [weak self] params in
                 self?.fetchPlaygroundWithReviews(region: params.region, category: params.category) ?? .empty()
             }
             .do(onNext: { [weak self] playgrounds in
+                print("✅ [Result] Received \(playgrounds.count) playgrounds")
                 self?.isLoading.accept(false)
                 // 검색 결과를 원본 데이터로 저장
                 self?.originalPlaygrounds.accept(playgrounds)

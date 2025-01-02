@@ -42,18 +42,10 @@ class MapViewModel {
     }
     
     private func setupBindings() {
-        // 초기 진입 시 한 번만 실행
+        // 초기 진입 시 위치 권한 처리만 수행
         viewDidLoad
             .take(1)
             .withLatestFrom(initialRegion)
-            .do(onNext: { [weak self] region in
-                self?.isLoading.accept(true)
-                let mapRegion = MapRegion(
-                    center: region.center,
-                    span: region.span
-                )
-                self?.playgroundListViewModel.searchButtonTapped.accept(mapRegion)
-            })
             .flatMapLatest { [weak self] _ -> Observable<Result<Bool, Error>> in
                 guard let self = self else { return .empty() }
                 return self.useCase.requestLocationPermission()
@@ -73,7 +65,6 @@ class MapViewModel {
                 if case .success(let location) = result {
                     self?.currentLocation.accept(location)
                 }
-                self?.isLoading.accept(false)
             })
             .subscribe()
             .disposed(by: disposeBag)
@@ -102,7 +93,6 @@ class MapViewModel {
             .skip(1)
             .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .distinctUntilChanged { old, new in
-                // 중요한 변화가 있을 때만 처리
                 let latDiff = abs(old.center.latitude - new.center.latitude)
                 let lonDiff = abs(old.center.longitude - new.center.longitude)
                 let spanLatDiff = abs(old.span.latitudeDelta - new.span.latitudeDelta)
@@ -115,10 +105,16 @@ class MapViewModel {
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
         
-        // 검색 버튼 탭 처리
+        // 검색 버튼 탭 시에만 Firebase 데이터 조회
         searchButtonTapped
+            .do(onNext: { [weak self] region in
+                print("🔍 [Search] Button tapped for region: lat \(region.center.latitude), lon \(region.center.longitude)")
+                self?.isLoading.accept(true)
+            })
             .subscribe(onNext: { [weak self] region in
+                print("🎯 [Search] Initiating playground search")
                 self?.playgroundListViewModel.searchButtonTapped.accept(region)
+                self?.isLoading.accept(false)
             })
             .disposed(by: disposeBag)
     }
