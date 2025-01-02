@@ -12,7 +12,7 @@ import MapKit
 
 final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Properties
-    private let viewModel: PlaygroundListViewModel
+    let viewModel: PlaygroundListViewModel
     private let disposeBag = DisposeBag()
     private var lastSearchedRegion: MapRegion?
     

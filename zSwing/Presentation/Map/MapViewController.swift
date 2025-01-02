@@ -119,7 +119,7 @@ class MapViewController: UIViewController {
             activityIndicator.centerYAnchor.constraint(equalTo: locationButton.centerYAnchor)
         ])
     }
-
+    
     private func setupMapView() {
         mapView.delegate = self
         
@@ -164,6 +164,14 @@ class MapViewController: UIViewController {
             }
             .compactMap { $0 }
             .subscribe()
+            .disposed(by: disposeBag)
+
+        // PlaygroundListViewModel의 playgrounds Observable을 구독하여 맵 어노테이션 업데이트
+        bottomSheetVC?.viewModel.playgrounds
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] playgroundsWithDistance in
+                self?.updateAnnotations(with: playgroundsWithDistance.map { $0.playground })
+            })
             .disposed(by: disposeBag)
         
         viewModel.currentLocation
@@ -233,7 +241,7 @@ class MapViewController: UIViewController {
         // currentAnnotations 업데이트
         currentAnnotations = Array(newAnnotations)
     }
-
+    
     // 두 지도 영역이 유사한지 확인하는 헬퍼 메서드
     private func isRegionSimilar(_ region1: MKCoordinateRegion, _ region2: MKCoordinateRegion) -> Bool {
         let centerThreshold = 0.01  // 약 1km
@@ -245,9 +253,9 @@ class MapViewController: UIViewController {
         let spanLonDiff = abs(region1.span.longitudeDelta - region2.span.longitudeDelta)
         
         return latDiff < centerThreshold &&
-               lonDiff < centerThreshold &&
-               spanLatDiff < spanThreshold &&
-               spanLonDiff < spanThreshold
+        lonDiff < centerThreshold &&
+        spanLatDiff < spanThreshold &&
+        spanLonDiff < spanThreshold
     }
     
     private func showAlert(message: String) {

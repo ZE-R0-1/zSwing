@@ -10,11 +10,6 @@ import RxRelay
 import MapKit
 import CoreLocation
 
-import RxSwift
-import RxRelay
-import MapKit
-import CoreLocation
-
 class MapViewModel {
     // MARK: - Properties
     private let useCase: MapUseCase
@@ -107,9 +102,9 @@ class MapViewModel {
         
         // 검색 버튼 탭 시에만 Firebase 데이터 조회
         searchButtonTapped
-            .do(onNext: { [weak self] region in
+            .do(onNext: { region in
                 print("🔍 [Search] Button tapped for region: lat \(region.center.latitude), lon \(region.center.longitude)")
-                self?.isLoading.accept(true)
+                self.isLoading.accept(true)
             })
             .subscribe(onNext: { [weak self] region in
                 print("🎯 [Search] Initiating playground search")
