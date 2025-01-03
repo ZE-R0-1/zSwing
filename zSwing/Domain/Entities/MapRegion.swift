@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
-struct MapRegion {
+struct MapRegion: Hashable {
     let center: CLLocationCoordinate2D
     let span: MKCoordinateSpan
     
@@ -24,5 +24,21 @@ struct MapRegion {
                 longitudeDelta: 0.1
             )
         )
+    }
+    
+    // Hashable 구현
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(center.latitude)
+        hasher.combine(center.longitude)
+        hasher.combine(span.latitudeDelta)
+        hasher.combine(span.longitudeDelta)
+    }
+    
+    // Equatable 구현
+    static func == (lhs: MapRegion, rhs: MapRegion) -> Bool {
+        return lhs.center.latitude == rhs.center.latitude &&
+        lhs.center.longitude == rhs.center.longitude &&
+        lhs.span.latitudeDelta == rhs.span.latitudeDelta &&
+        lhs.span.longitudeDelta == rhs.span.longitudeDelta
     }
 }

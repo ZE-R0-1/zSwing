@@ -22,6 +22,10 @@ final class PlaygroundListViewModel {
     private let originalPlaygrounds = BehaviorRelay<[PlaygroundWithDistance]>(value: [])
     private let reviewRepository: ReviewRepository
     
+    // 캐시를 위한 properties
+    private var cachedRegions: [MapRegion] = []
+    private var cachedPlaygrounds: [MapRegion: [PlaygroundWithDistance]] = [:]
+    
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
     let categorySelected = BehaviorRelay<PlaygroundType>(value: .all)
@@ -40,10 +44,30 @@ final class PlaygroundListViewModel {
     }
     
     private func bind() {
-        // 검색 버튼 처리를 별도 메서드로 분리
         bindSearchButton()
-        // 카테고리 변경 처리를 별도 메서드로 분리
         bindCategoryChanges()
+    }
+    
+    private func getCachedPlaygrounds(for region: MapRegion) -> [PlaygroundWithDistance]? {
+        for cachedRegion in cachedRegions {
+            let latDiff = abs(cachedRegion.center.latitude - region.center.latitude)
+            let lonDiff = abs(cachedRegion.center.longitude - region.center.longitude)
+            let spanLatDiff = abs(cachedRegion.span.latitudeDelta - region.span.latitudeDelta)
+            let spanLonDiff = abs(cachedRegion.span.longitudeDelta - region.span.longitudeDelta)
+            
+            if latDiff < 0.01 && lonDiff < 0.01 &&
+                spanLatDiff < 0.01 && spanLonDiff < 0.01 {
+                print("🎯 [Cache Hit] Using cached data for region")
+                return cachedPlaygrounds[cachedRegion]
+            }
+        }
+        return nil
+    }
+    
+    private func cachePlaygrounds(_ playgrounds: [PlaygroundWithDistance], for region: MapRegion) {
+        print("💾 [Cache] Storing data for region")
+        cachedRegions.append(region)
+        cachedPlaygrounds[region] = playgrounds
     }
     
     private func bindSearchButton() {
@@ -58,22 +82,27 @@ final class PlaygroundListViewModel {
             .do(onNext: { params in
                 print("🏷️ [Category] Using filter: \(params.category.rawValue)")
             })
-            .flatMapLatest { [weak self] params in
-                self?.fetchPlaygroundWithReviews(region: params.region, category: params.category) ?? .empty()
+            .flatMapLatest { [weak self] params -> Observable<[PlaygroundWithDistance]> in
+                guard let self = self else { return .empty() }
+                
+                if let cachedData = self.getCachedPlaygrounds(for: params.region) {
+                    print("🔄 [Cache] Using cached data")
+                    return .just(cachedData)
+                }
+                
+                return self.fetchPlaygroundWithReviews(region: params.region, category: params.category)
+                    .do(onNext: { playgrounds in
+                        self.cachePlaygrounds(playgrounds, for: params.region)
+                    })
             }
-            .do(onNext: { [weak self] playgrounds in
+            .do(onNext: { playgrounds in
                 print("✅ [Result] Received \(playgrounds.count) playgrounds")
-                self?.isLoading.accept(false)
-                // 검색 결과를 원본 데이터로 저장
-                self?.originalPlaygrounds.accept(playgrounds)
-                // 현재 선택된 카테고리로 필터링
-                self?.filterPlaygrounds()
             })
-            .catch { [weak self] error in
-                self?.error.accept(error)
-                return .empty()
-            }
-            .subscribe()
+            .do(onNext: { [weak self] playgrounds in
+                self?.originalPlaygrounds.accept(playgrounds)
+                self?.isLoading.accept(false)
+            })
+            .bind(to: playgrounds)
             .disposed(by: disposeBag)
     }
 
@@ -90,7 +119,7 @@ final class PlaygroundListViewModel {
             })
             .disposed(by: disposeBag)
     }
-
+    
     private func filterPlaygrounds() {
         let currentCategory = categorySelected.value
         let filtered = originalPlaygrounds.value.filter { playground in
@@ -108,7 +137,6 @@ final class PlaygroundListViewModel {
             longitude: region.center.longitude
         )
         
-        // 1. 먼저 필터링된 놀이터들을 가져옵니다
         return playgroundUseCase
             .fetchFilteredPlaygrounds(
                 categories: Set([category.rawValue]),
@@ -116,7 +144,6 @@ final class PlaygroundListViewModel {
             )
             .flatMap { [weak self] playgrounds -> Observable<[Playground]> in
                 guard let self = self else { return .empty() }
-                // 각 놀이터의 리뷰를 가져옴
                 let reviewObservables = playgrounds.map { playground -> Observable<Playground> in
                     return self.reviewRepository.fetchReviews(
                         playgroundId: playground.pfctSn,
@@ -131,13 +158,11 @@ final class PlaygroundListViewModel {
                 }
                 return Observable.zip(reviewObservables)
             }
-            // 2. 거리 계산과 정렬을 별도의 메서드로 분리합니다
             .map { [weak self] playgrounds in
                 self?.calculateDistances(playgrounds: playgrounds, from: currentLocation) ?? []
             }
     }
-
-    // 거리 계산과 정렬을 담당하는 별도의 메서드
+    
     private func calculateDistances(playgrounds: [Playground], from location: CLLocation) -> [PlaygroundWithDistance] {
         return playgrounds
             .map { playground in

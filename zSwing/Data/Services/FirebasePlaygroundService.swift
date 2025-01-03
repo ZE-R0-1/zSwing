@@ -23,15 +23,25 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
     
     func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
         print("🔥 [Firebase Call] Starting playground fetch for region: lat \(region.center.latitude), lon \(region.center.longitude)")
+        
         return Observable.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
-            let query = self.db.collection("playgrounds")
-                .whereField("latCrtsVl", isGreaterThanOrEqualTo: String(region.center.latitude - region.span.latitudeDelta/2))
-                .whereField("latCrtsVl", isLessThanOrEqualTo: String(region.center.latitude + region.span.latitudeDelta/2))
+            // 위도, 경도 범위 계산
+            let minLat = String(region.center.latitude - region.span.latitudeDelta/2)
+            let maxLat = String(region.center.latitude + region.span.latitudeDelta/2)
+            let minLon = String(region.center.longitude - region.span.longitudeDelta/2)
+            let maxLon = String(region.center.longitude + region.span.longitudeDelta/2)
             
-            print("🔥 [Firebase Query] Executing with bounds: \(region.center.latitude - region.span.latitudeDelta/2) to \(region.center.latitude + region.span.latitudeDelta/2)")
-
+            print("🔥 [Firebase Query] Executing with bounds: lat(\(minLat) to \(maxLat)), lon(\(minLon) to \(maxLon))")
+            
+            // 위도와 경도 모두 필터링
+            let query = self.db.collection("playgrounds")
+                .whereField("latCrtsVl", isGreaterThanOrEqualTo: minLat)
+                .whereField("latCrtsVl", isLessThanOrEqualTo: maxLat)
+                .whereField("lotCrtsVl", isGreaterThanOrEqualTo: minLon)
+                .whereField("lotCrtsVl", isLessThanOrEqualTo: maxLon)
+            
             query.getDocuments { snapshot, error in
                 if let error = error {
                     print("❌ [Firebase Error] Fetch failed:", error.localizedDescription)
@@ -53,12 +63,6 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                           let latitude = Double(latString.trimmingCharacters(in: .whitespacesAndNewlines)),
                           let longitude = Double(lonString.trimmingCharacters(in: .whitespacesAndNewlines))
                     else {
-                        return nil
-                    }
-                    
-                    let minLon = region.center.longitude - region.span.longitudeDelta/2
-                    let maxLon = region.center.longitude + region.span.longitudeDelta/2
-                    guard longitude >= minLon && longitude <= maxLon else {
                         return nil
                     }
                     
