@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import Kingfisher
 
 class PlaygroundCell: UITableViewCell {
     static let identifier = "PlaygroundCell"
@@ -107,7 +108,7 @@ class PlaygroundCell: UITableViewCell {
             photoGridView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
             photoGridView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             gridWidthConstraint,
-            photoGridView.heightAnchor.constraint(equalToConstant: 114), // 고정 높이로 변경
+            photoGridView.heightAnchor.constraint(equalToConstant: 114),
             photoGridView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
     }
@@ -126,6 +127,7 @@ class PlaygroundCell: UITableViewCell {
             imageView.clipsToBounds = true
             imageView.image = UIImage(systemName: "photo")
             imageView.tintColor = .systemGray3
+            imageView.backgroundColor = .systemGray6
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
             photoGridView.addSubview(imageView)
@@ -162,22 +164,25 @@ class PlaygroundCell: UITableViewCell {
             .flatMap { $0.imageUrls }
             .prefix(3)
         
-        // 기존 이미지 초기화
-        photoImageViews.forEach { $0.image = UIImage(systemName: "photo") }
+        // 기본 이미지로 초기화
+        photoImageViews.forEach { imageView in
+            imageView.image = UIImage(systemName: "photo")
+            imageView.tintColor = .systemGray3
+        }
         
-        // 새 이미지 로드
+        // Kingfisher를 사용한 이미지 로드
         for (index, urlString) in recentImageUrls.enumerated() {
             guard index < photoImageViews.count,
                   let url = URL(string: urlString) else { continue }
             
-            URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-                DispatchQueue.main.async {
-                    if let data = data,
-                       let image = UIImage(data: data) {
-                        self?.photoImageViews[index].image = image
-                    }
-                }
-            }.resume()
+            photoImageViews[index].kf.setImage(
+                with: url,
+                placeholder: UIImage(systemName: "photo"),
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            )
         }
     }
     
@@ -186,9 +191,9 @@ class PlaygroundCell: UITableViewCell {
         nameLabel.text = nil
         distanceLabel.text = nil
         photoImageViews.forEach { imageView in
+            imageView.kf.cancelDownloadTask() // Kingfisher 다운로드 작업 취소
             imageView.image = UIImage(systemName: "photo")
         }
-        // cell이 재사용될 때 disposeBag을 새로 생성
         disposeBag = DisposeBag()
     }
 }

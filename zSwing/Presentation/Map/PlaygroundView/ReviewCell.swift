@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ReviewCell: UICollectionViewCell {
     static let identifier = "ReviewCell"
@@ -64,8 +65,28 @@ final class ReviewCell: UICollectionViewCell {
     
     // MARK: - Configuration
     func configure(with review: Review) {
-        if let firstImageUrl = review.imageUrls.first {
-            loadImage(from: firstImageUrl)
+        if let firstImageUrl = review.imageUrls.first,
+           let url = URL(string: firstImageUrl) {
+            // Kingfisher를 사용한 이미지 로딩
+            imageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(systemName: "photo"),
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage,
+                    .cacheMemoryOnly
+                ],
+                completionHandler: { [weak self] result in
+                    switch result {
+                    case .success(_):
+                        break
+                    case .failure(let error):
+                        print("❌ Failed to load image: \(error.localizedDescription)")
+                        self?.imageView.image = UIImage(systemName: "photo")
+                        self?.imageView.tintColor = .systemGray4
+                    }
+                }
+            )
             
             // 이미지가 2장 이상인 경우에만 카운트 표시
             let additionalCount = review.imageUrls.count - 1
@@ -86,34 +107,13 @@ final class ReviewCell: UICollectionViewCell {
         }
     }
     
-    private func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL string:", urlString)
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            if let error = error {
-                print("Error loading image:", error.localizedDescription)
-                return
-            }
-            
-            guard let data = data, let image = UIImage(data: data) else {
-                print("Failed to create image from data")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                print("Successfully loaded image")
-                self?.imageView.image = image
-            }
-        }.resume()
-    }
-    
     // MARK: - Reuse
     override func prepareForReuse() {
         super.prepareForReuse()
+        // Kingfisher 이미지 다운로드 취소
+        imageView.kf.cancelDownloadTask()
         imageView.image = UIImage(systemName: "photo")
+        imageView.tintColor = .systemGray4
         imageCountLabel.isHidden = true
         imageCountLabel.text = nil
     }

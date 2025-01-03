@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ReviewDetailImageCell: UICollectionViewCell {
     static let identifier = "ReviewDetailImageCell"
@@ -55,36 +56,38 @@ class ReviewDetailImageCell: UICollectionViewCell {
     
     // MARK: - Configuration
     func configure(with urlString: String) {
-        activityIndicator.startAnimating()
-        
         guard let url = URL(string: urlString) else {
-            activityIndicator.stopAnimating()
             imageView.image = UIImage(systemName: "photo")
             return
         }
         
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            DispatchQueue.main.async {
+        activityIndicator.startAnimating()
+        
+        imageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(systemName: "photo"),
+            options: [
+                .transition(.fade(0.3)),
+                .cacheOriginalImage
+            ],
+            completionHandler: { [weak self] result in
                 self?.activityIndicator.stopAnimating()
                 
-                if let error = error {
-                    print("Error loading image: \(error.localizedDescription)")
-                    self?.imageView.image = UIImage(systemName: "photo")
-                    return
-                }
-                
-                if let data = data, let image = UIImage(data: data) {
-                    self?.imageView.image = image
-                } else {
+                switch result {
+                case .success(_):
+                    break
+                case .failure(let error):
+                    print("❌ Error loading image: \(error.localizedDescription)")
                     self?.imageView.image = UIImage(systemName: "photo")
                 }
             }
-        }.resume()
+        )
     }
     
     // MARK: - Reuse
     override func prepareForReuse() {
         super.prepareForReuse()
+        imageView.kf.cancelDownloadTask()
         imageView.image = nil
         activityIndicator.stopAnimating()
     }

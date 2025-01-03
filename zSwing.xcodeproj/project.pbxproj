@@ -38,6 +38,7 @@
 		CE64A9D22D22654400FF6740 /* ReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D12D22654400FF6740 /* ReviewViewModel.swift */; };
 		CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D32D2265C100FF6740 /* ReviewController.swift */; };
 		CE64A9D62D2275DB00FF6740 /* ReviewDetailImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64A9D52D2275DB00FF6740 /* ReviewDetailImageCell.swift */; };
+		CE64A9D92D27A3D200FF6740 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = CE64A9D82D27A3D200FF6740 /* Kingfisher */; };
 		CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E72CDC969B00EF4563 /* ProfileUseCase.swift */; };
 		CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4E92CDCA27400EF4563 /* ProfileRepository.swift */; };
 		CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7AA4EB2CDCA2B100EF4563 /* ProfileViewModel.swift */; };
@@ -196,6 +197,7 @@
 				CE2B97B82CC0F5BA00FF532F /* FirebaseAuth in Frameworks */,
 				CE2B97C12CC0F9EB00FF532F /* GoogleSignIn in Frameworks */,
 				CE2B97CE2CC0FF7900FF532F /* KakaoSDKUser in Frameworks */,
+				CE64A9D92D27A3D200FF6740 /* Kingfisher in Frameworks */,
 				CE2B97BA2CC0F5BA00FF532F /* FirebaseFirestore in Frameworks */,
 				CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */,
 				CE2B97BC2CC0F5BA00FF532F /* FirebaseStorage in Frameworks */,
@@ -514,6 +516,7 @@
 				CEDF13B62CD9F6B50090D9CE /* RxSwift */,
 				CEFA52682CE34F0500B4280B /* RxGesture */,
 				CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */,
+				CE64A9D82D27A3D200FF6740 /* Kingfisher */,
 			);
 			productName = zSwing;
 			productReference = CE2B979F2CC0913300FF532F /* zSwing.app */;
@@ -550,6 +553,7 @@
 				CEDF13B32CD9F6B50090D9CE /* XCRemoteSwiftPackageReference "RxSwift" */,
 				CEFA52672CE34F0500B4280B /* XCRemoteSwiftPackageReference "RxGesture" */,
 				CECC4E4A2D00504A00AA6B68 /* XCRemoteSwiftPackageReference "RxCoreLocation" */,
+				CE64A9D72D27A3D200FF6740 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = CE2B97A02CC0913300FF532F /* Products */;
 			projectDirPath = "";
@@ -903,6 +907,14 @@
 				minimumVersion = 2.23.0;
 			};
 		};
+		CE64A9D72D27A3D200FF6740 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
 		CECC4E4A2D00504A00AA6B68 /* XCRemoteSwiftPackageReference "RxCoreLocation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxCoreLocation.git";
@@ -969,6 +981,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CE2B97C82CC0FF7900FF532F /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		CE64A9D82D27A3D200FF6740 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE64A9D72D27A3D200FF6740 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		CECC4E4B2D00504A00AA6B68 /* RxCoreLocation */ = {
 			isa = XCSwiftPackageProductDependency;

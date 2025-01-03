@@ -292,7 +292,6 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
                 cellIdentifier: ReviewCell.identifier,
                 cellType: ReviewCell.self
             )) { _, review, cell in
-                print("Binding review to cell:", review)
                 cell.configure(with: review)
             }
             .disposed(by: disposeBag)
