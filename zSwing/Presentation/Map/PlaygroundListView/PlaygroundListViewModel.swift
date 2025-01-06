@@ -77,6 +77,9 @@ final class PlaygroundListViewModel {
                 print("📱 [PlaygroundList] Search initiated for region")
                 self?.updateLocationTitle(for: region.center)
                 self?.isLoading.accept(true)
+                // 검색 시작할 때 데이터 초기화
+                self?.playgrounds.accept([])
+                self?.originalPlaygrounds.accept([])
             })
             .withLatestFrom(categorySelected) { (region: $0, category: $1) }
             .do(onNext: { params in
@@ -84,11 +87,6 @@ final class PlaygroundListViewModel {
             })
             .flatMapLatest { [weak self] params -> Observable<[PlaygroundWithDistance]> in
                 guard let self = self else { return .empty() }
-                
-                if let cachedData = self.getCachedPlaygrounds(for: params.region) {
-                    print("🔄 [Cache] Using cached data")
-                    return .just(cachedData)
-                }
                 
                 return self.fetchPlaygroundWithReviews(region: params.region, category: params.category)
                     .do(onNext: { playgrounds in
@@ -105,7 +103,7 @@ final class PlaygroundListViewModel {
             .bind(to: playgrounds)
             .disposed(by: disposeBag)
     }
-
+    
     private func bindCategoryChanges() {
         categorySelected
             .skip(1)
