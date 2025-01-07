@@ -80,8 +80,22 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
     
     private let favoriteButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "heart"), for: .normal)
-        button.tintColor = .systemRed
+        button.setImage(UIImage(systemName: "bookmark"), for: .normal)
+        button.tintColor = .systemBlue
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        return button
+    }()
+    
+    private let closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        let image = UIImage(systemName: "xmark", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .darkGray
+        button.backgroundColor = .clear
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
@@ -124,18 +138,6 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         return button
     }()
     
-    private let closeButton: UIButton = {
-        let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
-        let image = UIImage(systemName: "xmark", withConfiguration: config)
-        button.setImage(image, for: .normal)
-        button.tintColor = .darkGray
-        button.backgroundColor = .clear
-        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        return button
-    }()
-    
     // MARK: - Initialization
     init(viewModel: PlaygroundViewModel) {
         self.viewModel = viewModel
@@ -163,13 +165,20 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         containerView.addSubview(scrollView)
         scrollView.addSubview(stackView)
         
+        // Create a horizontal stack view for the header buttons
+        let headerButtonsStack = UIStackView()
+        headerButtonsStack.axis = .horizontal
+        headerButtonsStack.spacing = 8
+        headerButtonsStack.addArrangedSubview(favoriteButton)
+        headerButtonsStack.addArrangedSubview(closeButton)
+        
         headerStackView.addArrangedSubview(nameLabel)
-        headerStackView.addArrangedSubview(closeButton)
+        headerStackView.addArrangedSubview(headerButtonsStack)
         
         emptyReviewView.addSubview(emptyReviewLabel)
         [emptyReviewView, emptyReviewLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
-        [headerStackView, addressLabel, distanceLabel, favoriteButton,
+        [headerStackView, addressLabel, distanceLabel,
          emptyReviewView, reviewsCollectionView, writeReviewButton].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -207,6 +216,9 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
             
             emptyReviewLabel.centerXAnchor.constraint(equalTo: emptyReviewView.centerXAnchor),
             emptyReviewLabel.centerYAnchor.constraint(equalTo: emptyReviewView.centerYAnchor),
+            
+            favoriteButton.widthAnchor.constraint(equalToConstant: 30),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 30),
             
             closeButton.widthAnchor.constraint(equalToConstant: 30),
             closeButton.heightAnchor.constraint(equalToConstant: 30)
@@ -267,7 +279,7 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         
         viewModel.isFavorite
             .map { isFavorite in
-                UIImage(systemName: isFavorite ? "heart.fill" : "heart")
+                UIImage(systemName: isFavorite ? "bookmark.fill" : "bookmark")
             }
             .bind(to: favoriteButton.rx.image())
             .disposed(by: disposeBag)
@@ -360,7 +372,7 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true)
     }
-
+    
     private func dismiss() {
         UIView.animate(withDuration: 0.3) {
             self.view.alpha = 0

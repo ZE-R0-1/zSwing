@@ -62,10 +62,15 @@ class ReviewController: UIViewController, UIScrollViewDelegate {
     }()
     
     private let likeButton: UIButton = {
-        let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
-        button.setImage(UIImage(systemName: "heart", withConfiguration: config), for: .normal)
-        button.setImage(UIImage(systemName: "heart.fill", withConfiguration: config), for: .selected)
+        let button = UIButton()  // type을 지정하지 않음
+        // SF Symbol 이미지 설정
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        let normalImage = UIImage(systemName: "heart", withConfiguration: symbolConfig)
+        let selectedImage = UIImage(systemName: "heart.fill", withConfiguration: symbolConfig)
+        // 버튼 이미지 설정
+        button.setImage(normalImage, for: .normal)
+        button.setImage(selectedImage, for: .selected)
+        // 이미지 틴트 컬러 설정
         button.tintColor = .systemRed
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
