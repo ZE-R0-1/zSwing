@@ -116,6 +116,10 @@ final class AppDIContainer {
         return NicknameViewModel(useCase: makeNicknameUseCase())
     }
     
+    private func makeHomeViewModel() -> HomeViewModel {
+        return HomeViewModel()
+    }
+    
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
             useCase: makeMapUseCase(),
@@ -176,9 +180,7 @@ final class AppDIContainer {
     }
     
     func makeHomeViewController() -> UIViewController {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .white
-        return vc
+        return HomeViewController(viewModel: makeHomeViewModel())
     }
     
     func makeLoadingViewController() -> LoadingViewController {

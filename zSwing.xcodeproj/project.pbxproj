@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE13958B2D2E6B5F00E98544 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */; };
+		CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395902D2E6C5600E98544 /* PostCell.swift */; };
+		CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395922D2E6D1000E98544 /* PostImageCell.swift */; };
+		CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395942D2E6DF000E98544 /* HomeViewModel.swift */; };
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
@@ -101,6 +105,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		CE1395902D2E6C5600E98544 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		CE1395922D2E6D1000E98544 /* PostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostImageCell.swift; sourceTree = "<group>"; };
+		CE1395942D2E6DF000E98544 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -208,6 +216,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE1395892D2E6B0E00E98544 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				CE1395942D2E6DF000E98544 /* HomeViewModel.swift */,
+				CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */,
+				CE1395902D2E6C5600E98544 /* PostCell.swift */,
+				CE1395922D2E6D1000E98544 /* PostImageCell.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		CE2B97962CC0913300FF532F = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +358,7 @@
 				CEFA526A2CE490D100B4280B /* Loading */,
 				CEDF13BE2CD9FA3C0090D9CE /* Auth */,
 				CED42A7E2CE1ED3400A7AE7E /* Nickname */,
+				CE1395892D2E6B0E00E98544 /* Home */,
 				CED42AB22CE2E22500A7AE7E /* Map */,
 				CE64A9CE2D22651B00FF6740 /* Review */,
 				CEDF13D72CDC5BEF0090D9CE /* Profile */,
@@ -594,6 +614,7 @@
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
 				CE5320A22D0FE28900CCAC15 /* FavoriteUseCase.swift in Sources */,
 				CEFA527A2CE70E6400B4280B /* Ride.swift in Sources */,
+				CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */,
 				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
 				CE5320A42D0FE29E00CCAC15 /* ReviewUseCase.swift in Sources */,
 				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
@@ -637,13 +658,16 @@
 				CE5320B02D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
+				CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */,
 				CE5320B42D0FE84600CCAC15 /* PlaygroundDetailDTO.swift in Sources */,
 				CE9B2F602D13E83D00EE9831 /* ReviewWriteViewController.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE5320B62D0FE88000CCAC15 /* PlaygroundViewController.swift in Sources */,
+				CE13958B2D2E6B5F00E98544 /* HomeViewController.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CE53209E2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift in Sources */,
+				CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */,
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
 				CE9B2F592D13DE2500EE9831 /* FirebaseStorageService.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
