@@ -178,8 +178,8 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
         emptyReviewView.addSubview(emptyReviewLabel)
         [emptyReviewView, emptyReviewLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
-        [headerStackView, addressLabel, distanceLabel,
-         emptyReviewView, reviewsCollectionView, writeReviewButton].forEach {
+        [headerStackView, addressLabel, distanceLabel, writeReviewButton,
+         emptyReviewView, reviewsCollectionView].forEach {
             stackView.addArrangedSubview($0)
         }
         

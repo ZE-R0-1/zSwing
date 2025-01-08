@@ -54,14 +54,25 @@ class RatingView: UIView {
     
     private func createStarButtons() {
         for i in 0..<maxRating {
-            let button = UIButton(type: .system)
-            button.setImage(UIImage(systemName: "star"), for: .normal)
-            button.setImage(UIImage(systemName: "star.fill"), for: .selected)
-            button.tintColor = .systemYellow
-            button.tag = i + 1
-            button.addTarget(self, action: #selector(starButtonTapped(_:)), for: .touchUpInside)
+            let button = UIButton()
+            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
             
-            // 버튼 크기 설정
+            let normalImage = UIImage(systemName: "star", withConfiguration: config)?
+                .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+            let halfImage = UIImage(systemName: "star.leadinghalf.filled", withConfiguration: config)?
+                .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+            let selectedImage = UIImage(systemName: "star.fill", withConfiguration: config)?
+                .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+            
+            button.setImage(normalImage, for: .normal)
+            button.setImage(selectedImage, for: .selected)
+            button.tag = i + 1
+            button.backgroundColor = .clear
+            
+            // 제스처 인식기 추가
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(starTapped(_:)))
+            button.addGestureRecognizer(tapGesture)
+            
             button.translatesAutoresizingMaskIntoConstraints = false
             button.heightAnchor.constraint(equalToConstant: 44).isActive = true
             button.widthAnchor.constraint(equalToConstant: 44).isActive = true
@@ -72,8 +83,14 @@ class RatingView: UIView {
     }
     
     // MARK: - Action Handlers
-    @objc private func starButtonTapped(_ sender: UIButton) {
-        let rating = Double(sender.tag)
+    @objc private func starTapped(_ gesture: UITapGestureRecognizer) {
+        guard let button = gesture.view as? UIButton else { return }
+        let location = gesture.location(in: button)
+        let buttonWidth = button.bounds.width
+        let tag = button.tag
+        
+        // 터치 위치가 버튼의 왼쪽 절반에 있는지 오른쪽 절반에 있는지 확인
+        let rating = location.x <= buttonWidth/2 ? Double(tag) - 0.5 : Double(tag)
         updateRating(rating)
         ratingChanged.accept(rating)
     }
@@ -83,12 +100,28 @@ class RatingView: UIView {
         currentRating = rating
         
         starButtons.enumerated().forEach { index, button in
-            let buttonRating = Double(index + 1)
-            button.isSelected = buttonRating <= rating
+            let buttonNumber = index + 1
+            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+            
+            if Double(buttonNumber) <= rating {
+                // 전체 별
+                let fullStar = UIImage(systemName: "star.fill", withConfiguration: config)?
+                    .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+                button.setImage(fullStar, for: .normal)
+            } else if Double(buttonNumber) - 0.5 == rating {
+                // 반 별
+                let halfStar = UIImage(systemName: "star.leadinghalf.filled", withConfiguration: config)?
+                    .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+                button.setImage(halfStar, for: .normal)
+            } else {
+                // 빈 별
+                let emptyStar = UIImage(systemName: "star", withConfiguration: config)?
+                    .withTintColor(.systemYellow, renderingMode: .alwaysOriginal)
+                button.setImage(emptyStar, for: .normal)
+            }
         }
     }
     
     func getRating() -> Double {
         return currentRating
-    }
-}
+    }}

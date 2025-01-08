@@ -19,6 +19,8 @@ class ReviewImageCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
+        imageView.layer.borderWidth = 1  // 테두리 두께
+        imageView.layer.borderColor = UIColor.systemGray4.cgColor  // 테두리 색상
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -72,6 +74,17 @@ class ReviewImageCell: UICollectionViewCell {
     // MARK: - Configuration
     func configure(with image: UIImage) {
         imageView.image = image
+        
+        // 기본 이미지인 경우 스타일 조정
+        if image.size == UIImage(systemName: "photo.fill")?.size {
+            imageView.contentMode = .center
+            imageView.tintColor = .systemGray3
+            deleteButton.isHidden = true  // 기본 이미지에서는 삭제 버튼 숨김
+        } else {
+            imageView.contentMode = .scaleAspectFill
+            imageView.tintColor = nil
+            deleteButton.isHidden = false
+        }
     }
     
     // MARK: - Reuse

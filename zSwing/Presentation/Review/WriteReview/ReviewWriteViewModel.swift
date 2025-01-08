@@ -42,6 +42,10 @@ class ReviewWriteViewModel {
         self.reviewUseCase = reviewUseCase
         self.playgroundId = playgroundId
         
+        // 초기에 기본 이미지 설정
+        let defaultImage = UIImage(systemName: "photo.fill") ?? UIImage()
+        selectedImages.accept([defaultImage])  // 시작할 때 기본 이미지로 초기화
+        
         setupBindings()
     }
     
@@ -50,7 +54,15 @@ class ReviewWriteViewModel {
         // 이미지 선택 처리
         imagesSelected
             .withLatestFrom(selectedImages) { (newImages, currentImages) -> [UIImage] in
-                let allImages = currentImages + newImages
+                // 새로운 이미지가 추가될 때만 기본 이미지 제거
+                let updatedCurrentImages = newImages.isEmpty ? currentImages : {
+                    if currentImages.count == 1 && currentImages[0].size == UIImage(systemName: "photo.fill")?.size {
+                        return []
+                    }
+                    return currentImages
+                }()
+                
+                let allImages = updatedCurrentImages + newImages
                 return Array(allImages.prefix(self.maxImages))
             }
             .do(onNext: { [weak self] images in
