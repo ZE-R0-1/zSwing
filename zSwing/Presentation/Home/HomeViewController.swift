@@ -16,11 +16,13 @@ class HomeViewController: UIViewController {
     // MARK: - UI Components
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.backgroundColor = .systemBackground
+        collection.isPagingEnabled = true  // 페이징 활성화
         collection.showsVerticalScrollIndicator = false
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
@@ -83,9 +85,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 // MARK: - UICollectionViewDelegateFlowLayout
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // 화면 전체 너비
         let width = collectionView.frame.width
-        // 프로필 영역(50) + 이미지 영역(width) + 하단 영역(100) 정도로 설정
-        let height = width + 150
+        // 화면 전체 높이에서 탭바 높이를 제외
+        let height = collectionView.frame.height - (tabBarController?.tabBar.frame.height ?? 0)
         return CGSize(width: width, height: height)
     }
 }

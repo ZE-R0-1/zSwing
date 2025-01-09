@@ -106,8 +106,8 @@ class PostCell: UICollectionViewCell {
             imageCollectionView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
             imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageCollectionView.heightAnchor.constraint(equalTo: imageCollectionView.widthAnchor),
-            
+            imageCollectionView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.7),
+
             // Page Control
             pageControl.centerXAnchor.constraint(equalTo: imageCollectionView.centerXAnchor),
             pageControl.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: -8),
