@@ -11,6 +11,10 @@
 		CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395902D2E6C5600E98544 /* PostCell.swift */; };
 		CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395922D2E6D1000E98544 /* PostImageCell.swift */; };
 		CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395942D2E6DF000E98544 /* HomeViewModel.swift */; };
+		CE1E387C2D30B5B600CE6996 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387B2D30B5B600CE6996 /* Post.swift */; };
+		CE1E387E2D30BA7B00CE6996 /* PostRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */; };
+		CE1E38802D30BC0E00CE6996 /* DefaultPostRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */; };
+		CE1E38822D30D50F00CE6996 /* PostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E38812D30D50F00CE6996 /* PostUseCase.swift */; };
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
@@ -109,6 +113,10 @@
 		CE1395902D2E6C5600E98544 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		CE1395922D2E6D1000E98544 /* PostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostImageCell.swift; sourceTree = "<group>"; };
 		CE1395942D2E6DF000E98544 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		CE1E387B2D30B5B600CE6996 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRepository.swift; sourceTree = "<group>"; };
+		CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPostRepository.swift; sourceTree = "<group>"; };
+		CE1E38812D30D50F00CE6996 /* PostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostUseCase.swift; sourceTree = "<group>"; };
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -389,6 +397,7 @@
 				CED477732CF58E61004659AA /* CategoryInfo.swift */,
 				CECC4E482D0048BE00AA6B68 /* MapRegion.swift */,
 				CE9B2F542D13DC6900EE9831 /* Review.swift */,
+				CE1E387B2D30B5B600CE6996 /* Post.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -405,6 +414,7 @@
 				CE53209F2D0FE20F00CCAC15 /* PlaygroundDetailUseCase.swift */,
 				CE5320A12D0FE28900CCAC15 /* FavoriteUseCase.swift */,
 				CE5320A32D0FE29E00CCAC15 /* ReviewUseCase.swift */,
+				CE1E38812D30D50F00CE6996 /* PostUseCase.swift */,
 			);
 			path = UserCases;
 			sourceTree = "<group>";
@@ -420,6 +430,7 @@
 				CE5320A52D0FE59900CCAC15 /* PlaygroundDetailRepository.swift */,
 				CE5320A72D0FE5B600CCAC15 /* FavoriteRepository.swift */,
 				CE5320A92D0FE6FD00CCAC15 /* ReviewRepository.swift */,
+				CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -435,6 +446,7 @@
 				CE5320AD2D0FE72900CCAC15 /* DefaultPlaygroundDetailRepository.swift */,
 				CE5320AF2D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift */,
 				CE5320B12D0FE7FA00CCAC15 /* DefaultReviewRepository.swift */,
+				CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -617,6 +629,7 @@
 				CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */,
 				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
 				CE5320A42D0FE29E00CCAC15 /* ReviewUseCase.swift in Sources */,
+				CE1E38822D30D50F00CE6996 /* PostUseCase.swift in Sources */,
 				CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */,
 				CEFA52702CE5D26300B4280B /* PlaygroundRepository.swift in Sources */,
 				CE7AA4F02CDCA47100EF4563 /* DefaultProfileRepository.swift in Sources */,
@@ -645,6 +658,7 @@
 				CED42ACC2CE3275800A7AE7E /* Location.swift in Sources */,
 				CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */,
 				CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */,
+				CE1E387E2D30BA7B00CE6996 /* PostRepository.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
 				CE5320A82D0FE5B600CCAC15 /* FavoriteRepository.swift in Sources */,
 				CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */,
@@ -654,6 +668,7 @@
 				CE5320A02D0FE20F00CCAC15 /* PlaygroundDetailUseCase.swift in Sources */,
 				CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
+				CE1E38802D30BC0E00CE6996 /* DefaultPostRepository.swift in Sources */,
 				CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */,
 				CE5320B02D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
@@ -661,6 +676,7 @@
 				CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */,
 				CE5320B42D0FE84600CCAC15 /* PlaygroundDetailDTO.swift in Sources */,
 				CE9B2F602D13E83D00EE9831 /* ReviewWriteViewController.swift in Sources */,
+				CE1E387C2D30B5B600CE6996 /* Post.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE5320B62D0FE88000CCAC15 /* PlaygroundViewController.swift in Sources */,
 				CE13958B2D2E6B5F00E98544 /* HomeViewController.swift in Sources */,

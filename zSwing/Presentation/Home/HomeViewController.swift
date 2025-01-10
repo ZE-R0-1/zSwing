@@ -7,12 +7,14 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 class HomeViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: HomeViewModel
     private let disposeBag = DisposeBag()
-
+    private let refreshControl = UIRefreshControl()
+    
     // MARK: - UI Components
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -22,7 +24,7 @@ class HomeViewController: UIViewController {
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.backgroundColor = .systemBackground
-        collection.isPagingEnabled = true  // 페이징 활성화
+        collection.isPagingEnabled = true
         collection.showsVerticalScrollIndicator = false
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
@@ -37,19 +39,22 @@ class HomeViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
         setupCollectionView()
+        setupBindings()
+        viewModel.viewDidLoad.accept(())
     }
     
     // MARK: - Setup Methods
     private func setupUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
+        collectionView.refreshControl = refreshControl
     }
     
     private func setupConstraints() {
@@ -63,22 +68,62 @@ class HomeViewController: UIViewController {
     
     private func setupCollectionView() {
         collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.register(PostCell.self, forCellWithReuseIdentifier: PostCell.identifier)
     }
-}
-
-// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10 // 임시 데이터 개수
+    
+    private func setupBindings() {
+        // CollectionView 데이터 바인딩
+        viewModel.posts
+            .bind(to: collectionView.rx.items(
+                cellIdentifier: PostCell.identifier,
+                cellType: PostCell.self
+            )) { [weak self] index, post, cell in
+                cell.configure(with: post)
+                cell.delegate = self
+            }
+            .disposed(by: disposeBag)
+        
+        // 새로고침 바인딩
+        refreshControl.rx.controlEvent(.valueChanged)
+            .bind(to: viewModel.refreshTrigger)
+            .disposed(by: disposeBag)
+        
+        // 로딩 상태 바인딩
+        viewModel.isLoading
+            .bind(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+        
+        // 무한 스크롤 바인딩
+        collectionView.rx.contentOffset
+            .map { [weak self] offset in
+                guard let self = self else { return false }
+                let contentHeight = self.collectionView.contentSize.height
+                let scrollViewHeight = self.collectionView.bounds.height
+                let threshold: CGFloat = 100
+                return offset.y + scrollViewHeight + threshold >= contentHeight
+            }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .map { _ in }
+            .bind(to: viewModel.loadMoreTrigger)
+            .disposed(by: disposeBag)
+        
+        // 에러 처리
+        viewModel.error
+            .subscribe(onNext: { [weak self] error in
+                self?.showError(error)
+            })
+            .disposed(by: disposeBag)
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostCell.identifier, for: indexPath) as? PostCell else {
-            return UICollectionViewCell()
-        }
-        return cell
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "오류",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
 }
 
@@ -87,7 +132,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width
         let height = collectionView.frame.height
-        
         return CGSize(width: width, height: height)
+    }
+}
+
+// MARK: - PostCellDelegate
+extension HomeViewController: PostCellDelegate {
+    func postCell(_ cell: PostCell, didTapLikeButton postId: String) {
+        viewModel.likeTrigger.accept(postId)
     }
 }

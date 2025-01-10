@@ -104,6 +104,14 @@ final class AppDIContainer {
         )
     }
     
+    private func makePostUseCase() -> PostUseCase {
+        return DefaultPostUseCase(repository: makePostRepository())
+    }
+    
+    private func makePostRepository() -> PostRepository {
+        return DefaultPostRepository()
+    }
+    
     // MARK: - ViewModels
     private func makeLoginViewModel() -> LoginViewModel {
         return LoginViewModel(
@@ -117,7 +125,7 @@ final class AppDIContainer {
     }
     
     private func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel()
+        return HomeViewModel(useCase: makePostUseCase())
     }
     
     private func makeMapViewModel() -> MapViewModel {

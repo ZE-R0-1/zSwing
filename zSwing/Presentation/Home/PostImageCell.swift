@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class PostImageCell: UICollectionViewCell {
     static let identifier = "PostImageCell"
@@ -46,13 +47,23 @@ class PostImageCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
-    func configure(with image: UIImage?) {
-        imageView.image = image
+    func configure(with imageUrl: String) {
+        if let url = URL(string: imageUrl) {
+            imageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(systemName: "photo"),
+                options: [
+                    .transition(.fade(0.3)),
+                    .cacheOriginalImage
+                ]
+            )
+        }
     }
     
     // MARK: - Reuse
     override func prepareForReuse() {
         super.prepareForReuse()
+        imageView.kf.cancelDownloadTask()
         imageView.image = nil
     }
 }

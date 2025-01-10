@@ -7,8 +7,16 @@
 
 import UIKit
 
+protocol PostCellDelegate: AnyObject {
+    func postCell(_ cell: PostCell, didTapLikeButton postId: String)
+}
+
 class PostCell: UICollectionViewCell {
     static let identifier = "PostCell"
+    
+    // MARK: - Properties
+    private var post: Post?
+    weak var delegate: PostCellDelegate?
     
     // MARK: - UI Components
     private let profileImageView: UIImageView = {
@@ -60,6 +68,13 @@ class PostCell: UICollectionViewCell {
         return button
     }()
     
+    private let likeCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let contentLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -74,6 +89,7 @@ class PostCell: UICollectionViewCell {
         setupUI()
         setupConstraints()
         setupCollectionView()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -84,8 +100,8 @@ class PostCell: UICollectionViewCell {
     private func setupUI() {
         contentView.backgroundColor = .systemBackground
         
-        [profileImageView, usernameLabel, imageCollectionView,
-         pageControl, likeButton, contentLabel].forEach {
+        [profileImageView, usernameLabel, imageCollectionView, pageControl,
+         likeButton, likeCountLabel, contentLabel].forEach {
             contentView.addSubview($0)
         }
     }
@@ -107,7 +123,7 @@ class PostCell: UICollectionViewCell {
             imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageCollectionView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.7),
-
+            
             // Page Control
             pageControl.centerXAnchor.constraint(equalTo: imageCollectionView.centerXAnchor),
             pageControl.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: -8),
@@ -117,6 +133,10 @@ class PostCell: UICollectionViewCell {
             likeButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             likeButton.widthAnchor.constraint(equalToConstant: 44),
             likeButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            // Like Count
+            likeCountLabel.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor),
+            likeCountLabel.leadingAnchor.constraint(equalTo: likeButton.trailingAnchor, constant: 4),
             
             // Content Label
             contentLabel.topAnchor.constraint(equalTo: likeButton.bottomAnchor, constant: 4),
@@ -130,19 +150,54 @@ class PostCell: UICollectionViewCell {
         imageCollectionView.dataSource = self
         imageCollectionView.register(PostImageCell.self, forCellWithReuseIdentifier: PostImageCell.identifier)
     }
+    
+    private func setupActions() {
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func likeButtonTapped() {
+        guard let post = post else { return }
+        delegate?.postCell(self, didTapLikeButton: post.id)
+    }
+    
+    // MARK: - Configuration
+    func configure(with post: Post) {
+        self.post = post
+        
+        usernameLabel.text = post.userName
+        contentLabel.text = post.content
+        likeCountLabel.text = "\(post.likeCount)"
+        
+        let heartImage = UIImage(systemName: post.isLiked ? "heart.fill" : "heart")
+        likeButton.setImage(heartImage, for: .normal)
+        likeButton.tintColor = post.isLiked ? .systemRed : .black
+        
+        pageControl.numberOfPages = post.imageUrls.count
+        pageControl.isHidden = post.imageUrls.count <= 1
+        
+        imageCollectionView.reloadData()
+    }
 }
 
-// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension PostCell: UICollectionViewDelegate, UICollectionViewDataSource {
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
+extension PostCell: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1  // 임시 데이터 개수
+        return post?.imageUrls.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostImageCell.identifier, for: indexPath) as? PostImageCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostImageCell.identifier, for: indexPath) as? PostImageCell,
+              let imageUrl = post?.imageUrls[indexPath.item] else {
             return UICollectionViewCell()
         }
+        
+        cell.configure(with: imageUrl)
         return cell
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let page = Int(scrollView.contentOffset.x / scrollView.bounds.width)
+        pageControl.currentPage = page
     }
 }
 
