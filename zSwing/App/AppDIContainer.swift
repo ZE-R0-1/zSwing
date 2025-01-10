@@ -117,9 +117,7 @@ final class AppDIContainer {
     }
     
     private func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(
-            reviewUseCase: makeReviewUseCase()
-        )
+        return HomeViewModel()
     }
     
     private func makeMapViewModel() -> MapViewModel {
