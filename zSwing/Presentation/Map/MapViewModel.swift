@@ -13,8 +13,9 @@ import CoreLocation
 class MapViewModel {
     // MARK: - Properties
     private let useCase: MapUseCase
+    private let playgroundUseCase: PlaygroundListUseCase
     private let disposeBag = DisposeBag()
-    let playgroundListViewModel: PlaygroundListViewModel
+    private let geocoder = CLGeocoder()
     
     // MARK: - Inputs
     let viewDidLoad = PublishRelay<Void>()
@@ -25,14 +26,19 @@ class MapViewModel {
     
     // MARK: - Outputs
     let currentLocation = BehaviorRelay<Location>(value: .defaultLocation)
+    let locationTitle = BehaviorRelay<String>(value: "")
     let error = PublishRelay<Error>()
     let isLoading = BehaviorRelay<Bool>(value: false)
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     
+    // 어노테이션과 목록을 위한 Outputs
+    let playgroundAnnotations = BehaviorRelay<[PlaygroundAnnotation]>(value: [])
+    let playgroundsForList = BehaviorRelay<[PlaygroundWithDistance]>(value: [])
+    
     // MARK: - Initialization
-    init(useCase: MapUseCase, playgroundListViewModel: PlaygroundListViewModel) {
+    init(useCase: MapUseCase, playgroundUseCase: PlaygroundListUseCase) {
         self.useCase = useCase
-        self.playgroundListViewModel = playgroundListViewModel
+        self.playgroundUseCase = playgroundUseCase
         setupBindings()
     }
     
@@ -100,17 +106,81 @@ class MapViewModel {
             .bind(to: shouldShowSearchButton)
             .disposed(by: disposeBag)
         
-        // 검색 버튼 탭 시에만 Firebase 데이터 조회
+        // 검색 버튼 탭 시 Firebase 데이터 조회 및 데이터 분배
         searchButtonTapped
-            .do(onNext: { region in
-                print("🔍 [Search] Button tapped for region: lat \(region.center.latitude), lon \(region.center.longitude)")
-                self.isLoading.accept(true)
+            .do(onNext: { [weak self] _ in
+                self?.isLoading.accept(true)
             })
-            .subscribe(onNext: { [weak self] region in
-                print("🎯 [Search] Initiating playground search")
-                self?.playgroundListViewModel.searchButtonTapped.accept(region)
+            .do(onNext: { [weak self] region in
+                self?.updateLocationTitle(for: region.center)
+            })
+            .withLatestFrom(currentLocation) { ($0, $1) }
+            .flatMapLatest { [weak self] (region, currentLocation) -> Observable<[Playground]> in
+                guard let self = self else { return .empty() }
+                return self.playgroundUseCase.fetchFilteredPlaygrounds(
+                    categories: Set([PlaygroundType.all.rawValue]),
+                    in: region
+                )
+            }
+            .do(onNext: { [weak self] _ in
                 self?.isLoading.accept(false)
             })
+            .subscribe(onNext: { [weak self] playgrounds in
+                guard let self = self else { return }
+                
+                // 어노테이션 업데이트
+                let annotations = playgrounds.map { PlaygroundAnnotation(playground: $0) }
+                self.playgroundAnnotations.accept(annotations)
+                
+                // 목록 업데이트 (거리 계산 포함)
+                let currentLocation = self.currentLocation.value
+                let playgroundsWithDistance = playgrounds.map { playground -> PlaygroundWithDistance in
+                    let distance = self.calculateDistance(
+                        from: currentLocation,
+                        to: playground.coordinate
+                    )
+                    return PlaygroundWithDistance(
+                        playground: playground,
+                        distance: distance
+                    )
+                }
+                self.playgroundsForList.accept(playgroundsWithDistance)
+            })
             .disposed(by: disposeBag)
+    }
+    
+    private func calculateDistance(from location: Location, to coordinate: CLLocationCoordinate2D) -> Double {
+        let from = CLLocation(
+            latitude: location.latitude,
+            longitude: location.longitude
+        )
+        let to = CLLocation(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+        )
+        return from.distance(from: to) / 1000.0 // km로 변환
+    }
+    
+    private func updateLocationTitle(for coordinate: CLLocationCoordinate2D) {
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            if let error = error {
+                print("Geocoding error: \(error)")
+                self?.locationTitle.accept("위치 정보 오류")
+                return
+            }
+            
+            if let locality = placemarks?.first?.locality,
+               let subLocality = placemarks?.first?.subLocality {
+                self?.locationTitle.accept("\(locality) \(subLocality)")
+            } else if let locality = placemarks?.first?.locality {
+                self?.locationTitle.accept(locality)
+            } else if let subLocality = placemarks?.first?.subLocality {
+                self?.locationTitle.accept(subLocality)
+            } else {
+                self?.locationTitle.accept("알 수 없는 위치")
+            }
+        }
     }
 }

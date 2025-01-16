@@ -6,6 +6,7 @@
 //
 
 import RxSwift
+import RxCocoa
 import UIKit
 import CoreLocation
 import MapKit
@@ -13,6 +14,7 @@ import MapKit
 final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Properties
     let viewModel: PlaygroundListViewModel
+    private let diContainer: AppDIContainer
     private let disposeBag = DisposeBag()
     private var lastSearchedRegion: MapRegion?
     
@@ -72,8 +74,9 @@ final class PlaygroundListViewController: BottomSheetViewController {
     }()
     
     // MARK: - Initialization
-    init(viewModel: PlaygroundListViewModel) {
+    init(viewModel: PlaygroundListViewModel, diContainer: AppDIContainer) {
         self.viewModel = viewModel
+        self.diContainer = diContainer
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -148,17 +151,9 @@ final class PlaygroundListViewController: BottomSheetViewController {
         
         // 카테고리 필터 바인딩
         segmentedControl.rx.selectedSegmentIndex
-            .do(onNext: { index in
-                print("✏️ Segment selected: \(index)")
-            })
             .map { index -> PlaygroundType in
-                let type = PlaygroundType.fromSegmentIndex(index)
-                print("🔄 Converting to PlaygroundType: \(type.rawValue)")
-                return type
+                PlaygroundType.fromSegmentIndex(index)
             }
-            .do(onNext: { type in
-                print("📲 Category changed to: \(type.rawValue)")
-            })
             .bind(to: viewModel.categorySelected)
             .disposed(by: disposeBag)
         
@@ -174,7 +169,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
                 )
             }
             .disposed(by: disposeBag)
-            
+        
         // 리뷰 작성 완료 노티피케이션 처리
         NotificationCenter.default.rx.notification(NSNotification.Name("RefreshPlaygroundList"))
             .subscribe(onNext: { [weak self] _ in
@@ -188,41 +183,15 @@ final class PlaygroundListViewController: BottomSheetViewController {
     // MARK: - Public Methods
     func fetchPlaygrounds(for region: MapRegion) {
         moveSheet(to: .mid)
-        lastSearchedRegion = region  // region을 저장
+        lastSearchedRegion = region
         viewModel.searchButtonTapped.accept(region)
     }
     
     func showPlaygroundView(_ playground: Playground) {
-        // Repository 및 UseCase 생성
-        let playgroundDetailRepository = DefaultPlaygroundDetailRepository()
-        let favoriteRepository = DefaultFavoriteRepository()
-        let reviewRepository = DefaultReviewRepository()
-        let storageService = FirebaseStorageService()
-        
-        let playgroundDetailUseCase = DefaultPlaygroundDetailUseCase(
-            playgroundRepository: playgroundDetailRepository,
-            favoriteRepository: favoriteRepository,
-            reviewRepository: reviewRepository
-        )
-        let favoriteUseCase = DefaultFavoriteUseCase(
-            favoriteRepository: favoriteRepository
-        )
-        let reviewUseCase = DefaultReviewUseCase(
-            reviewRepository: reviewRepository,
-            storageService: storageService
-        )
-        
-        // ViewModel 생성
-        let viewModel = PlaygroundViewModel(
+        let playgroundView = diContainer.makePlaygroundView(
             playground: playground,
-            currentLocation: CLLocationManager().location,
-            playgroundDetailUseCase: playgroundDetailUseCase,
-            favoriteUseCase: favoriteUseCase,
-            reviewUseCase: reviewUseCase
+            currentLocation: CLLocationManager().location
         )
-        
-        // PlaygroundView 생성 및 표시
-        let playgroundView = PlaygroundViewController(viewModel: viewModel)
         playgroundView.delegate = self
         
         // 현재 콘텐츠를 숨기고

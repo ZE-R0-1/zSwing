@@ -37,6 +37,7 @@ class DefaultMainTabCoordinator: MainTabCoordinator {
     
     func start() {
         setupTabs()
+        showMap()
     }
     
     func showHome() {

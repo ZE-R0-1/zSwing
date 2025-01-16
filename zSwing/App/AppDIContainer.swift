@@ -16,7 +16,7 @@ final class AppDIContainer {
     private lazy var authRepository = DefaultAuthenticationRepository()
     private lazy var authService: FirebaseAuthServiceProtocol = FirebaseAuthService()
     private lazy var playgroundRepository: PlaygroundRepository = DefaultPlaygroundRepository(firebaseService: firebasePlaygroundService)
-    private lazy var locationRepository: MapRepository = DefaultMapRepository()
+    private lazy var mapRepository: MapRepository = DefaultMapRepository()
     private lazy var firebasePlaygroundService: FirebasePlaygroundServiceProtocol = FirebasePlaygroundService()
     private lazy var playgroundDetailRepository: PlaygroundDetailRepository = DefaultPlaygroundDetailRepository()
     private lazy var favoriteRepository: FavoriteRepository = DefaultFavoriteRepository()
@@ -72,14 +72,14 @@ final class AppDIContainer {
     }
     
     private func makeMapUseCase() -> MapUseCase {
-        return DefaultMapUseCase(repository: locationRepository)
+        return DefaultMapUseCase(
+            repository: mapRepository
+        )
     }
     
     private func makePlaygroundListUseCase() -> PlaygroundListUseCase {
         return DefaultPlaygroundListUseCase(
-            repository: DefaultPlaygroundRepository(
-                firebaseService: firebasePlaygroundService
-            )
+            repository: playgroundRepository
         )
     }
     
@@ -131,7 +131,7 @@ final class AppDIContainer {
     private func makeMapViewModel() -> MapViewModel {
         return MapViewModel(
             useCase: makeMapUseCase(),
-            playgroundListViewModel: makePlaygroundListViewModel()
+            playgroundUseCase: makePlaygroundListUseCase()
         )
     }
     
@@ -175,7 +175,10 @@ final class AppDIContainer {
     }
     
     func makePlaygroundListViewController() -> PlaygroundListViewController {
-        return PlaygroundListViewController(viewModel: makePlaygroundListViewModel())
+        return PlaygroundListViewController(
+            viewModel: makePlaygroundListViewModel(),
+            diContainer: self
+        )
     }
     
     func makePlaygroundView(playground: Playground, currentLocation: CLLocation?) -> PlaygroundViewController {

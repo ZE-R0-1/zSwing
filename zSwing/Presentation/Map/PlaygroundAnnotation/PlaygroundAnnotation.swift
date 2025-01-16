@@ -21,11 +21,6 @@ class PlaygroundAnnotation: NSObject, MKAnnotation {
         return playground.pfctSn == other.playground.pfctSn
     }
     
-    // 클러스터링 식별자를 computed property로 변경
-    var clusteringIdentifier: String? {
-        return "playground.cluster"
-    }
-    
     init(playground: Playground) {
         self.playground = playground
         self.coordinate = playground.coordinate
