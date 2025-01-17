@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import RxSwift
 
 class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private let welcomeLabel: UILabel = {
@@ -36,29 +38,11 @@ class HomeViewController: UIViewController {
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
-        collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.isScrollEnabled = false
         collectionView.register(FacilityCell.self, forCellWithReuseIdentifier: "FacilityCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-    
-    // MARK: - Properties
-    private let facilities = [
-        PlaygroundFacility(name: "그네", imageName: "arrow.up.and.down"), // 그네의 움직임을 표현
-        PlaygroundFacility(name: "미끄럼틀", imageName: "arrow.down.forward.circle.fill"),
-        PlaygroundFacility(name: "정글짐", imageName: "cube.transparent"),
-        PlaygroundFacility(name: "공중기구", imageName: "airplane"),
-        PlaygroundFacility(name: "회전기구", imageName: "rotate.3d"),
-        PlaygroundFacility(name: "흔들기구", imageName: "wave.3.right"),
-        PlaygroundFacility(name: "오르는기구", imageName: "arrow.up.circle"),
-        PlaygroundFacility(name: "건너는기구", imageName: "arrow.left.and.right"),
-        PlaygroundFacility(name: "조합놀이대", imageName: "square.stack.3d.up"),
-        PlaygroundFacility(name: "철봉", imageName: "figure.gymnastics"),
-        PlaygroundFacility(name: "늑목", imageName: "arrow.up.and.down.square"), // 늑목의 형태를 표현
-        PlaygroundFacility(name: "평균대", imageName: "minus")
-    ]
     
     // MARK: - Initialization
     init(viewModel: HomeViewModel) {
@@ -74,7 +58,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        configureUI()
+        bindViewModel()
     }
     
     // MARK: - UI Setup
@@ -100,24 +84,40 @@ class HomeViewController: UIViewController {
         ])
     }
     
-    private func configureUI() {
-        welcomeLabel.attributedText = viewModel.welcomeMessage
+    private func bindViewModel() {
+        // welcomeMessage 바인딩
+        viewModel.welcomeMessage
+            .bind(to: welcomeLabel.rx.attributedText)
+            .disposed(by: disposeBag)
+        
+        // CollectionView 데이터 바인딩
+        viewModel.facilities
+            .bind(to: facilityCollectionView.rx.items(cellIdentifier: "FacilityCell",
+                  cellType: FacilityCell.self)) { _, facility, cell in
+                cell.configure(with: facility)
+            }
+            .disposed(by: disposeBag)
+        
+        // Cell 선택 처리
+        facilityCollectionView.rx.itemSelected
+            .withLatestFrom(viewModel.facilities) { indexPath, facilities in
+                return facilities[indexPath.item]
+            }
+            .subscribe(onNext: { [weak self] facility in
+                print("Selected facility: \(facility.name)")
+                // 여기에 선택 처리 로직 추가
+            })
+            .disposed(by: disposeBag)
+            
+        // Cell 크기 설정
+        facilityCollectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+
     }
 }
 
 // MARK: - UICollectionView DataSource & Delegate
-extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return facilities.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FacilityCell", for: indexPath) as! FacilityCell
-        let facility = facilities[indexPath.item]
-        cell.configure(with: facility)
-        return cell
-    }
-    
+extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let numberOfItemsPerRow: CGFloat = 6
         let availableWidth = collectionView.bounds.width

@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import RxSwift
+import RxRelay
 
 class FacilityCell: UICollectionViewCell {
+    private let disposeBag = DisposeBag()
+    
+    // 선택 상태를 관리하는 BehaviorRelay 추가
+    private let isItemSelected = BehaviorRelay<Bool>(value: false)
+    
     private let iconContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray6
@@ -45,6 +52,11 @@ class FacilityCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        isItemSelected.accept(false)
+    }
+    
     private func setupUI() {
         contentView.addSubview(iconContainer)
         iconContainer.addSubview(iconImageView)
@@ -74,12 +86,23 @@ class FacilityCell: UICollectionViewCell {
     private func setupStyle() {
         contentView.backgroundColor = .clear
         
-        // 선택 시 효과를 위한 설정
-        self.backgroundView = UIView()
-        self.selectedBackgroundView = UIView()
-        self.selectedBackgroundView?.backgroundColor = .systemGray5
+        // Rx로 선택 상태에 따른 애니메이션 처리
+        isItemSelected
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] selected in
+                UIView.animate(withDuration: 0.2) {
+                    if selected {
+                        self?.iconContainer.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+                        self?.iconContainer.backgroundColor = .systemGray5
+                    } else {
+                        self?.iconContainer.transform = .identity
+                        self?.iconContainer.backgroundColor = .systemGray6
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
     }
-
+    
     func configure(with facility: PlaygroundFacility) {
         iconImageView.image = UIImage(systemName: facility.imageName)
         nameLabel.text = facility.name
@@ -88,6 +111,12 @@ class FacilityCell: UICollectionViewCell {
             nameLabel.lineBreakMode = .byClipping  // 5글자 이하는 잘리지 않게
         } else {
             nameLabel.lineBreakMode = .byTruncatingTail  // 5글자 초과는 ...으로 표시
+        }
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            isItemSelected.accept(isSelected)
         }
     }
 }
