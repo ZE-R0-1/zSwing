@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE13958B2D2E6B5F00E98544 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */; };
+		CE13958B2D2E6B5F00E98544 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE13958A2D2E6B5F00E98544 /* FeedViewController.swift */; };
 		CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395902D2E6C5600E98544 /* PostCell.swift */; };
 		CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395922D2E6D1000E98544 /* PostImageCell.swift */; };
-		CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395942D2E6DF000E98544 /* HomeViewModel.swift */; };
+		CE1395952D2E6DF000E98544 /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1395942D2E6DF000E98544 /* FeedViewModel.swift */; };
 		CE1E387C2D30B5B600CE6996 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387B2D30B5B600CE6996 /* Post.swift */; };
 		CE1E387E2D30BA7B00CE6996 /* PostRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */; };
 		CE1E38802D30BC0E00CE6996 /* DefaultPostRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */; };
 		CE1E38822D30D50F00CE6996 /* PostUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1E38812D30D50F00CE6996 /* PostUseCase.swift */; };
+		CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEEFD2D39E673008677CB /* HomeViewController.swift */; };
+		CE2AEF002D39E687008677CB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */; };
+		CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEF012D39ED33008677CB /* FacilityCell.swift */; };
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
@@ -107,14 +110,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		CE13958A2D2E6B5F00E98544 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		CE1395902D2E6C5600E98544 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		CE1395922D2E6D1000E98544 /* PostImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostImageCell.swift; sourceTree = "<group>"; };
-		CE1395942D2E6DF000E98544 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		CE1395942D2E6DF000E98544 /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
 		CE1E387B2D30B5B600CE6996 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRepository.swift; sourceTree = "<group>"; };
 		CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPostRepository.swift; sourceTree = "<group>"; };
 		CE1E38812D30D50F00CE6996 /* PostUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostUseCase.swift; sourceTree = "<group>"; };
+		CE2AEEFD2D39E673008677CB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		CE2AEF012D39ED33008677CB /* FacilityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityCell.swift; sourceTree = "<group>"; };
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -220,13 +226,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CE1395892D2E6B0E00E98544 /* Home */ = {
+		CE1395892D2E6B0E00E98544 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
-				CE1395942D2E6DF000E98544 /* HomeViewModel.swift */,
-				CE13958A2D2E6B5F00E98544 /* HomeViewController.swift */,
+				CE1395942D2E6DF000E98544 /* FeedViewModel.swift */,
+				CE13958A2D2E6B5F00E98544 /* FeedViewController.swift */,
 				CE1395902D2E6C5600E98544 /* PostCell.swift */,
 				CE1395922D2E6D1000E98544 /* PostImageCell.swift */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		CE2AEEFC2D39E661008677CB /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				CE2AEEFD2D39E673008677CB /* HomeViewController.swift */,
+				CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */,
+				CE2AEF012D39ED33008677CB /* FacilityCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -362,7 +378,8 @@
 				CEFA526A2CE490D100B4280B /* Loading */,
 				CEDF13BE2CD9FA3C0090D9CE /* Auth */,
 				CED42A7E2CE1ED3400A7AE7E /* Nickname */,
-				CE1395892D2E6B0E00E98544 /* Home */,
+				CE2AEEFC2D39E661008677CB /* Home */,
+				CE1395892D2E6B0E00E98544 /* Feed */,
 				CED42AB22CE2E22500A7AE7E /* Map */,
 				CE64A9CE2D22651B00FF6740 /* Review */,
 				CEDF13D72CDC5BEF0090D9CE /* Profile */,
@@ -620,7 +637,7 @@
 				CE7AA4EE2CDCA2D000EF4563 /* ProfileViewController.swift in Sources */,
 				CE5320A22D0FE28900CCAC15 /* FavoriteUseCase.swift in Sources */,
 				CEFA527A2CE70E6400B4280B /* Ride.swift in Sources */,
-				CE1395952D2E6DF000E98544 /* HomeViewModel.swift in Sources */,
+				CE1395952D2E6DF000E98544 /* FeedViewModel.swift in Sources */,
 				CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */,
 				CE5320A42D0FE29E00CCAC15 /* ReviewUseCase.swift in Sources */,
 				CE1E38822D30D50F00CE6996 /* PostUseCase.swift in Sources */,
@@ -630,6 +647,7 @@
 				CE64A9CD2D1A781300FF6740 /* PlaygroundDetail.swift in Sources */,
 				CECC4E412D00135400AA6B68 /* BottomSheetViewController.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
+				CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */,
 				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
 				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
@@ -671,7 +689,7 @@
 				CE1E387C2D30B5B600CE6996 /* Post.swift in Sources */,
 				CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */,
 				CE5320B62D0FE88000CCAC15 /* PlaygroundViewController.swift in Sources */,
-				CE13958B2D2E6B5F00E98544 /* HomeViewController.swift in Sources */,
+				CE13958B2D2E6B5F00E98544 /* FeedViewController.swift in Sources */,
 				CED42A862CE1EFC200A7AE7E /* NicknameRepository.swift in Sources */,
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CE53209E2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift in Sources */,
@@ -685,9 +703,11 @@
 				CE64A9D22D22654400FF6740 /* ReviewViewModel.swift in Sources */,
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CE9B2F552D13DC6900EE9831 /* Review.swift in Sources */,
+				CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */,
 				CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */,
+				CE2AEF002D39E687008677CB /* HomeViewModel.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,18 +14,6 @@ struct PlaygroundDTO {
     let latCrtsVl: Double   // 위도
     let lotCrtsVl: Double   // 경도
     let idrodrCdNm: String  // 실내/실외 구분
-    
-    func toDomain() -> Playground {
-        return Playground(
-            pfctSn: pfctSn,
-            pfctNm: pfctNm,
-            coordinate: CLLocationCoordinate2D(
-                latitude: latCrtsVl,
-                longitude: lotCrtsVl
-            ),
-            idrodrCdNm: idrodrCdNm
-        )
-    }
 }
 
 // 필터링을 위한 PlaygroundType

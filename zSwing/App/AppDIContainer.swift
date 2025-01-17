@@ -125,7 +125,11 @@ final class AppDIContainer {
     }
     
     private func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(useCase: makePostUseCase())
+        return HomeViewModel()
+    }
+    
+    private func makeFeedViewModel() -> FeedViewModel {
+        return FeedViewModel(useCase: makePostUseCase())
     }
     
     private func makeMapViewModel() -> MapViewModel {
@@ -162,6 +166,10 @@ final class AppDIContainer {
         return NicknameViewController(viewModel: makeNicknameViewModel())
     }
     
+    func makeHomeViewController() -> UIViewController {
+        return HomeViewController(viewModel: makeHomeViewModel())
+    }
+    
     func makeMapViewController(coordinator: MapCoordinator) -> MapViewController {
         return MapViewController(
             viewModel: makeMapViewModel(),
@@ -190,8 +198,8 @@ final class AppDIContainer {
         )
     }
     
-    func makeHomeViewController() -> UIViewController {
-        return HomeViewController(viewModel: makeHomeViewModel())
+    func makeFeedViewController() -> UIViewController {
+        return FeedViewController(viewModel: makeFeedViewModel())
     }
     
     func makeLoadingViewController() -> LoadingViewController {

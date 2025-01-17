@@ -11,7 +11,6 @@ import MapKit
 
 protocol MapCoordinator: Coordinator {
     func showMap()
-    func showPlaygroundList()
 }
 
 class DefaultMapCoordinator: MapCoordinator {
@@ -26,19 +25,11 @@ class DefaultMapCoordinator: MapCoordinator {
     
     func start() {
         showMap()
-        showPlaygroundList()
     }
     
     func showMap() {
         let mapVC = makeMapViewController()
         navigationController.setViewControllers([mapVC], animated: false)
-    }
-    
-    func showPlaygroundList() {
-        guard let mapVC = navigationController.viewControllers.first as? MapViewController else { return }
-        
-        let playgroundListVC = diContainer.makePlaygroundListViewController()
-        mapVC.addBottomSheet(playgroundListVC)
     }
     
     private func makeMapViewController() -> MapViewController {

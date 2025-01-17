@@ -17,3 +17,8 @@ struct PlaygroundWithDistance {
     let playground: Playground
     let distance: Double?
 }
+
+struct PlaygroundFacility {
+    let name: String
+    let imageName: String // SF Symbol 이름
+}

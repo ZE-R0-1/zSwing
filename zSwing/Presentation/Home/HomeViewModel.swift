@@ -2,114 +2,35 @@
 //  HomeViewModel.swift
 //  zSwing
 //
-//  Created by USER on 1/8/25.
+//  Created by USER on 1/17/25.
 //
 
-import RxSwift
-import RxRelay
-import Foundation
-import FirebaseFirestore
+import UIKit
 
 class HomeViewModel {
-    // MARK: - Inputs
-    let viewDidLoad = PublishRelay<Void>()
-    let refreshTrigger = PublishRelay<Void>()
-    let loadMoreTrigger = PublishRelay<Void>()
-    let likeTrigger = PublishRelay<String>()  // postId
-    
-    // MARK: - Outputs
-    let posts = BehaviorRelay<[Post]>(value: [])
-    let isLoading = BehaviorRelay<Bool>(value: false)
-    let error = PublishRelay<Error>()
-    
-    // MARK: - Properties
-    private let useCase: PostUseCase
-    private let disposeBag = DisposeBag()
-    private var currentPage = 0
-    private var isLastPage = false
-    
-    // MARK: - Initialization
-    init(useCase: PostUseCase) {
-        self.useCase = useCase
-        setupBindings()
+    // 놀이터 테마 컬러 - 밝은 하늘색
+    static let themeColor = UIColor(red: 38/255, green: 222/255, blue: 129/255, alpha: 1.0) // #26DE81
+
+    var userName: String {
+        return "홍길동"
     }
     
-    private func setupBindings() {
-        // 초기 로딩
-        let initialLoad = viewDidLoad
-            .do(onNext: { [weak self] in
-                self?.isLoading.accept(true)
-            })
-            .flatMapLatest { [weak self] _ -> Observable<[Post]> in
-                guard let self = self else { return .empty() }
-                self.currentPage = 0
-                return self.useCase.fetchPosts(page: self.currentPage)
-            }
+    var welcomeMessage: NSAttributedString {
+        let fullText = "\(userName)님, 반가워요!\n놀이터를 찾아볼까요?"
+        let attributedString = NSMutableAttributedString(string: fullText)
         
-        // 새로고침
-        let refresh = refreshTrigger
-            .do(onNext: { [weak self] in
-                self?.currentPage = 0
-                self?.isLastPage = false
-            })
-            .flatMapLatest { [weak self] _ -> Observable<[Post]> in
-                guard let self = self else { return .empty() }
-                return self.useCase.fetchPosts(page: self.currentPage)
-            }
+        // 사용자 이름 부분에만 컬러 적용
+        let range = (fullText as NSString).range(of: userName)
+        attributedString.addAttribute(.foregroundColor,
+                                    value: HomeViewModel.themeColor,
+                                    range: range)
         
-        // 추가 로딩
-        let loadMore = loadMoreTrigger
-            .filter { [weak self] _ in
-                guard let self = self else { return false }
-                return !self.isLoading.value && !self.isLastPage
-            }
-            .do(onNext: { [weak self] in
-                self?.isLoading.accept(true)
-            })
-            .flatMapLatest { [weak self] _ -> Observable<[Post]> in
-                guard let self = self else { return .empty() }
-                self.currentPage += 1
-                return self.useCase.fetchPosts(page: self.currentPage)
-            }
+        // 전체 텍스트에 폰트 적용
+        let fullRange = NSRange(location: 0, length: fullText.count)
+        attributedString.addAttribute(.font,
+                                    value: UIFont.systemFont(ofSize: 24, weight: .bold),
+                                    range: fullRange)
         
-        // 좋아요 토글
-        likeTrigger
-            .flatMapLatest { [weak self] postId -> Observable<(String, Bool)> in
-                guard let self = self else { return .empty() }
-                return self.useCase.toggleLike(postId: postId)
-                    .map { (postId, $0) }
-            }
-            .subscribe(onNext: { [weak self] postId, isLiked in
-                guard let self = self else { return }
-                var currentPosts = self.posts.value
-                if let index = currentPosts.firstIndex(where: { $0.id == postId }) {
-                    var updatedPost = currentPosts[index]
-                    updatedPost.isLiked = isLiked
-                    updatedPost.likeCount += isLiked ? 1 : -1
-                    currentPosts[index] = updatedPost
-                    self.posts.accept(currentPosts)
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        // 데이터 처리
-        Observable.merge(initialLoad, refresh, loadMore)
-            .do(onNext: { [weak self] posts in
-                self?.isLastPage = posts.isEmpty
-                self?.isLoading.accept(false)
-            })
-            .subscribe(onNext: { [weak self] newPosts in
-                guard let self = self else { return }
-                if self.currentPage == 0 {
-                    self.posts.accept(newPosts)
-                } else {
-                    let currentPosts = self.posts.value
-                    self.posts.accept(currentPosts + newPosts)
-                }
-            }, onError: { [weak self] error in
-                self?.error.accept(error)
-                self?.isLoading.accept(false)
-            })
-            .disposed(by: disposeBag)
+        return attributedString
     }
 }
