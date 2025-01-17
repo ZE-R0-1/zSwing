@@ -86,20 +86,20 @@ class DefaultMainTabCoordinator: MainTabCoordinator, MapCoordinator {
     
     private func setupTabs() {
         // Home Tab
-        let homeVC = diContainer.makeHomeViewController()
-        homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
+        let homeNavController = UINavigationController()
+        let homeCoordinator = diContainer.makeHomeCoordinator(navigationController: homeNavController)
+        homeCoordinator.start()
+        homeNavController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
         
-        // Map Tab
+        // 나머지 탭 코드 유지
         let mapVC = diContainer.makeMapViewController(coordinator: self)
         mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 1)
         
-        // Profile Tab
         let profileVC = diContainer.makeProfileViewController()
         profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person"), tag: 2)
         
-        // Set ViewControllers
         tabBarController.setViewControllers(
-            [homeVC, mapVC, profileVC],
+            [homeNavController, mapVC, profileVC],
             animated: false
         )
     }

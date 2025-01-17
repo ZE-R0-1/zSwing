@@ -38,6 +38,13 @@ final class AppDIContainer {
         )
     }
     
+    func makeHomeCoordinator(navigationController: UINavigationController) -> HomeCoordinator {
+        return DefaultHomeCoordinator(
+            navigationController: navigationController,
+            diContainer: self
+        )
+    }
+    
     func makeMapCoordinator(navigationController: UINavigationController) -> MapCoordinator {
         return DefaultMapCoordinator(
             navigationController: navigationController,
@@ -124,8 +131,8 @@ final class AppDIContainer {
         return NicknameViewModel(useCase: makeNicknameUseCase())
     }
     
-    private func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel()
+    func makeHomeViewModel(coordinator: HomeCoordinator) -> HomeViewModel {
+        return HomeViewModel(coordinator: coordinator)
     }
     
     private func makeFeedViewModel() -> FeedViewModel {
@@ -166,8 +173,9 @@ final class AppDIContainer {
         return NicknameViewController(viewModel: makeNicknameViewModel())
     }
     
-    func makeHomeViewController() -> UIViewController {
-        return HomeViewController(viewModel: makeHomeViewModel())
+    func makeHomeViewController(coordinator: HomeCoordinator) -> UIViewController {
+        let viewModel = makeHomeViewModel(coordinator: coordinator)
+        return HomeViewController(viewModel: viewModel)
     }
     
     func makeMapViewController(coordinator: MapCoordinator) -> MapViewController {

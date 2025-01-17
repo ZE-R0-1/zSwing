@@ -18,6 +18,8 @@
 		CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEEFD2D39E673008677CB /* HomeViewController.swift */; };
 		CE2AEF002D39E687008677CB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */; };
 		CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEF012D39ED33008677CB /* FacilityCell.swift */; };
+		CE2AEF0C2D3A34A4008677CB /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEF0B2D3A34A4008677CB /* HomeCoordinator.swift */; };
+		CE2AEF0F2D3A3517008677CB /* RideCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */; };
 		CE2B97A32CC0913300FF532F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A22CC0913300FF532F /* AppDelegate.swift */; };
 		CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B97A42CC0913300FF532F /* SceneDelegate.swift */; };
 		CE2B97AC2CC0913500FF532F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE2B97AB2CC0913500FF532F /* Assets.xcassets */; };
@@ -121,6 +123,8 @@
 		CE2AEEFD2D39E673008677CB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		CE2AEF012D39ED33008677CB /* FacilityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityCell.swift; sourceTree = "<group>"; };
+		CE2AEF0B2D3A34A4008677CB /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
+		CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCategoryViewController.swift; sourceTree = "<group>"; };
 		CE2B979F2CC0913300FF532F /* zSwing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zSwing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B97A22CC0913300FF532F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE2B97A42CC0913300FF532F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -240,11 +244,21 @@
 		CE2AEEFC2D39E661008677CB /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				CE2AEF0D2D3A3501008677CB /* RideCategory */,
 				CE2AEEFD2D39E673008677CB /* HomeViewController.swift */,
 				CE2AEEFF2D39E687008677CB /* HomeViewModel.swift */,
+				CE2AEF0B2D3A34A4008677CB /* HomeCoordinator.swift */,
 				CE2AEF012D39ED33008677CB /* FacilityCell.swift */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		CE2AEF0D2D3A3501008677CB /* RideCategory */ = {
+			isa = PBXGroup;
+			children = (
+				CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */,
+			);
+			path = RideCategory;
 			sourceTree = "<group>";
 		};
 		CE2B97962CC0913300FF532F = {
@@ -647,6 +661,7 @@
 				CE64A9CD2D1A781300FF6740 /* PlaygroundDetail.swift in Sources */,
 				CECC4E412D00135400AA6B68 /* BottomSheetViewController.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
+				CE2AEF0F2D3A3517008677CB /* RideCategoryViewController.swift in Sources */,
 				CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */,
 				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
@@ -662,6 +677,7 @@
 				CE9B2F5E2D13E6E100EE9831 /* RatingView.swift in Sources */,
 				CE9B2F622D13E86500EE9831 /* ReviewImageCell.swift in Sources */,
 				CE9B2F5C2D13E0F900EE9831 /* ReviewWriteViewModel.swift in Sources */,
+				CE2AEF0C2D3A34A4008677CB /* HomeCoordinator.swift in Sources */,
 				CE5320B82D0FE8F000CCAC15 /* ReviewCell.swift in Sources */,
 				CE5320AA2D0FE6FD00CCAC15 /* ReviewRepository.swift in Sources */,
 				CECC4E392CFFF16600AA6B68 /* PlaygroundListUseCase.swift in Sources */,

@@ -104,8 +104,7 @@ class HomeViewController: UIViewController {
                 return facilities[indexPath.item]
             }
             .subscribe(onNext: { [weak self] facility in
-                print("Selected facility: \(facility.name)")
-                // 여기에 선택 처리 로직 추가
+                self?.viewModel.didSelectFacility(facility)
             })
             .disposed(by: disposeBag)
             

@@ -10,10 +10,19 @@ import RxSwift
 import RxCocoa
 
 class HomeViewModel {
-    // 놀이터 테마 컬러 - 밝은 하늘색
-    static let themeColor = UIColor(red: 38/255, green: 222/255, blue: 129/255, alpha: 1.0) // #26DE81
-
+    private let coordinator: HomeCoordinator
+    
+    // 기존 코드 유지
+    static let themeColor = UIColor(red: 38/255, green: 222/255, blue: 129/255, alpha: 1.0)
     let userName = BehaviorRelay<String>(value: "홍길동")
+    
+    init(coordinator: HomeCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    func didSelectFacility(_ facility: PlaygroundFacility) {
+        coordinator.showRideCategory(for: facility)
+    }
     
     var welcomeMessage: Observable<NSAttributedString> {
         return userName.map { [weak self] name in
