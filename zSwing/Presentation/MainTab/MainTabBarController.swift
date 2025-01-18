@@ -23,6 +23,5 @@ class MainTabBarController: UITabBarController {
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
-        tabBar.layer.cornerRadius = 15
     }
 }

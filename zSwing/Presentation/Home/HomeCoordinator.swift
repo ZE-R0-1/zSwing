@@ -22,6 +22,7 @@ class DefaultHomeCoordinator: HomeCoordinator {
     
     func start() {
         let viewController = diContainer.makeHomeViewController(coordinator: self)
+        navigationController.setNavigationBarHidden(true, animated: false)  // 네비게이션 바 숨기기
         navigationController.pushViewController(viewController, animated: true)
     }
     

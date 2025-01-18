@@ -70,7 +70,7 @@ class HomeViewController: UIViewController {
         view.addSubview(facilityCollectionView)
         
         NSLayoutConstraint.activate([
-            welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44+24),
             welcomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             welcomeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             
