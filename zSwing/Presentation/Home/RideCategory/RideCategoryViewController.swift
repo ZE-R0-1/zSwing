@@ -7,27 +7,12 @@
 
 import UIKit
 import RxSwift
-
+import RxCocoa
 
 class RideCategoryViewController: UIViewController {
-    private let facility: PlaygroundFacility
+    private let viewModel: RideCategoryViewModel
     private let disposeBag = DisposeBag()
-    
-    private let categories: [String] = [
-        "그네",
-        "미끄럼틀",
-        "정글짐",
-        "공중기구",
-        "회전기구",
-        "흔들기구",
-        "오르는기구",
-        "건너는기구",
-        "조합놀이대",
-        "철봉",
-        "늑목",
-        "평균대"
-    ]
-
+    private var isInitialScrollDone = false
     
     // MARK: - UI Components
     private let navigationStack: UIStackView = {
@@ -65,7 +50,7 @@ class RideCategoryViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 2
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)  // 여기에 여백 추가
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -76,8 +61,8 @@ class RideCategoryViewController: UIViewController {
     }()
     
     // MARK: - Initialization
-    init(facility: PlaygroundFacility) {
-        self.facility = facility
+    init(viewModel: RideCategoryViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -89,7 +74,21 @@ class RideCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindUI()
+        bindViewModel()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if !isInitialScrollDone {
+            let indexPath = IndexPath(item: viewModel.selectedIndex.value, section: 0)
+            categoryCollectionView.scrollToItem(
+                at: indexPath,
+                at: .centeredHorizontally,
+                animated: false
+            )
+            isInitialScrollDone = true
+        }
     }
     
     // MARK: - Setup
@@ -111,7 +110,6 @@ class RideCategoryViewController: UIViewController {
             navigationStack.heightAnchor.constraint(equalToConstant: 44),
             
             backButton.widthAnchor.constraint(equalToConstant: 44),
-            backButton.leadingAnchor.constraint(equalTo: navigationStack.leadingAnchor, constant: 8),
             
             spacerView.widthAnchor.constraint(equalTo: backButton.widthAnchor),
             
@@ -122,14 +120,16 @@ class RideCategoryViewController: UIViewController {
         ])
     }
     
-    private func bindUI() {
+    private func bindViewModel() {
+        // 뒤로가기 버튼 바인딩
         backButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
         
-        Observable.just(categories)
+        // 카테고리 데이터 바인딩
+        viewModel.categories
             .bind(to: categoryCollectionView.rx.items(
                 cellIdentifier: CategoryCell.identifier,
                 cellType: CategoryCell.self
@@ -138,25 +138,32 @@ class RideCategoryViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        categoryCollectionView.selectItem(
-            at: IndexPath(item: 0, section: 0),
-            animated: false,
-            scrollPosition: []
-        )
+        // 초기 선택 상태 설정
+        viewModel.selectedIndex
+            .take(1)
+            .subscribe(onNext: { [weak self] index in
+                let indexPath = IndexPath(item: index, section: 0)
+                self?.categoryCollectionView.selectItem(
+                    at: indexPath,
+                    animated: false,
+                    scrollPosition: []
+                )
+            })
+            .disposed(by: disposeBag)
         
+        // 카테고리 선택 처리
         categoryCollectionView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
-                print("Selected category: \(self?.categories[indexPath.item] ?? "")")
-                
-                // 선택된 셀을 중앙으로 스크롤
+                self?.viewModel.categorySelected(at: indexPath.item)
                 self?.categoryCollectionView.scrollToItem(
                     at: indexPath,
-                    at: .centeredHorizontally,  // 수평 중앙 정렬
+                    at: .centeredHorizontally,
                     animated: true
                 )
             })
             .disposed(by: disposeBag)
         
+        // CollectionView 델리게이트 설정
         categoryCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
     }
@@ -165,7 +172,7 @@ class RideCategoryViewController: UIViewController {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension RideCategoryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let category = categories[indexPath.item]
+        let category = viewModel.categories.value[indexPath.item]
         let width = category.size(withAttributes: [.font: UIFont.systemFont(ofSize: 16)]).width + 20
         return CGSize(width: width, height: 44)
     }

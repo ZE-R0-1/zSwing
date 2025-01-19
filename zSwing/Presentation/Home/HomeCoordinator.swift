@@ -27,7 +27,8 @@ class DefaultHomeCoordinator: HomeCoordinator {
     }
     
     func showRideCategory(for facility: PlaygroundFacility) {
-        let viewController = RideCategoryViewController(facility: facility)
+        let viewModel = RideCategoryViewModel(facility: facility)
+        let viewController = RideCategoryViewController(viewModel: viewModel)
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)
     }

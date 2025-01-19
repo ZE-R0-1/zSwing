@@ -51,7 +51,6 @@ class CategoryCell: UICollectionViewCell {
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            nameLabel.heightAnchor.constraint(equalToConstant: 16),
             
             underlineView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
             underlineView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),

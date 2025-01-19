@@ -45,18 +45,7 @@ class HomeViewModel {
         }
     }
     
-    let facilities = BehaviorRelay<[PlaygroundFacility]>(value: [
-        PlaygroundFacility(name: "그네", imageName: "arrow.up.and.down"),
-        PlaygroundFacility(name: "미끄럼틀", imageName: "arrow.down.forward.circle.fill"),
-        PlaygroundFacility(name: "정글짐", imageName: "cube.transparent"),
-        PlaygroundFacility(name: "공중기구", imageName: "airplane"),
-        PlaygroundFacility(name: "회전기구", imageName: "rotate.3d"),
-        PlaygroundFacility(name: "흔들기구", imageName: "wave.3.right"),
-        PlaygroundFacility(name: "오르는기구", imageName: "arrow.up.circle"),
-        PlaygroundFacility(name: "건너는기구", imageName: "arrow.left.and.right"),
-        PlaygroundFacility(name: "조합놀이대", imageName: "square.stack.3d.up"),
-        PlaygroundFacility(name: "철봉", imageName: "figure.gymnastics"),
-        PlaygroundFacility(name: "늑목", imageName: "arrow.up.and.down.square"),
-        PlaygroundFacility(name: "평균대", imageName: "minus")
-    ])
+    let facilities = BehaviorRelay<[PlaygroundFacility]>(value:
+        PlaygroundFacilityType.allCases.map { PlaygroundFacility(type: $0) }
+    )
 }

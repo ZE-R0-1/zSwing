@@ -101,6 +101,7 @@
 		CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */; };
 		CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */; };
 		CEE115FB2D3D0C82004918D3 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */; };
+		CEE115FD2D3D1C8E004918D3 /* RideCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE115FC2D3D1C8E004918D3 /* RideCategoryViewModel.swift */; };
 		CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = CEFA52682CE34F0500B4280B /* RxGesture */; };
 		CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526B2CE490E500B4280B /* LoadingViewController.swift */; };
 		CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526D2CE5D22500B4280B /* Playground.swift */; };
@@ -198,6 +199,7 @@
 		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
 		CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
+		CEE115FC2D3D1C8E004918D3 /* RideCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCategoryViewModel.swift; sourceTree = "<group>"; };
 		CEFA526B2CE490E500B4280B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		CEFA526D2CE5D22500B4280B /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundRepository.swift; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */,
+				CEE115FC2D3D1C8E004918D3 /* RideCategoryViewModel.swift */,
 				CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */,
 			);
 			path = RideCategory;
@@ -726,6 +729,7 @@
 				CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */,
+				CEE115FD2D3D1C8E004918D3 /* RideCategoryViewModel.swift in Sources */,
 				CEDF13AF2CD9F63B0090D9CE /* User.swift in Sources */,
 				CE2AEF002D39E687008677CB /* HomeViewModel.swift in Sources */,
 				CE2B97A52CC0913300FF532F /* SceneDelegate.swift in Sources */,
