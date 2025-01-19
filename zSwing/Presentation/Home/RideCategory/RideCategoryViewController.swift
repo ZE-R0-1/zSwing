@@ -50,7 +50,7 @@ class RideCategoryViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 2
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -58,6 +58,38 @@ class RideCategoryViewController: UIViewController {
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
+    }()
+    
+    private let shadowView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.label.withAlphaComponent(0.1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var toggleButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = HomeViewModel.themeColor
+        button.setTitle("지도보기", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.layer.cornerRadius = 22
+        
+        // 그림자 효과 추가
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.2
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    private let contentContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     // MARK: - Initialization
@@ -102,6 +134,9 @@ class RideCategoryViewController: UIViewController {
         
         view.addSubview(navigationStack)
         view.addSubview(categoryCollectionView)
+        view.addSubview(shadowView)
+        view.addSubview(contentContainerView)
+        view.addSubview(toggleButton)
         
         NSLayoutConstraint.activate([
             navigationStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
@@ -116,7 +151,22 @@ class RideCategoryViewController: UIViewController {
             categoryCollectionView.topAnchor.constraint(equalTo: navigationStack.bottomAnchor, constant: 14),
             categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            categoryCollectionView.heightAnchor.constraint(equalToConstant: 44)
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 44),
+            
+            shadowView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
+            shadowView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            shadowView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            shadowView.heightAnchor.constraint(equalToConstant: 1),
+            
+            contentContainerView.topAnchor.constraint(equalTo: shadowView.bottomAnchor),
+            contentContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            toggleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            toggleButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
+            toggleButton.widthAnchor.constraint(equalToConstant: 90),
+            toggleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     
@@ -166,6 +216,30 @@ class RideCategoryViewController: UIViewController {
         // CollectionView 델리게이트 설정
         categoryCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
+        
+        // 토글 버튼 상태 바인딩
+        viewModel.isMapMode
+            .map { $0 ? "목록보기" : "지도보기" }
+            .bind(to: toggleButton.rx.title(for: .normal))
+            .disposed(by: disposeBag)
+        
+        // 토글 버튼 탭 처리
+        toggleButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.viewModel.toggleViewMode()
+            })
+            .disposed(by: disposeBag)
+            
+        // 뷰 모드에 따른 컨텐츠 전환
+        viewModel.isMapMode
+            .subscribe(onNext: { [weak self] isMapMode in
+                // 여기서 실제 지도/목록 뷰 전환 구현
+                UIView.animate(withDuration: 0.3) {
+                    // 뷰 전환 애니메이션
+                }
+            })
+            .disposed(by: disposeBag)
+
     }
 }
 
