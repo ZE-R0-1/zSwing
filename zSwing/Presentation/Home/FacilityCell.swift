@@ -6,15 +6,8 @@
 //
 
 import UIKit
-import RxSwift
-import RxRelay
 
 class FacilityCell: UICollectionViewCell {
-    private let disposeBag = DisposeBag()
-    
-    // 선택 상태를 관리하는 BehaviorRelay 추가
-    private let isItemSelected = BehaviorRelay<Bool>(value: false)
-    
     private let iconContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray6
@@ -52,11 +45,6 @@ class FacilityCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        isItemSelected.accept(false)
-    }
-    
     private func setupUI() {
         contentView.addSubview(iconContainer)
         iconContainer.addSubview(iconImageView)
@@ -85,22 +73,30 @@ class FacilityCell: UICollectionViewCell {
     
     private func setupStyle() {
         contentView.backgroundColor = .clear
-        
-        // Rx로 선택 상태에 따른 애니메이션 처리
-        isItemSelected
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] selected in
-                UIView.animate(withDuration: 0.2) {
-                    if selected {
-                        self?.iconContainer.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-                        self?.iconContainer.backgroundColor = .systemGray5
-                    } else {
-                        self?.iconContainer.transform = .identity
-                        self?.iconContainer.backgroundColor = .systemGray6
-                    }
-                }
-            })
-            .disposed(by: disposeBag)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        UIView.animate(withDuration: 0.2) {
+            self.iconContainer.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.iconContainer.backgroundColor = .systemGray5
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        UIView.animate(withDuration: 0.2) {
+            self.iconContainer.transform = .identity
+            self.iconContainer.backgroundColor = .systemGray6
+        }
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        UIView.animate(withDuration: 0.2) {
+            self.iconContainer.transform = .identity
+            self.iconContainer.backgroundColor = .systemGray6
+        }
     }
     
     func configure(with facility: PlaygroundFacility) {
@@ -111,12 +107,6 @@ class FacilityCell: UICollectionViewCell {
             nameLabel.lineBreakMode = .byClipping  // 5글자 이하는 잘리지 않게
         } else {
             nameLabel.lineBreakMode = .byTruncatingTail  // 5글자 초과는 ...으로 표시
-        }
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            isItemSelected.accept(isSelected)
         }
     }
 }

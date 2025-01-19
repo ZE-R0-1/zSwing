@@ -100,6 +100,7 @@
 		CEDF13CD2CDA084B0090D9CE /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */; };
 		CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */; };
 		CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */; };
+		CEE115FB2D3D0C82004918D3 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */; };
 		CEFA52692CE34F0500B4280B /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = CEFA52682CE34F0500B4280B /* RxGesture */; };
 		CEFA526C2CE490E500B4280B /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526B2CE490E500B4280B /* LoadingViewController.swift */; };
 		CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA526D2CE5D22500B4280B /* Playground.swift */; };
@@ -196,6 +197,7 @@
 		CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		CEDF13CF2CDA08B20090D9CE /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		CEDF13D22CDC57730090D9CE /* MainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabCoordinator.swift; sourceTree = "<group>"; };
+		CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		CEFA526B2CE490E500B4280B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		CEFA526D2CE5D22500B4280B /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		CEFA526F2CE5D26300B4280B /* PlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundRepository.swift; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */,
+				CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */,
 			);
 			path = RideCategory;
 			sourceTree = "<group>";
@@ -713,6 +716,7 @@
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
 				CE9B2F592D13DE2500EE9831 /* FirebaseStorageService.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
+				CEE115FB2D3D0C82004918D3 /* CategoryCell.swift in Sources */,
 				CEFA526E2CE5D22500B4280B /* Playground.swift in Sources */,
 				CEDF13BA2CD9F75B0090D9CE /* AuthenticationRepository.swift in Sources */,
 				CEC373162CFD810200D400D0 /* Coordinator.swift in Sources */,
