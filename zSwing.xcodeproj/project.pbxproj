@@ -67,6 +67,7 @@
 		CEAD044A2D3E22FA0007907A /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04492D3E22FA0007907A /* LocationManager.swift */; };
 		CEAD044E2D3E29C60007907A /* PlaygroundListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */; };
 		CEAD04502D3E2A030007907A /* PlaygroundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */; };
+		CEAD04522D3E327B0007907A /* PlaygroundMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */; };
 		CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */; };
 		CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */; };
 		CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */; };
@@ -112,8 +113,8 @@
 		CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52752CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift */; };
 		CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */; };
 		CEFA527A2CE70E6400B4280B /* Ride.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52792CE70E6400B4280B /* Ride.swift */; };
-		CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */; };
-		CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */; };
+		CEFA52842CE736E300B4280B /* PlaygroundAnnotation1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA52832CE736E300B4280B /* PlaygroundAnnotation1.swift */; };
+		CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -171,6 +172,7 @@
 		CEAD04492D3E22FA0007907A /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListCell.swift; sourceTree = "<group>"; };
 		CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListView.swift; sourceTree = "<group>"; };
+		CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundMapView.swift; sourceTree = "<group>"; };
 		CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCoordinator.swift; sourceTree = "<group>"; };
 		CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -212,8 +214,8 @@
 		CEFA52752CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlaygroundRepository.swift; sourceTree = "<group>"; };
 		CEFA52772CE5E07600B4280B /* PlaygroundCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundCell.swift; path = zSwing/Presentation/Map/PlaygroundListView/PlaygroundCell.swift; sourceTree = SOURCE_ROOT; };
 		CEFA52792CE70E6400B4280B /* Ride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ride.swift; sourceTree = "<group>"; };
-		CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundAnnotation.swift; sourceTree = "<group>"; };
-		CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundAnnotationView.swift; path = zSwing/Presentation/Map/PlaygroundAnnotation/PlaygroundAnnotationView.swift; sourceTree = SOURCE_ROOT; };
+		CEFA52832CE736E300B4280B /* PlaygroundAnnotation1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundAnnotation1.swift; sourceTree = "<group>"; };
+		CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaygroundAnnotationView1.swift; path = zSwing/Presentation/Map/PlaygroundAnnotation/PlaygroundAnnotationView1.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,6 +350,7 @@
 		CEAD044B2D3E29B30007907A /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -561,8 +564,8 @@
 		CEFA52622CE34D8300B4280B /* PlaygroundAnnotation */ = {
 			isa = PBXGroup;
 			children = (
-				CEFA52832CE736E300B4280B /* PlaygroundAnnotation.swift */,
-				CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView.swift */,
+				CEFA52832CE736E300B4280B /* PlaygroundAnnotation1.swift */,
+				CEFA528B2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift */,
 			);
 			path = PlaygroundAnnotation;
 			sourceTree = "<group>";
@@ -694,7 +697,7 @@
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
 				CE2AEF0F2D3A3517008677CB /* RideCategoryViewController.swift in Sources */,
 				CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */,
-				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView.swift in Sources */,
+				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
 				CEFA52762CE5D5CF00B4280B /* DefaultPlaygroundRepository.swift in Sources */,
 				CEDF13B22CD9F66D0090D9CE /* SignInUseCase.swift in Sources */,
@@ -718,6 +721,7 @@
 				CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */,
 				CE1E387E2D30BA7B00CE6996 /* PostRepository.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
+				CEAD04522D3E327B0007907A /* PlaygroundMapView.swift in Sources */,
 				CE5320A82D0FE5B600CCAC15 /* FavoriteRepository.swift in Sources */,
 				CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */,
 				CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */,
@@ -743,7 +747,7 @@
 				CE53209E2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift in Sources */,
 				CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */,
 				CEAD044A2D3E22FA0007907A /* LocationManager.swift in Sources */,
-				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
+				CEFA52842CE736E300B4280B /* PlaygroundAnnotation1.swift in Sources */,
 				CE9B2F592D13DE2500EE9831 /* FirebaseStorageService.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
 				CEE115FB2D3D0C82004918D3 /* CategoryCell.swift in Sources */,

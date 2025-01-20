@@ -98,6 +98,12 @@ class RideCategoryViewController: UIViewController {
         return view
     }()
     
+    private lazy var playgroundMapView: PlaygroundMapView = {
+        let view = PlaygroundMapView(locationManager: viewModel.locationManager)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     // MARK: - Initialization
     init(viewModel: RideCategoryViewModel) {
         self.viewModel = viewModel
@@ -139,6 +145,7 @@ class RideCategoryViewController: UIViewController {
         navigationStack.addArrangedSubview(spacerView)
         
         contentContainerView.addSubview(playgroundListView)
+        contentContainerView.addSubview(playgroundMapView)
 
         view.addSubview(navigationStack)
         view.addSubview(categoryCollectionView)
@@ -176,6 +183,11 @@ class RideCategoryViewController: UIViewController {
             playgroundListView.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor),
             playgroundListView.bottomAnchor.constraint(equalTo: contentContainerView.bottomAnchor),
             
+            playgroundMapView.topAnchor.constraint(equalTo: contentContainerView.topAnchor),
+            playgroundMapView.leadingAnchor.constraint(equalTo: contentContainerView.leadingAnchor),
+            playgroundMapView.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor),
+            playgroundMapView.bottomAnchor.constraint(equalTo: contentContainerView.bottomAnchor),
+
             toggleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             toggleButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
             toggleButton.widthAnchor.constraint(equalToConstant: 90),
@@ -249,13 +261,13 @@ class RideCategoryViewController: UIViewController {
                 guard let self = self else { return }
                 UIView.animate(withDuration: 0.3) {
                     self.playgroundListView.alpha = isMapMode ? 0 : 1
-                    // 나중에 mapView가 추가되면:
-                    // self.mapView.alpha = isMapMode ? 1 : 0
+                    self.playgroundMapView.alpha = isMapMode ? 1 : 0
                 }
             })
             .disposed(by: disposeBag)
 
         playgroundListView.configure(with: viewModel)
+        playgroundMapView.configure(with: viewModel)
     }
 }
 

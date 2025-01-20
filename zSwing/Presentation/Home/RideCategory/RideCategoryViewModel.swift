@@ -14,7 +14,7 @@ class RideCategoryViewModel {
     
     // Input
     private let facility: PlaygroundFacility
-    private let locationManager: LocationManager
+    let locationManager: LocationManager
     
     // Output
     let categories = BehaviorRelay<[String]>(value: PlaygroundFacilityType.allCases.map { $0.rawValue })

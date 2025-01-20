@@ -32,7 +32,7 @@ class MapViewModel {
     let shouldShowSearchButton = BehaviorRelay<Bool>(value: false)
     
     // 어노테이션과 목록을 위한 Outputs
-    let playgroundAnnotations = BehaviorRelay<[PlaygroundAnnotation]>(value: [])
+    let playgroundAnnotations = BehaviorRelay<[PlaygroundAnnotation1]>(value: [])
     let playgroundsForList = BehaviorRelay<[PlaygroundWithDistance]>(value: [])
     
     // MARK: - Initialization
@@ -129,7 +129,7 @@ class MapViewModel {
                 guard let self = self else { return }
                 
                 // 어노테이션 업데이트
-                let annotations = playgrounds.map { PlaygroundAnnotation(playground: $0) }
+                let annotations = playgrounds.map { PlaygroundAnnotation1(playground: $0) }
                 self.playgroundAnnotations.accept(annotations)
                 
                 // 목록 업데이트 (거리 계산 포함)

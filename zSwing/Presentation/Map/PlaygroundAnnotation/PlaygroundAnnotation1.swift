@@ -7,7 +7,7 @@
 
 import MapKit
 
-class PlaygroundAnnotation: NSObject, MKAnnotation {
+class PlaygroundAnnotation1: NSObject, MKAnnotation {
     let playground: Playground1
     let coordinate: CLLocationCoordinate2D
     let title: String?
@@ -17,7 +17,7 @@ class PlaygroundAnnotation: NSObject, MKAnnotation {
     }
     
     override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? PlaygroundAnnotation else { return false }
+        guard let other = object as? PlaygroundAnnotation1 else { return false }
         return playground.pfctSn == other.playground.pfctSn
     }
     

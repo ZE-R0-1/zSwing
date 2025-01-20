@@ -17,6 +17,7 @@ final class PlaygroundListView: UIView {
        let table = UITableView()
        table.backgroundColor = .clear
        table.separatorStyle = .none
+       table.allowsSelection = false
        table.register(PlaygroundListCell.self, forCellReuseIdentifier: PlaygroundListCell.identifier)
        table.translatesAutoresizingMaskIntoConstraints = false
        return table
@@ -57,7 +58,7 @@ final class PlaygroundListView: UIView {
            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
            
            emptyStateLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-           emptyStateLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+           emptyStateLabel.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor)
        ])
    }
    
@@ -77,7 +78,7 @@ final class PlaygroundListView: UIView {
        
        // Show/hide empty state
        viewModel.filteredPlaygrounds
-           .map { $0.isEmpty }
+           .map { !$0.isEmpty }
            .bind(to: emptyStateLabel.rx.isHidden)
            .disposed(by: disposeBag)
        

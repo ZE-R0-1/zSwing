@@ -8,7 +8,7 @@
 import UIKit
 import MapKit
 
-class PlaygroundAnnotationView: MKAnnotationView {
+class PlaygroundAnnotationView1: MKAnnotationView {
     static let identifier = "PlaygroundAnnotationView"
     
     // MARK: - UI Components
@@ -97,7 +97,7 @@ class PlaygroundAnnotationView: MKAnnotationView {
     }
     
     // MARK: - Configuration
-    func configure(with annotation: PlaygroundAnnotation) {
+    func configure(with annotation: PlaygroundAnnotation1) {
         titleLabel.text = annotation.playground.pfctNm
     }
     

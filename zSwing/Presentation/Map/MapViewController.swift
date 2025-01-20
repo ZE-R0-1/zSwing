@@ -18,7 +18,7 @@ class MapViewController: UIViewController {
     weak var coordinator: MapCoordinator?
     private let diContainer: AppDIContainer
     private var bottomSheetVC: PlaygroundListViewController?
-    private var currentAnnotations: [PlaygroundAnnotation] = []
+    private var currentAnnotations: [PlaygroundAnnotation1] = []
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -188,8 +188,8 @@ class MapViewController: UIViewController {
         mapView.setRegion(region, animated: true)
     }
     
-    private func updateAnnotations(with newAnnotations: [PlaygroundAnnotation]) {
-        let currentAnnotations = mapView.annotations.filter { $0 is PlaygroundAnnotation }
+    private func updateAnnotations(with newAnnotations: [PlaygroundAnnotation1]) {
+        let currentAnnotations = mapView.annotations.filter { $0 is PlaygroundAnnotation1 }
         mapView.removeAnnotations(currentAnnotations)
         mapView.addAnnotations(newAnnotations)
         
@@ -243,7 +243,7 @@ extension MapViewController: MKMapViewDelegate {
             return nil
         }
         
-        if let playground = annotation as? PlaygroundAnnotation {
+        if let playground = annotation as? PlaygroundAnnotation1 {
             let identifier = MKMapViewDefaultAnnotationViewReuseIdentifier
             let view = mapView.dequeueReusableAnnotationView(
                 withIdentifier: identifier,
@@ -261,7 +261,7 @@ extension MapViewController: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
-        if let playgroundAnnotation = annotation as? PlaygroundAnnotation {
+        if let playgroundAnnotation = annotation as? PlaygroundAnnotation1 {
             // Handle playground selection
         }
     }
