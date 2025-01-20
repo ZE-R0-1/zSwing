@@ -64,6 +64,9 @@
 		CE9B2F5E2D13E6E100EE9831 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9B2F5D2D13E6E100EE9831 /* RatingView.swift */; };
 		CE9B2F602D13E83D00EE9831 /* ReviewWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9B2F5F2D13E83D00EE9831 /* ReviewWriteViewController.swift */; };
 		CE9B2F622D13E86500EE9831 /* ReviewImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9B2F612D13E86500EE9831 /* ReviewImageCell.swift */; };
+		CEAD044A2D3E22FA0007907A /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04492D3E22FA0007907A /* LocationManager.swift */; };
+		CEAD044E2D3E29C60007907A /* PlaygroundListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */; };
+		CEAD04502D3E2A030007907A /* PlaygroundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */; };
 		CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */; };
 		CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */; };
 		CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */; };
@@ -165,6 +168,9 @@
 		CE9B2F5D2D13E6E100EE9831 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		CE9B2F5F2D13E83D00EE9831 /* ReviewWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewWriteViewController.swift; sourceTree = "<group>"; };
 		CE9B2F612D13E86500EE9831 /* ReviewImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewImageCell.swift; sourceTree = "<group>"; };
+		CEAD04492D3E22FA0007907A /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListCell.swift; sourceTree = "<group>"; };
+		CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListView.swift; sourceTree = "<group>"; };
 		CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCoordinator.swift; sourceTree = "<group>"; };
 		CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -260,6 +266,8 @@
 		CE2AEF0D2D3A3501008677CB /* RideCategory */ = {
 			isa = PBXGroup;
 			children = (
+				CEAD044C2D3E29B80007907A /* List */,
+				CEAD044B2D3E29B30007907A /* Map */,
 				CE2AEF0E2D3A3517008677CB /* RideCategoryViewController.swift */,
 				CEE115FC2D3D1C8E004918D3 /* RideCategoryViewModel.swift */,
 				CEE115FA2D3D0C82004918D3 /* CategoryCell.swift */,
@@ -335,6 +343,22 @@
 				CE9B2F612D13E86500EE9831 /* ReviewImageCell.swift */,
 			);
 			path = WriteReview;
+			sourceTree = "<group>";
+		};
+		CEAD044B2D3E29B30007907A /* Map */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		CEAD044C2D3E29B80007907A /* List */ = {
+			isa = PBXGroup;
+			children = (
+				CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */,
+				CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */,
+			);
+			path = List;
 			sourceTree = "<group>";
 		};
 		CED42A7E2CE1ED3400A7AE7E /* Nickname */ = {
@@ -499,6 +523,7 @@
 				CEDF13CC2CDA084B0090D9CE /* FirebaseAuthService.swift */,
 				CECC4E3C2D000E9000AA6B68 /* FirebasePlaygroundService.swift */,
 				CE9B2F582D13DE2500EE9831 /* FirebaseStorageService.swift */,
+				CEAD04492D3E22FA0007907A /* LocationManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -677,6 +702,7 @@
 				CECC4E492D0048BE00AA6B68 /* MapRegion.swift in Sources */,
 				CEFA52782CE5E07600B4280B /* PlaygroundCell.swift in Sources */,
 				CE64A9D62D2275DB00FF6740 /* ReviewDetailImageCell.swift in Sources */,
+				CEAD044E2D3E29C60007907A /* PlaygroundListCell.swift in Sources */,
 				CECC4E332CFFE82D00AA6B68 /* BottomSheetUseCase.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
 				CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */,
@@ -716,6 +742,7 @@
 				CECC4E432D0013F700AA6B68 /* PlaygroundListViewModel.swift in Sources */,
 				CE53209E2D0C2CEE00CCAC15 /* PlaygroundViewModel.swift in Sources */,
 				CE1395912D2E6C5600E98544 /* PostCell.swift in Sources */,
+				CEAD044A2D3E22FA0007907A /* LocationManager.swift in Sources */,
 				CEFA52842CE736E300B4280B /* PlaygroundAnnotation.swift in Sources */,
 				CE9B2F592D13DE2500EE9831 /* FirebaseStorageService.swift in Sources */,
 				CEDF13BD2CD9F7B10090D9CE /* DefaultAuthenticationRepository.swift in Sources */,
@@ -727,6 +754,7 @@
 				CED42A7D2CE1ECED00A7AE7E /* DefaultNicknameRepository.swift in Sources */,
 				CE9B2F552D13DC6900EE9831 /* Review.swift in Sources */,
 				CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */,
+				CEAD04502D3E2A030007907A /* PlaygroundListView.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */,
 				CEE115FD2D3D1C8E004918D3 /* RideCategoryViewModel.swift in Sources */,

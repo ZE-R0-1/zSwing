@@ -324,7 +324,7 @@ final class PlaygroundViewController: UIViewController, ReviewWriteDelegate {
             .disposed(by: disposeBag)
     }
     
-    private func showReviewWriteViewController(for playground: Playground) {
+    private func showReviewWriteViewController(for playground: Playground1) {
         let reviewUseCase = DefaultReviewUseCase(
             reviewRepository: DefaultReviewRepository(),
             storageService: FirebaseStorageService()

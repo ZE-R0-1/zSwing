@@ -14,7 +14,7 @@ struct PlaygroundDetail {
 }
 
 struct PlaygroundWithDistance {
-    let playground: Playground
+    let playground: Playground1
     let distance: Double?
 }
 

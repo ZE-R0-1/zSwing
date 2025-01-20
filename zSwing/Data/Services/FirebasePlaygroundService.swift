@@ -11,7 +11,7 @@ import FirebaseFirestore
 import CoreLocation
 
 protocol FirebasePlaygroundServiceProtocol {
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]>
 }
 
 class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
@@ -21,7 +21,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
         self.db = firestore
     }
     
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]> {
         print("🔥 [Firebase Call] Starting playground fetch for region: lat \(region.center.latitude), lon \(region.center.longitude)")
         
         return Observable.create { [weak self] observer in
@@ -51,7 +51,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                 
                 print("✅ [Firebase Success] Fetched \(snapshot?.documents.count ?? 0) documents")
                 
-                let playgrounds = snapshot?.documents.compactMap { document -> Playground? in
+                let playgrounds = snapshot?.documents.compactMap { document -> Playground1? in
                     let data = document.data()
                     
                     guard let pfctNm = data["pfctNm"] as? String,
@@ -66,7 +66,7 @@ class FirebasePlaygroundService: FirebasePlaygroundServiceProtocol {
                         return nil
                     }
                     
-                    return Playground(
+                    return Playground1(
                         pfctSn: document.documentID,
                         pfctNm: pfctNm,
                         coordinate: CLLocationCoordinate2D(

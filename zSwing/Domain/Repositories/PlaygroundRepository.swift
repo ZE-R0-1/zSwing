@@ -9,6 +9,6 @@ import RxSwift
 import CoreLocation
 
 protocol PlaygroundRepository {
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
-    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]>
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]>
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground1]>
 }

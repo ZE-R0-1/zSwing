@@ -13,10 +13,12 @@ protocol HomeCoordinator: Coordinator {
 
 class DefaultHomeCoordinator: HomeCoordinator {
     let navigationController: UINavigationController
+    let locationManager: LocationManager
     private let diContainer: AppDIContainer
     
-    init(navigationController: UINavigationController, diContainer: AppDIContainer) {
+    init(navigationController: UINavigationController, diContainer: AppDIContainer, locationManager: LocationManager) {
         self.navigationController = navigationController
+        self.locationManager = locationManager
         self.diContainer = diContainer
     }
     
@@ -27,7 +29,7 @@ class DefaultHomeCoordinator: HomeCoordinator {
     }
     
     func showRideCategory(for facility: PlaygroundFacility) {
-        let viewModel = RideCategoryViewModel(facility: facility)
+        let viewModel = RideCategoryViewModel(facility: facility, locationManager: locationManager)
         let viewController = RideCategoryViewController(viewModel: viewModel)
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)

@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct Playground {
+struct Playground1 {
     let pfctSn: String       // 놀이시설일련번호
     let pfctNm: String       // 놀이시설명
     let coordinate: CLLocationCoordinate2D
@@ -20,4 +20,13 @@ struct Playground {
     var isIndoor: Bool {
         return idrodrCdNm == "실내"
     }
+}
+
+struct Playground {
+    let id: String
+    let name: String  // 놀이터 이름
+    let address: String  // 주소
+    let coordinate: CLLocationCoordinate2D  // 위도/경도
+    let facilities: [PlaygroundFacility]  // 보유 놀이시설
+    let madeAt: Date  // 만들어진 날짜
 }

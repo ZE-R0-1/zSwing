@@ -144,7 +144,7 @@ class PlaygroundCell: UITableViewCell {
     }
     
     // MARK: - Configuration
-    func configure(with playground: Playground, distance: Double?) {
+    func configure(with playground: Playground1, distance: Double?) {
         nameLabel.text = playground.pfctNm
         
         if let distance = distance {
@@ -158,7 +158,7 @@ class PlaygroundCell: UITableViewCell {
         loadReviewImages(for: playground)
     }
     
-    private func loadReviewImages(for playground: Playground) {
+    private func loadReviewImages(for playground: Playground1) {
         // 최근 3개의 리뷰 이미지만 표시
         let recentImageUrls = playground.reviews
             .flatMap { $0.imageUrls }

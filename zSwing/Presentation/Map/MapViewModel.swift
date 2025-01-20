@@ -115,7 +115,7 @@ class MapViewModel {
                 self?.updateLocationTitle(for: region.center)
             })
             .withLatestFrom(currentLocation) { ($0, $1) }
-            .flatMapLatest { [weak self] (region, currentLocation) -> Observable<[Playground]> in
+            .flatMapLatest { [weak self] (region, currentLocation) -> Observable<[Playground1]> in
                 guard let self = self else { return .empty() }
                 return self.playgroundUseCase.fetchFilteredPlaygrounds(
                     categories: Set([PlaygroundType.all.rawValue]),

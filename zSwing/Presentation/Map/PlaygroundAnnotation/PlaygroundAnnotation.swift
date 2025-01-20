@@ -8,7 +8,7 @@
 import MapKit
 
 class PlaygroundAnnotation: NSObject, MKAnnotation {
-    let playground: Playground
+    let playground: Playground1
     let coordinate: CLLocationCoordinate2D
     let title: String?
     
@@ -21,7 +21,7 @@ class PlaygroundAnnotation: NSObject, MKAnnotation {
         return playground.pfctSn == other.playground.pfctSn
     }
     
-    init(playground: Playground) {
+    init(playground: Playground1) {
         self.playground = playground
         self.coordinate = playground.coordinate
         self.title = playground.pfctNm

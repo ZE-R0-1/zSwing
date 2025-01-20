@@ -22,6 +22,7 @@ final class AppDIContainer {
     private lazy var favoriteRepository: FavoriteRepository = DefaultFavoriteRepository()
     private lazy var reviewRepository: ReviewRepository = DefaultReviewRepository()
     private lazy var storageService: StorageServiceProtocol = FirebaseStorageService()
+    private lazy var locationManager = LocationManager()
     
     // MARK: - Coordinators
     func makeAuthCoordinator(navigationController: UINavigationController) -> AuthCoordinator {
@@ -41,7 +42,8 @@ final class AppDIContainer {
     func makeHomeCoordinator(navigationController: UINavigationController) -> HomeCoordinator {
         return DefaultHomeCoordinator(
             navigationController: navigationController,
-            diContainer: self
+            diContainer: self,
+            locationManager: locationManager
         )
     }
     
@@ -154,7 +156,7 @@ final class AppDIContainer {
         return PlaygroundListViewModel(playgroundUseCase: makePlaygroundListUseCase())
     }
     
-    private func makePlaygroundViewModel(playground: Playground, currentLocation: CLLocation?) -> PlaygroundViewModel {
+    private func makePlaygroundViewModel(playground: Playground1, currentLocation: CLLocation?) -> PlaygroundViewModel {
         return PlaygroundViewModel(
             playground: playground,
             currentLocation: currentLocation,
@@ -197,7 +199,7 @@ final class AppDIContainer {
         )
     }
     
-    func makePlaygroundView(playground: Playground, currentLocation: CLLocation?) -> PlaygroundViewController {
+    func makePlaygroundView(playground: Playground1, currentLocation: CLLocation?) -> PlaygroundViewController {
         return PlaygroundViewController(
             viewModel: makePlaygroundViewModel(
                 playground: playground,

@@ -18,7 +18,7 @@ final class DefaultPlaygroundRepository: PlaygroundRepository {
         self.firebaseService = firebaseService
     }
     
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]> {
         return firebaseService.fetchPlaygrounds(in: region)
             .catch { error in
                 print("Error fetching playgrounds:", error)
@@ -26,7 +26,7 @@ final class DefaultPlaygroundRepository: PlaygroundRepository {
             }
     }
     
-    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground1]> {
         return fetchPlaygrounds(in: region)
             .map { playgrounds in
                 guard !categories.contains(PlaygroundType.all.rawValue) else {

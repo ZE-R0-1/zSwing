@@ -92,6 +92,12 @@ class RideCategoryViewController: UIViewController {
         return view
     }()
     
+    private lazy var playgroundListView: PlaygroundListView = {
+        let view = PlaygroundListView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     // MARK: - Initialization
     init(viewModel: RideCategoryViewModel) {
         self.viewModel = viewModel
@@ -132,6 +138,8 @@ class RideCategoryViewController: UIViewController {
         navigationStack.addArrangedSubview(titleLabel)
         navigationStack.addArrangedSubview(spacerView)
         
+        contentContainerView.addSubview(playgroundListView)
+
         view.addSubview(navigationStack)
         view.addSubview(categoryCollectionView)
         view.addSubview(shadowView)
@@ -162,6 +170,11 @@ class RideCategoryViewController: UIViewController {
             contentContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            playgroundListView.topAnchor.constraint(equalTo: contentContainerView.topAnchor),
+            playgroundListView.leadingAnchor.constraint(equalTo: contentContainerView.leadingAnchor),
+            playgroundListView.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor),
+            playgroundListView.bottomAnchor.constraint(equalTo: contentContainerView.bottomAnchor),
             
             toggleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             toggleButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
@@ -233,13 +246,16 @@ class RideCategoryViewController: UIViewController {
         // 뷰 모드에 따른 컨텐츠 전환
         viewModel.isMapMode
             .subscribe(onNext: { [weak self] isMapMode in
-                // 여기서 실제 지도/목록 뷰 전환 구현
+                guard let self = self else { return }
                 UIView.animate(withDuration: 0.3) {
-                    // 뷰 전환 애니메이션
+                    self.playgroundListView.alpha = isMapMode ? 0 : 1
+                    // 나중에 mapView가 추가되면:
+                    // self.mapView.alpha = isMapMode ? 1 : 0
                 }
             })
             .disposed(by: disposeBag)
 
+        playgroundListView.configure(with: viewModel)
     }
 }
 

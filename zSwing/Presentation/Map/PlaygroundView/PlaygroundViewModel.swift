@@ -25,7 +25,7 @@ class PlaygroundViewModel {
     let reviews = BehaviorRelay<[Review]>(value: [])
     let isLoading = BehaviorRelay<Bool>(value: false)
     let error = PublishRelay<Error>()
-    let showReviewWrite = PublishRelay<Playground>()
+    let showReviewWrite = PublishRelay<Playground1>()
     
     // MARK: - Dependencies
     private let playgroundDetailUseCase: PlaygroundDetailUseCase
@@ -34,11 +34,11 @@ class PlaygroundViewModel {
     private let disposeBag = DisposeBag()
     
     // MARK: - Properties
-    private let playground: Playground
+    private let playground: Playground1
     private let currentLocation: CLLocation?
     
     init(
-        playground: Playground,
+        playground: Playground1,
         currentLocation: CLLocation?,
         playgroundDetailUseCase: PlaygroundDetailUseCase,
         favoriteUseCase: FavoriteUseCase,
@@ -78,7 +78,7 @@ class PlaygroundViewModel {
         
         // 리뷰 작성 버튼 탭 처리
         writeReviewButtonTapped
-            .map { [weak self] _ -> Playground in
+            .map { [weak self] _ -> Playground1 in
                 guard let self = self else { fatalError("Self is nil") }
                 return self.playground
             }

@@ -140,9 +140,9 @@ final class PlaygroundListViewModel {
                 categories: Set([category.rawValue]),
                 in: region
             )
-            .flatMap { [weak self] playgrounds -> Observable<[Playground]> in
+            .flatMap { [weak self] playgrounds -> Observable<[Playground1]> in
                 guard let self = self else { return .empty() }
-                let reviewObservables = playgrounds.map { playground -> Observable<Playground> in
+                let reviewObservables = playgrounds.map { playground -> Observable<Playground1> in
                     return self.reviewRepository.fetchReviews(
                         playgroundId: playground.pfctSn,
                         sortBy: .latest,
@@ -161,7 +161,7 @@ final class PlaygroundListViewModel {
             }
     }
     
-    private func calculateDistances(playgrounds: [Playground], from location: CLLocation) -> [PlaygroundWithDistance] {
+    private func calculateDistances(playgrounds: [Playground1], from location: CLLocation) -> [PlaygroundWithDistance] {
         return playgrounds
             .map { playground in
                 let playgroundLocation = CLLocation(

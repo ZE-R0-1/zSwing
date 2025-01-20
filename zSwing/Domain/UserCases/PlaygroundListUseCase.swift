@@ -10,9 +10,9 @@ import CoreLocation
 import MapKit
 
 protocol PlaygroundListUseCase {
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]>
-    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]>
-    func sortPlaygroundsByDistance(playgrounds: [Playground], userLocation: CLLocation?) -> [Playground]
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]>
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground1]>
+    func sortPlaygroundsByDistance(playgrounds: [Playground1], userLocation: CLLocation?) -> [Playground1]
 }
 
 final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
@@ -24,7 +24,7 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
         self.locationManager = locationManager
     }
     
-    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground]> {
+    func fetchPlaygrounds(in region: MapRegion) -> Observable<[Playground1]> {
         return repository.fetchPlaygrounds(in: region)
             .map { [weak self] playgrounds in
                 self?.sortPlaygroundsByDistance(
@@ -38,7 +38,7 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
             }
     }
     
-    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground]> {
+    func fetchFilteredPlaygrounds(categories: Set<String>, in region: MapRegion) -> Observable<[Playground1]> {
         return repository.fetchFilteredPlaygrounds(categories: categories, in: region)
             .map { [weak self] playgrounds in
                 self?.sortPlaygroundsByDistance(
@@ -51,10 +51,10 @@ final class DefaultPlaygroundListUseCase: PlaygroundListUseCase {
             }
     }
     
-    func sortPlaygroundsByDistance(playgrounds: [Playground], userLocation: CLLocation?) -> [Playground] {
+    func sortPlaygroundsByDistance(playgrounds: [Playground1], userLocation: CLLocation?) -> [Playground1] {
         guard let userLocation = userLocation else { return playgrounds }
         
-        return playgrounds.map { playground -> (Playground, Double) in
+        return playgrounds.map { playground -> (Playground1, Double) in
             let playgroundLocation = CLLocation(
                 latitude: playground.coordinate.latitude,
                 longitude: playground.coordinate.longitude

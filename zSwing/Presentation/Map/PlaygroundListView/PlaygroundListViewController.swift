@@ -187,7 +187,7 @@ final class PlaygroundListViewController: BottomSheetViewController {
         viewModel.searchButtonTapped.accept(region)
     }
     
-    func showPlaygroundView(_ playground: Playground) {
+    func showPlaygroundView(_ playground: Playground1) {
         let playgroundView = diContainer.makePlaygroundView(
             playground: playground,
             currentLocation: CLLocationManager().location
