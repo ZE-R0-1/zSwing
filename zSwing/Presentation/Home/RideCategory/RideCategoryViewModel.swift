@@ -22,27 +22,42 @@ class RideCategoryViewModel {
     let isMapMode = BehaviorRelay<Bool>(value: false)
     
     let playgrounds = BehaviorRelay<[Playground]>(value: [])
-    lazy var filteredPlaygrounds: Observable<[Playground]> = Observable.combineLatest(
-        selectedIndex,
-        playgrounds,
-        sortOption
-    ).map { [weak self] index, playgrounds, sort in
-        guard let self = self else { return [] }
-        
-        let selectedFacilityType = PlaygroundFacilityType.allCases[index]
-        let filtered = playgrounds.filter { playground in
-            playground.facilities.contains { facility in
-                facility.type == selectedFacilityType
+    lazy var filteredPlaygrounds: Observable<[Playground]> = {
+        return Observable.combineLatest(
+            selectedIndex,
+            playgrounds,
+            sortOption,
+            locationManager.currentLocationObservable.compactMap { $0 }
+        ).map { [weak self] index, playgrounds, sort, location in
+            guard let self = self else { return [] }
+            
+            let selectedFacilityType = PlaygroundFacilityType.allCases[index]
+            let filtered = playgrounds.filter { playground in
+                playground.facilities.contains { facility in
+                    facility.type == selectedFacilityType
+                }
+            }
+            
+            switch sort {
+            case .distance:
+                return filtered.sorted { playground1, playground2 in
+                    let location1 = CLLocation(latitude: playground1.coordinate.latitude, longitude: playground1.coordinate.longitude)
+                    let location2 = CLLocation(latitude: playground2.coordinate.latitude, longitude: playground2.coordinate.longitude)
+                    return location.distance(from: location1) < location.distance(from: location2)
+                }
+                
+            case .madeAt:
+                return filtered.sorted { $0.madeAt > $1.madeAt }
+                
+            case .facilityCount:
+                return filtered.sorted { $0.facilities.count > $1.facilities.count }
             }
         }
-        
-        return self.sortPlaygrounds(filtered, by: sort)
-    }
+    }()
     
     let sortOption = BehaviorRelay<SortOption>(value: .distance)
     
     // MARK: - Types
-    
     enum SortOption {
         case distance
         case madeAt
@@ -50,7 +65,6 @@ class RideCategoryViewModel {
     }
     
     // MARK: - Initialization
-    
     init(facility: PlaygroundFacility, locationManager: LocationManager) {
         self.facility = facility
         self.locationManager = locationManager
@@ -102,26 +116,10 @@ class RideCategoryViewModel {
         // 샘플 데이터로 playgrounds 초기화
         playgrounds.accept(samplePlaygrounds)
         
-        // filteredPlaygrounds Observable 설정
-        self.filteredPlaygrounds = Observable.combineLatest(
-            selectedIndex,
-            playgrounds,
-            sortOption
-        ).map { [weak self] index, playgrounds, sort in
-            guard let self = self else { return [] }
-            
-            let selectedFacilityType = PlaygroundFacilityType.allCases[index]
-            let filtered = playgrounds.filter { playground in
-                playground.facilities.contains { facility in
-                    facility.type == selectedFacilityType
-                }
-            }
-            
-            return self.sortPlaygrounds(filtered, by: sort)
-        }
-        
+        // 위치 업데이트 시작
         locationManager.startUpdatingLocation()
     }
+    
     
     // MARK: - Public Methods
     

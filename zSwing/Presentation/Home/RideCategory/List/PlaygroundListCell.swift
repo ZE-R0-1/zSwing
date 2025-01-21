@@ -82,7 +82,7 @@ final class PlaygroundListCell: UITableViewCell {
             
             nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
             nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            nameLabel.trailingAnchor.constraint(equalTo: distanceLabel.leadingAnchor, constant: -8),
+            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: distanceLabel.leadingAnchor, constant: -8),
             
             distanceLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             distanceLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
