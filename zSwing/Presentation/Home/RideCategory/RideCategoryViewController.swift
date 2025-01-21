@@ -95,12 +95,14 @@ class RideCategoryViewController: UIViewController {
     private lazy var playgroundListView: PlaygroundListView = {
         let view = PlaygroundListView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.alpha = 1  // 명시적으로 초기값 설정
         return view
     }()
     
     private lazy var playgroundMapView: PlaygroundMapView = {
         let view = PlaygroundMapView(locationManager: viewModel.locationManager)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
         return view
     }()
     
