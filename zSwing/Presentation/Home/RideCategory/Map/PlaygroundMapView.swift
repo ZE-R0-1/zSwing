@@ -8,12 +8,19 @@
 import UIKit
 import MapKit
 import RxSwift
+import RxRelay
 
 final class PlaygroundMapView: UIView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private var annotations: [PlaygroundAnnotation] = []
     private let locationManager: LocationManager
+    private let visibleRegion = PublishRelay<MKCoordinateRegion>()
+
+    // 외부에서 현재 보이는 영역을 관찰할 수 있도록 Observable 제공
+    var visibleRegionObservable: Observable<MKCoordinateRegion> {
+        return visibleRegion.asObservable()
+    }
     
     // MARK: - UI Components
     private let mapView: MKMapView = {
@@ -122,19 +129,23 @@ final class PlaygroundMapView: UIView {
     func configure(with viewModel: RideCategoryViewModel) {
         mapView.delegate = self
         
-        // Bind playgrounds data
-        viewModel.filteredPlaygrounds
-            .subscribe(onNext: { [weak self] playgrounds in
-                self?.updateAnnotations(with: playgrounds)
-                
-                // Show alert with animation when empty
-                if playgrounds.isEmpty {
-                    self?.showEmptyStateAlert()
-                } else {
-                    self?.hideEmptyStateAlert()
-                }
-            })
-            .disposed(by: disposeBag)
+        // 지도 보기 모드 전환, 카테고리 변경, 지도 영역 변경시에만 확인
+        Observable.merge([
+            viewModel.isMapMode.filter { $0 }.map { _ in () },  // 맵뷰로 전환될 때
+            viewModel.selectedIndex.map { _ in () },  // 카테고리 변경될 때
+            visibleRegionObservable.map { _ in () }   // 지도 영역 변경될 때
+        ])
+        .withLatestFrom(viewModel.filteredPlaygrounds)
+        .subscribe(onNext: { [weak self] playgrounds in
+            self?.updateAnnotations(with: playgrounds)
+            
+            if playgrounds.isEmpty {
+                self?.showEmptyStateAlert()
+            } else {
+                self?.hideEmptyStateAlert()
+            }
+        })
+        .disposed(by: disposeBag)
         
         // 현재 위치 버튼 바인딩
         currentLocationButton.rx.tap
@@ -167,16 +178,6 @@ final class PlaygroundMapView: UIView {
         }
         
         mapView.addAnnotations(annotations)
-        
-        // Zoom to show all annotations
-        if !annotations.isEmpty {
-            let region = MKCoordinateRegion(
-                coordinates: annotations.map { $0.coordinate },
-                latitudinalMeters: 1000,
-                longitudinalMeters: 1000
-            )
-            mapView.setRegion(region, animated: true)
-        }
     }
     
     private func showEmptyStateAlert() {
@@ -222,6 +223,22 @@ extension PlaygroundMapView: MKMapViewDelegate {
         }
         
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        guard annotation is PlaygroundAnnotation else { return }
+        
+        // 선택된 annotation으로 지도 중심 이동 및 확대
+        let region = MKCoordinateRegion(
+            center: annotation.coordinate,
+            latitudinalMeters: 200,  // 200m 반경으로 확대
+            longitudinalMeters: 200
+        )
+        mapView.setRegion(region, animated: true)
+    }
+
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        visibleRegion.accept(mapView.region)
     }
 }
 

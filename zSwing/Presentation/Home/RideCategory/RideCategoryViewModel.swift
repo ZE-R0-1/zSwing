@@ -8,6 +8,7 @@
 import RxSwift
 import RxRelay
 import CoreLocation
+import MapKit
 
 class RideCategoryViewModel {
     // MARK: - Properties
@@ -20,21 +21,44 @@ class RideCategoryViewModel {
     let categories = BehaviorRelay<[String]>(value: PlaygroundFacilityType.allCases.map { $0.rawValue })
     let selectedIndex: BehaviorRelay<Int>
     let isMapMode = BehaviorRelay<Bool>(value: false)
-    
     let playgrounds = BehaviorRelay<[Playground]>(value: [])
+    let sortOption = BehaviorRelay<SortOption>(value: .distance)
+    
+    let visibleRegion = BehaviorRelay<MKCoordinateRegion?>(value: nil)
+    
     lazy var filteredPlaygrounds: Observable<[Playground]> = {
         return Observable.combineLatest(
             selectedIndex,
             playgrounds,
             sortOption,
-            locationManager.currentLocationObservable.compactMap { $0 }
-        ).map { [weak self] index, playgrounds, sort, location in
+            locationManager.currentLocationObservable.compactMap { $0 },
+            visibleRegion.asObservable()
+        ).map { [weak self] index, playgrounds, sort, location, region in
             guard let self = self else { return [] }
             
             let selectedFacilityType = PlaygroundFacilityType.allCases[index]
-            let filtered = playgrounds.filter { playground in
+            var filtered = playgrounds.filter { playground in
                 playground.facilities.contains { facility in
                     facility.type == selectedFacilityType
+                }
+            }
+            
+            // 지도에 보이는 영역으로 필터링 (모드와 관계없이)
+            if let region = region {
+                filtered = filtered.filter { playground in
+                    let coordinate = playground.coordinate
+                    let latitudeDelta = region.span.latitudeDelta / 2
+                    let longitudeDelta = region.span.longitudeDelta / 2
+                    
+                    let minLat = region.center.latitude - latitudeDelta
+                    let maxLat = region.center.latitude + latitudeDelta
+                    let minLon = region.center.longitude - longitudeDelta
+                    let maxLon = region.center.longitude + longitudeDelta
+                    
+                    return coordinate.latitude >= minLat &&
+                           coordinate.latitude <= maxLat &&
+                           coordinate.longitude >= minLon &&
+                           coordinate.longitude <= maxLon
                 }
             }
             
@@ -54,8 +78,6 @@ class RideCategoryViewModel {
             }
         }
     }()
-    
-    let sortOption = BehaviorRelay<SortOption>(value: .distance)
     
     // MARK: - Types
     enum SortOption {
@@ -142,6 +164,11 @@ class RideCategoryViewModel {
         
         let playgroundLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         return currentLocation.distance(from: playgroundLocation)
+    }
+    
+    // 지도 영역 업데이트 메서드
+    func updateVisibleRegion(_ region: MKCoordinateRegion) {
+        visibleRegion.accept(region)
     }
     
     // MARK: - Private Methods

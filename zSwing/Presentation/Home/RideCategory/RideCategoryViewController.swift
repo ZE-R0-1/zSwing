@@ -244,6 +244,13 @@ class RideCategoryViewController: UIViewController {
         categoryCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
+        // 지도 영역 변경 바인딩
+        playgroundMapView.visibleRegionObservable
+            .subscribe(onNext: { [weak viewModel] region in
+                viewModel?.updateVisibleRegion(region)
+            })
+            .disposed(by: disposeBag)
+        
         // 토글 버튼 상태 바인딩
         viewModel.isMapMode
             .map { $0 ? "목록보기" : "지도보기" }
@@ -261,9 +268,27 @@ class RideCategoryViewController: UIViewController {
         viewModel.isMapMode
             .subscribe(onNext: { [weak self] isMapMode in
                 guard let self = self else { return }
-                UIView.animate(withDuration: 0.3) {
-                    self.playgroundListView.alpha = isMapMode ? 0 : 1
-                    self.playgroundMapView.alpha = isMapMode ? 1 : 0
+                
+                if isMapMode {
+                    // 맵뷰로 전환
+                    self.playgroundMapView.isHidden = false
+                    self.playgroundMapView.alpha = 0
+                    UIView.animate(withDuration: 0.3) {
+                        self.playgroundListView.alpha = 0
+                        self.playgroundMapView.alpha = 1
+                    } completion: { _ in
+                        self.playgroundListView.isHidden = true
+                    }
+                } else {
+                    // 리스트뷰로 전환
+                    self.playgroundListView.isHidden = false
+                    self.playgroundListView.alpha = 0
+                    UIView.animate(withDuration: 0.3) {
+                        self.playgroundMapView.alpha = 0
+                        self.playgroundListView.alpha = 1
+                    } completion: { _ in
+                        self.playgroundMapView.isHidden = true
+                    }
                 }
             })
             .disposed(by: disposeBag)
