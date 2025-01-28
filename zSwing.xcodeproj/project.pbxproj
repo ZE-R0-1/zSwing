@@ -68,6 +68,11 @@
 		CEAD044E2D3E29C60007907A /* PlaygroundListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */; };
 		CEAD04502D3E2A030007907A /* PlaygroundListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */; };
 		CEAD04522D3E327B0007907A /* PlaygroundMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */; };
+		CEAD04682D4323AD0007907A /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04672D4323AD0007907A /* AppVersion.swift */; };
+		CEAD046C2D4324480007907A /* AppVersionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD046B2D4324480007907A /* AppVersionRepository.swift */; };
+		CEAD046E2D4324850007907A /* AppVersionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD046D2D4324850007907A /* AppVersionUseCase.swift */; };
+		CEAD04702D4324CB0007907A /* DefaultAppVersionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD046F2D4324CB0007907A /* DefaultAppVersionRepository.swift */; };
+		CEAD04722D4325140007907A /* AppVersionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04712D4325140007907A /* AppVersionChecker.swift */; };
 		CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */; };
 		CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */; };
 		CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */; };
@@ -173,6 +178,11 @@
 		CEAD044D2D3E29C60007907A /* PlaygroundListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListCell.swift; sourceTree = "<group>"; };
 		CEAD044F2D3E2A030007907A /* PlaygroundListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundListView.swift; sourceTree = "<group>"; };
 		CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundMapView.swift; sourceTree = "<group>"; };
+		CEAD04672D4323AD0007907A /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
+		CEAD046B2D4324480007907A /* AppVersionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionRepository.swift; sourceTree = "<group>"; };
+		CEAD046D2D4324850007907A /* AppVersionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionUseCase.swift; sourceTree = "<group>"; };
+		CEAD046F2D4324CB0007907A /* DefaultAppVersionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppVersionRepository.swift; sourceTree = "<group>"; };
+		CEAD04712D4325140007907A /* AppVersionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionChecker.swift; sourceTree = "<group>"; };
 		CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCoordinator.swift; sourceTree = "<group>"; };
 		CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -364,6 +374,13 @@
 			path = List;
 			sourceTree = "<group>";
 		};
+		CEAD04732D48A1B70007907A /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
 		CED42A7E2CE1ED3400A7AE7E /* Nickname */ = {
 			isa = PBXGroup;
 			children = (
@@ -404,6 +421,7 @@
 				CEDF13AD2CD9F62D0090D9CE /* Entities */,
 				CEDF13B02CD9F6520090D9CE /* UserCases */,
 				CEDF13B82CD9F7100090D9CE /* Repositories */,
+				CEAD04732D48A1B70007907A /* Errors */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -421,6 +439,7 @@
 		CEDF13AB2CD9F2760090D9CE /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CEAD04712D4325140007907A /* AppVersionChecker.swift */,
 				CEDF13D12CDC57590090D9CE /* MainTab */,
 				CEFA526A2CE490D100B4280B /* Loading */,
 				CEDF13BE2CD9FA3C0090D9CE /* Auth */,
@@ -457,6 +476,7 @@
 				CECC4E482D0048BE00AA6B68 /* MapRegion.swift */,
 				CE9B2F542D13DC6900EE9831 /* Review.swift */,
 				CE1E387B2D30B5B600CE6996 /* Post.swift */,
+				CEAD04672D4323AD0007907A /* AppVersion.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -474,6 +494,7 @@
 				CE5320A12D0FE28900CCAC15 /* FavoriteUseCase.swift */,
 				CE5320A32D0FE29E00CCAC15 /* ReviewUseCase.swift */,
 				CE1E38812D30D50F00CE6996 /* PostUseCase.swift */,
+				CEAD046D2D4324850007907A /* AppVersionUseCase.swift */,
 			);
 			path = UserCases;
 			sourceTree = "<group>";
@@ -490,6 +511,7 @@
 				CE5320A72D0FE5B600CCAC15 /* FavoriteRepository.swift */,
 				CE5320A92D0FE6FD00CCAC15 /* ReviewRepository.swift */,
 				CE1E387D2D30BA7B00CE6996 /* PostRepository.swift */,
+				CEAD046B2D4324480007907A /* AppVersionRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -506,6 +528,7 @@
 				CE5320AF2D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift */,
 				CE5320B12D0FE7FA00CCAC15 /* DefaultReviewRepository.swift */,
 				CE1E387F2D30BC0E00CE6996 /* DefaultPostRepository.swift */,
+				CEAD046F2D4324CB0007907A /* DefaultAppVersionRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -675,6 +698,7 @@
 			files = (
 				CE5320B22D0FE7FA00CCAC15 /* DefaultReviewRepository.swift in Sources */,
 				CE9B2F572D13DC8C00EE9831 /* ReviewDTO.swift in Sources */,
+				CEAD04682D4323AD0007907A /* AppVersion.swift in Sources */,
 				CED42AB42CE2E23700A7AE7E /* MapViewModel.swift in Sources */,
 				CECC4E3F2D000F0700AA6B68 /* PlaygroundDTO.swift in Sources */,
 				CECC4E3D2D000E9000AA6B68 /* FirebasePlaygroundService.swift in Sources */,
@@ -696,6 +720,7 @@
 				CECC4E412D00135400AA6B68 /* BottomSheetViewController.swift in Sources */,
 				CED42AB92CE2E2DE00A7AE7E /* MapViewController.swift in Sources */,
 				CE2AEF0F2D3A3517008677CB /* RideCategoryViewController.swift in Sources */,
+				CEAD04702D4324CB0007907A /* DefaultAppVersionRepository.swift in Sources */,
 				CE2AEF022D39ED33008677CB /* FacilityCell.swift in Sources */,
 				CEFA528C2CEC5F4100B4280B /* PlaygroundAnnotationView1.swift in Sources */,
 				CED42AA52CE2DBB000A7AE7E /* MapUseCase.swift in Sources */,
@@ -709,6 +734,7 @@
 				CECC4E332CFFE82D00AA6B68 /* BottomSheetUseCase.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
 				CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */,
+				CEAD046C2D4324480007907A /* AppVersionRepository.swift in Sources */,
 				CE9B2F5E2D13E6E100EE9831 /* RatingView.swift in Sources */,
 				CE9B2F622D13E86500EE9831 /* ReviewImageCell.swift in Sources */,
 				CE9B2F5C2D13E0F900EE9831 /* ReviewWriteViewModel.swift in Sources */,
@@ -719,6 +745,7 @@
 				CED42ACC2CE3275800A7AE7E /* Location.swift in Sources */,
 				CEDF13D32CDC57730090D9CE /* MainTabCoordinator.swift in Sources */,
 				CED42A822CE1ED5500A7AE7E /* NicknameViewController.swift in Sources */,
+				CEAD046E2D4324850007907A /* AppVersionUseCase.swift in Sources */,
 				CE1E387E2D30BA7B00CE6996 /* PostRepository.swift in Sources */,
 				CE7AA4EC2CDCA2B100EF4563 /* ProfileViewModel.swift in Sources */,
 				CEAD04522D3E327B0007907A /* PlaygroundMapView.swift in Sources */,
@@ -759,6 +786,7 @@
 				CE9B2F552D13DC6900EE9831 /* Review.swift in Sources */,
 				CE2AEEFE2D39E673008677CB /* HomeViewController.swift in Sources */,
 				CEAD04502D3E2A030007907A /* PlaygroundListView.swift in Sources */,
+				CEAD04722D4325140007907A /* AppVersionChecker.swift in Sources */,
 				CED42A842CE1EF5B00A7AE7E /* NicknameUseCase.swift in Sources */,
 				CECC4E452D0018FE00AA6B68 /* PlaygroundListViewController.swift in Sources */,
 				CEE115FD2D3D1C8E004918D3 /* RideCategoryViewModel.swift in Sources */,
@@ -921,7 +949,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zero.zSwing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -954,7 +982,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zero.zSwing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

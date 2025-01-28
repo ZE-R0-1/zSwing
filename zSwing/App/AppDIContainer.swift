@@ -117,6 +117,12 @@ final class AppDIContainer {
         return DefaultPostUseCase(repository: makePostRepository())
     }
     
+    private func makeAppVersionUseCase() -> AppVersionUseCase {
+        return DefaultAppVersionUseCase(
+            repository: DefaultAppVersionRepository()
+        )
+    }
+    
     private func makePostRepository() -> PostRepository {
         return DefaultPostRepository()
     }
@@ -214,5 +220,9 @@ final class AppDIContainer {
     
     func makeLoadingViewController() -> LoadingViewController {
         return LoadingViewController()
+    }
+    
+    func makeAppVersionChecker() -> AppVersionChecker {
+        return AppVersionChecker(useCase: makeAppVersionUseCase())
     }
 }

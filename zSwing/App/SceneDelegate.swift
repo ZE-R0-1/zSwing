@@ -24,16 +24,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.backgroundColor = .white
         self.window = window
         
-        // 먼저 로딩 화면을 표시
         let loadingViewController = LoadingViewController()
         window.rootViewController = loadingViewController
         window.makeKeyAndVisible()
         
-        // 인증 상태 체크
         checkAuthenticationState(window: window)
     }
     
     private func checkAuthenticationState(window: UIWindow) {
+        let appVersionChecker = AppDIContainer.shared.makeAppVersionChecker()
+        appVersionChecker.checkVersion(in: window.rootViewController ?? UIViewController())
+        
         firebaseAuthService.getCurrentUser()
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] user in
@@ -63,6 +64,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             })
             .disposed(by: disposeBag)
     }
+    
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
             if (AuthApi.isKakaoTalkLoginUrl(url)) {
