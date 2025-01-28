@@ -74,6 +74,7 @@ final class PlaygroundMapView: UIView {
         self.locationManager = locationManager
         super.init(frame: .zero)
         setupUI()
+        configureMap()
         setupInitialLocation()
     }
     
@@ -108,6 +109,18 @@ final class PlaygroundMapView: UIView {
             currentLocationButton.widthAnchor.constraint(equalToConstant: 44),
             currentLocationButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+    
+    private func configureMap() {
+        mapView.delegate = self
+        mapView.register(
+            PlaygroundAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: "PlaygroundAnnotation"
+        )
+        mapView.register(
+            PlaygroundClusterAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: "PlaygroundCluster"
+        )
     }
     
     private func setupInitialLocation() {
@@ -206,18 +219,42 @@ final class PlaygroundMapView: UIView {
 // MARK: - MKMapViewDelegate
 extension PlaygroundMapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard annotation is PlaygroundAnnotation else { return nil }
+        if annotation is MKUserLocation {
+            return nil
+        }
         
+        // 클러스터 어노테이션 처리
+        if let cluster = annotation as? MKClusterAnnotation {
+            let identifier = "PlaygroundCluster"
+            
+            var annotationView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: identifier) as? PlaygroundClusterAnnotationView
+            
+            if annotationView == nil {
+                annotationView = PlaygroundClusterAnnotationView(
+                    annotation: cluster,
+                    reuseIdentifier: identifier
+                )
+            } else {
+                annotationView?.annotation = cluster
+            }
+            
+            annotationView?.configure(with: cluster.memberAnnotations.count)
+            return annotationView
+        }
+        
+        // 일반 어노테이션 처리
         let identifier = "PlaygroundAnnotation"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        
+        var annotationView = mapView.dequeueReusableAnnotationView(
+            withIdentifier: identifier) as? PlaygroundAnnotationView
         
         if annotationView == nil {
-            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView = PlaygroundAnnotationView(
+                annotation: annotation,
+                reuseIdentifier: identifier
+            )
             annotationView?.canShowCallout = true
-            
-            // Add right callout accessory view (info button)
-            let button = UIButton(type: .detailDisclosure)
-            annotationView?.rightCalloutAccessoryView = button
         } else {
             annotationView?.annotation = annotation
         }
@@ -226,15 +263,6 @@ extension PlaygroundMapView: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
-        guard annotation is PlaygroundAnnotation else { return }
-        
-        // 선택된 annotation으로 지도 중심 이동 및 확대
-        let region = MKCoordinateRegion(
-            center: annotation.coordinate,
-            latitudinalMeters: 200,  // 200m 반경으로 확대
-            longitudinalMeters: 200
-        )
-        mapView.setRegion(region, animated: true)
     }
 
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {

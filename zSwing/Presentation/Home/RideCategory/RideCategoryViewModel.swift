@@ -18,7 +18,7 @@ class RideCategoryViewModel {
     let locationManager: LocationManager
     
     // Output
-    let categories = BehaviorRelay<[String]>(value: PlaygroundFacilityType.allCases.map { $0.rawValue })
+    let categories = BehaviorRelay<[String]>(value: ["전체"] + PlaygroundFacilityType.allCases.map { $0.rawValue })
     let selectedIndex: BehaviorRelay<Int>
     let isMapMode = BehaviorRelay<Bool>(value: false)
     let playgrounds = BehaviorRelay<[Playground]>(value: [])
@@ -37,9 +37,13 @@ class RideCategoryViewModel {
             guard let self = self else { return [] }
             
             let selectedFacilityType = PlaygroundFacilityType.allCases[index]
-            var filtered = playgrounds.filter { playground in
-                playground.facilities.contains { facility in
-                    facility.type == selectedFacilityType
+            var filtered = playgrounds
+            if index > 0 { // "전체"가 아닌 경우에만 필터링
+                let selectedFacilityType = PlaygroundFacilityType.allCases[index - 1]
+                filtered = playgrounds.filter { playground in
+                    playground.facilities.contains { facility in
+                        facility.type == selectedFacilityType
+                    }
                 }
             }
             
@@ -91,7 +95,7 @@ class RideCategoryViewModel {
         self.facility = facility
         self.locationManager = locationManager
         
-        let index = PlaygroundFacilityType.allCases.firstIndex { $0.rawValue == facility.name } ?? 0
+        let index = facility.name == "전체" ? 0 : (PlaygroundFacilityType.allCases.firstIndex { $0.rawValue == facility.name }.map { $0 + 1 } ?? 0)
         self.selectedIndex = BehaviorRelay<Int>(value: index)
         
         // 샘플 데이터 추가
@@ -123,6 +127,19 @@ class RideCategoryViewModel {
             Playground(
                 id: "3",
                 name: "서울숲 놀이터",
+                address: "서울시 성동구 뚝섬로 273",
+                coordinate: CLLocationCoordinate2D(latitude: 37.5445, longitude: 127.0374),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .jungleGym),
+                    PlaygroundFacility(type: .composite),
+                    PlaygroundFacility(type: .climbing)
+                ],
+                madeAt: Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "4",
+                name: "서울숲 놀이터2",
                 address: "서울시 성동구 뚝섬로 273",
                 coordinate: CLLocationCoordinate2D(latitude: 37.5445, longitude: 127.0374),
                 facilities: [

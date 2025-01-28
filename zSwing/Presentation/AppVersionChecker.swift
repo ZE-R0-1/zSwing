@@ -43,8 +43,6 @@ final class AppVersionChecker {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak viewController] version in
                 self.showUpdateAlert(for: version.updateType, in: viewController)
-            }, onError: { [weak viewController] error in
-                self.handleError(error, in: viewController)
             })
             .disposed(by: disposeBag)
     }
@@ -93,24 +91,5 @@ final class AppVersionChecker {
     private func openAppStore() {
         guard let url = URL(string: AppVersionConstants.appStoreURL) else { return }
         UIApplication.shared.open(url)
-    }
-    
-    private func handleError(_ error: Error, in viewController: UIViewController?) {
-        guard let viewController = viewController else { return }
-        
-        let message: String
-        if let appError = error as? AppVersionError {
-            message = appError.description
-        } else {
-            message = "버전 확인 중 오류가 발생했습니다."
-        }
-        
-        let alert = UIAlertController(
-            title: "오류",
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        viewController.present(alert, animated: true)
     }
 }
