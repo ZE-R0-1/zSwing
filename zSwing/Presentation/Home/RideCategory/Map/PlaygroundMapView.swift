@@ -14,10 +14,11 @@ final class PlaygroundMapView: UIView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private var annotations: [PlaygroundAnnotation] = []
+    private var selectedAnnotation: MKAnnotation?
     private let locationManager: LocationManager
     private let visibleRegion = PublishRelay<MKCoordinateRegion>()
+    let annotationSelected = PublishRelay<BottomSheetType>()
 
-    // 외부에서 현재 보이는 영역을 관찰할 수 있도록 Observable 제공
     var visibleRegionObservable: Observable<MKCoordinateRegion> {
         return visibleRegion.asObservable()
     }
@@ -140,8 +141,6 @@ final class PlaygroundMapView: UIView {
     
     // MARK: - Configuration
     func configure(with viewModel: RideCategoryViewModel) {
-        mapView.delegate = self
-        
         // 지도 보기 모드 전환, 카테고리 변경, 지도 영역 변경시에만 확인
         Observable.merge([
             viewModel.isMapMode.filter { $0 }.map { _ in () },  // 맵뷰로 전환될 때
@@ -254,7 +253,6 @@ extension PlaygroundMapView: MKMapViewDelegate {
                 annotation: annotation,
                 reuseIdentifier: identifier
             )
-            annotationView?.canShowCallout = true
         } else {
             annotationView?.annotation = annotation
         }
@@ -263,10 +261,26 @@ extension PlaygroundMapView: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        selectedAnnotation = annotation
+        if let cluster = annotation as? MKClusterAnnotation {
+            let playgrounds = cluster.memberAnnotations.compactMap { annotation in
+                (annotation as? PlaygroundAnnotation)?.playground
+            }
+            annotationSelected.accept(.cluster(playgrounds: playgrounds))
+        } else if let playgroundAnnotation = annotation as? PlaygroundAnnotation {
+            annotationSelected.accept(.single(playground: playgroundAnnotation.playground))
+        }
     }
 
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         visibleRegion.accept(mapView.region)
+    }
+    
+    func deselectAnnotation() {
+        if let annotation = selectedAnnotation {
+            mapView.deselectAnnotation(annotation, animated: true)
+            selectedAnnotation = nil
+        }
     }
 }
 

@@ -251,6 +251,26 @@ class RideCategoryViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
+        // 맵뷰 어노테이션 선택 처리
+        playgroundMapView.annotationSelected
+            .subscribe(onNext: { [weak self] type in
+                guard let self = self else { return }
+                let bottomSheet = PlaygroundBottomSheetController(
+                    type: type,
+                    locationManager: self.viewModel.locationManager
+                )
+                
+                // 바텀시트 dismiss 처리 추가
+                bottomSheet.dismissObservable
+                    .subscribe(onNext: { [weak self] in
+                        self?.playgroundMapView.deselectAnnotation()
+                    })
+                    .disposed(by: self.disposeBag)
+                
+                self.present(bottomSheet, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         // 토글 버튼 상태 바인딩
         viewModel.isMapMode
             .map { $0 ? "목록보기" : "지도보기" }

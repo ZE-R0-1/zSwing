@@ -31,7 +31,7 @@ class PlaygroundAnnotationView: MKAnnotationView {
     // MARK: - Properties
     override var annotation: MKAnnotation? {
         didSet {
-            clusteringIdentifier = "playground"  // 클러스터링 식별자 추가
+            clusteringIdentifier = "playground"
         }
     }
     
@@ -49,15 +49,12 @@ class PlaygroundAnnotationView: MKAnnotationView {
     private func setupUI() {
         frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         
-        // 컨테이너 뷰 설정
         containerView.frame = bounds
         addSubview(containerView)
         
-        // 이미지 뷰 설정
         imageView.frame = CGRect(x: 8, y: 8, width: 24, height: 24)
         containerView.addSubview(imageView)
         
-        // 선택 상태에 따른 애니메이션을 위한 기본 transform 설정
         containerView.transform = .identity
     }
     
@@ -90,8 +87,5 @@ class PlaygroundAnnotationView: MKAnnotationView {
         containerView.transform = .identity
         containerView.backgroundColor = .white
         imageView.tintColor = HomeViewModel.themeColor
-        
-        // 콜아웃 관련 설정 초기화
-        self.canShowCallout = true
     }
 }

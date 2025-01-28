@@ -75,6 +75,11 @@
 		CEAD04722D4325140007907A /* AppVersionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04712D4325140007907A /* AppVersionChecker.swift */; };
 		CEAD04792D48AD5C0007907A /* PlaygroundAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04782D48AD5C0007907A /* PlaygroundAnnotationView.swift */; };
 		CEAD047B2D48ADF00007907A /* PlaygroundClusterAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD047A2D48ADF00007907A /* PlaygroundClusterAnnotationView.swift */; };
+		CEAD04842D48C03B0007907A /* PlaygroundDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04832D48C03B0007907A /* PlaygroundDetailViewModel.swift */; };
+		CEAD04862D48C06E0007907A /* PlaygroundClusterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04852D48C06E0007907A /* PlaygroundClusterViewModel.swift */; };
+		CEAD04882D48C0980007907A /* PlaygroundDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04872D48C0980007907A /* PlaygroundDetailView.swift */; };
+		CEAD048A2D48C0CC0007907A /* PlaygroundClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD04892D48C0CC0007907A /* PlaygroundClusterView.swift */; };
+		CEAD048C2D48C0EA0007907A /* PlaygroundBottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAD048B2D48C0EA0007907A /* PlaygroundBottomSheetController.swift */; };
 		CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */; };
 		CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */; };
 		CEC373142CFD7C5000D400D0 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */; };
@@ -187,6 +192,11 @@
 		CEAD04712D4325140007907A /* AppVersionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionChecker.swift; sourceTree = "<group>"; };
 		CEAD04782D48AD5C0007907A /* PlaygroundAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundAnnotationView.swift; sourceTree = "<group>"; };
 		CEAD047A2D48ADF00007907A /* PlaygroundClusterAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundClusterAnnotationView.swift; sourceTree = "<group>"; };
+		CEAD04832D48C03B0007907A /* PlaygroundDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailViewModel.swift; sourceTree = "<group>"; };
+		CEAD04852D48C06E0007907A /* PlaygroundClusterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundClusterViewModel.swift; sourceTree = "<group>"; };
+		CEAD04872D48C0980007907A /* PlaygroundDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundDetailView.swift; sourceTree = "<group>"; };
+		CEAD04892D48C0CC0007907A /* PlaygroundClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundClusterView.swift; sourceTree = "<group>"; };
+		CEAD048B2D48C0EA0007907A /* PlaygroundBottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundBottomSheetController.swift; sourceTree = "<group>"; };
 		CEC3730F2CFD7A9B00D400D0 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		CEC373112CFD7C2D00D400D0 /* MapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCoordinator.swift; sourceTree = "<group>"; };
 		CEC373132CFD7C5000D400D0 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -364,6 +374,7 @@
 		CEAD044B2D3E29B30007907A /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				CEAD04802D48BF980007907A /* BottomSheet */,
 				CEAD04512D3E327B0007907A /* PlaygroundMapView.swift */,
 				CEAD04782D48AD5C0007907A /* PlaygroundAnnotationView.swift */,
 				CEAD047A2D48ADF00007907A /* PlaygroundClusterAnnotationView.swift */,
@@ -385,6 +396,18 @@
 			children = (
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		CEAD04802D48BF980007907A /* BottomSheet */ = {
+			isa = PBXGroup;
+			children = (
+				CEAD048B2D48C0EA0007907A /* PlaygroundBottomSheetController.swift */,
+				CEAD04832D48C03B0007907A /* PlaygroundDetailViewModel.swift */,
+				CEAD04852D48C06E0007907A /* PlaygroundClusterViewModel.swift */,
+				CEAD04872D48C0980007907A /* PlaygroundDetailView.swift */,
+				CEAD04892D48C0CC0007907A /* PlaygroundClusterView.swift */,
+			);
+			path = BottomSheet;
 			sourceTree = "<group>";
 		};
 		CED42A7E2CE1ED3400A7AE7E /* Nickname */ = {
@@ -739,6 +762,7 @@
 				CE64A9D62D2275DB00FF6740 /* ReviewDetailImageCell.swift in Sources */,
 				CEAD044E2D3E29C60007907A /* PlaygroundListCell.swift in Sources */,
 				CECC4E332CFFE82D00AA6B68 /* BottomSheetUseCase.swift in Sources */,
+				CEAD04862D48C06E0007907A /* PlaygroundClusterViewModel.swift in Sources */,
 				CEDF13C82CDA04710090D9CE /* AppDIContainer.swift in Sources */,
 				CE64A9D42D2265C100FF6740 /* ReviewController.swift in Sources */,
 				CEAD046C2D4324480007907A /* AppVersionRepository.swift in Sources */,
@@ -760,15 +784,19 @@
 				CE5320A82D0FE5B600CCAC15 /* FavoriteRepository.swift in Sources */,
 				CED42AA32CE2DB6A00A7AE7E /* MapRepository.swift in Sources */,
 				CED42A802CE1ED4900A7AE7E /* NicknameViewModel.swift in Sources */,
+				CEAD04842D48C03B0007907A /* PlaygroundDetailViewModel.swift in Sources */,
+				CEAD04882D48C0980007907A /* PlaygroundDetailView.swift in Sources */,
 				CEC373102CFD7A9B00D400D0 /* AuthCoordinator.swift in Sources */,
 				CEDF13D02CDA08B20090D9CE /* UserDTO.swift in Sources */,
 				CE5320A02D0FE20F00CCAC15 /* PlaygroundDetailUseCase.swift in Sources */,
 				CED42AAC2CE2DD4D00A7AE7E /* DefaultMapRepository.swift in Sources */,
 				CE2B97D32CC6238B00FF532F /* MainTabBarController.swift in Sources */,
+				CEAD048A2D48C0CC0007907A /* PlaygroundClusterView.swift in Sources */,
 				CE1E38802D30BC0E00CE6996 /* DefaultPostRepository.swift in Sources */,
 				CEC373122CFD7C2D00D400D0 /* MapCoordinator.swift in Sources */,
 				CE5320B02D0FE7D500CCAC15 /* DefaultFavoriteRepository.swift in Sources */,
 				CE7AA4E82CDC969B00EF4563 /* ProfileUseCase.swift in Sources */,
+				CEAD048C2D48C0EA0007907A /* PlaygroundBottomSheetController.swift in Sources */,
 				CE7AA4EA2CDCA27400EF4563 /* ProfileRepository.swift in Sources */,
 				CE1395932D2E6D1000E98544 /* PostImageCell.swift in Sources */,
 				CE5320B42D0FE84600CCAC15 /* PlaygroundDetailDTO.swift in Sources */,
