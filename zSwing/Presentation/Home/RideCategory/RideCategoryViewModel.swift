@@ -149,6 +149,42 @@ class RideCategoryViewModel {
                     PlaygroundFacility(type: .climbing)
                 ],
                 madeAt: Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "5",
+                name: "뚝섬한강공원 놀이터2",
+                address: "서울시 성동구 자동차시장길 49",
+                coordinate: CLLocationCoordinate2D(latitude: 37.5297, longitude: 127.0668),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .slide),
+                    PlaygroundFacility(type: .composite)
+                ],
+                madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "6",
+                name: "뚝섬한강공원 놀이터3",
+                address: "서울시 성동구 자동차시장길 49",
+                coordinate: CLLocationCoordinate2D(latitude: 37.5297, longitude: 127.0668),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .slide),
+                    PlaygroundFacility(type: .composite)
+                ],
+                madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "7",
+                name: "뚝섬한강공원 놀이터4",
+                address: "서울시 성동구 자동차시장길 49",
+                coordinate: CLLocationCoordinate2D(latitude: 37.5297, longitude: 127.0668),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .slide),
+                    PlaygroundFacility(type: .composite)
+                ],
+                madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
             )
         ]
         

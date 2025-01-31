@@ -135,9 +135,13 @@ final class PlaygroundMapView: UIView {
                     longitudinalMeters: 1000
                 )
                 self?.mapView.setRegion(region, animated: false)
+                
+                // 확대/축소 기능 비활성화
+                self?.mapView.isZoomEnabled = false
             })
             .disposed(by: disposeBag)
     }
+
     
     // MARK: - Configuration
     func configure(with viewModel: RideCategoryViewModel) {
