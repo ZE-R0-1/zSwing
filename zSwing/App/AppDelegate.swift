@@ -22,10 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupExternalServices() {
         FirebaseApp.configure()
-        KakaoSDK.initSDK(appKey: "96bebf3c072c2e393d427de37f6b39e8")
+//        KakaoSDK.initSDK(appKey: "96bebf3c072c2e393d427de37f6b39e8")
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return AuthApi.isKakaoTalkLoginUrl(url) ? AuthController.handleOpenUrl(url: url) : GIDSignIn.sharedInstance.handle(url)
-    }
+//    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+//        return AuthApi.isKakaoTalkLoginUrl(url) ? AuthController.handleOpenUrl(url: url) : GIDSignIn.sharedInstance.handle(url)
+//    }
 }

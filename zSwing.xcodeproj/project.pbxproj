@@ -391,13 +391,6 @@
 			path = List;
 			sourceTree = "<group>";
 		};
-		CEAD04732D48A1B70007907A /* Errors */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Errors;
-			sourceTree = "<group>";
-		};
 		CEAD04802D48BF980007907A /* BottomSheet */ = {
 			isa = PBXGroup;
 			children = (
@@ -450,7 +443,6 @@
 				CEDF13AD2CD9F62D0090D9CE /* Entities */,
 				CEDF13B02CD9F6520090D9CE /* UserCases */,
 				CEDF13B82CD9F7100090D9CE /* Repositories */,
-				CEAD04732D48A1B70007907A /* Errors */,
 			);
 			path = Domain;
 			sourceTree = "<group>";

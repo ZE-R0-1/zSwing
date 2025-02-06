@@ -185,6 +185,30 @@ class RideCategoryViewModel {
                     PlaygroundFacility(type: .composite)
                 ],
                 madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "8",
+                name: "신림 놀이터",
+                address: "서울시 관악구",
+                coordinate: CLLocationCoordinate2D(latitude: 37.4864, longitude: 126.9294),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .slide),
+                    PlaygroundFacility(type: .composite)
+                ],
+                madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
+            ),
+            Playground(
+                id: "9",
+                name: "신림 놀이터2",
+                address: "서울시 관악구",
+                coordinate: CLLocationCoordinate2D(latitude: 37.4864, longitude: 126.9264),
+                facilities: [
+                    PlaygroundFacility(type: .swing),
+                    PlaygroundFacility(type: .slide),
+                    PlaygroundFacility(type: .composite)
+                ],
+                madeAt: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
             )
         ]
         

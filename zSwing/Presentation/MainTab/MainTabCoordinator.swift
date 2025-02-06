@@ -11,8 +11,8 @@ protocol MainTabCoordinator: Coordinator {
     var tabBarController: UITabBarController { get }
     func showHome()
     func showMap()
-    func showProfile()
-    func switchToAuth()
+//    func showProfile()
+//    func switchToAuth()
 }
 
 class DefaultMainTabCoordinator: MainTabCoordinator, MapCoordinator {
@@ -24,8 +24,8 @@ class DefaultMainTabCoordinator: MainTabCoordinator, MapCoordinator {
     // Child Coordinators
     private var homeCoordinator: Coordinator?
     private var mapCoordinator: MapCoordinator?
-    private var profileCoordinator: ProfileCoordinator?
-    private var authCoordinator: AuthCoordinator?
+//    private var profileCoordinator: ProfileCoordinator?
+//    private var authCoordinator: AuthCoordinator?
     
     init(navigationController: UINavigationController, diContainer: AppDIContainer) {
         self.navigationController = navigationController
@@ -48,58 +48,55 @@ class DefaultMainTabCoordinator: MainTabCoordinator, MapCoordinator {
         tabBarController.selectedIndex = 1
     }
     
-    func showProfile() {
-        tabBarController.selectedIndex = 2
-    }
+//    func showProfile() {
+//        tabBarController.selectedIndex = 2
+//    }
     
-    func switchToAuth() {
-        print("🔄 MainTab coordinator: Starting switchToAuth")
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            print("📱 Current window hierarchy:")
-            print("- Root VC: \(String(describing: window.rootViewController))")
-            print("- Child VCs: \(String(describing: window.rootViewController?.children))")
-            
-            let navigationController = UINavigationController()
-            let authCoordinator = diContainer.makeAuthCoordinator(
-                navigationController: navigationController
-            )
-            
-            // coordinator 시작 전에 인스턴스 저장
-            self.authCoordinator = authCoordinator
-            
-            // coordinator 시작 (이 때 LoginViewController의 coordinator가 설정됨)
-            authCoordinator.start()
-            
-            UIView.transition(with: window,
-                              duration: 0.3,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                window.rootViewController = navigationController
-            }) { completed in
-                print("📱 New window hierarchy:")
-                print("- Root VC: \(String(describing: window.rootViewController))")
-                print("- Child VCs: \(String(describing: window.rootViewController?.children))")
-            }
-        }
-    }
+//    func switchToAuth() {
+//        print("🔄 MainTab coordinator: Starting switchToAuth")
+//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//           let window = windowScene.windows.first {
+//            print("📱 Current window hierarchy:")
+//            print("- Root VC: \(String(describing: window.rootViewController))")
+//            print("- Child VCs: \(String(describing: window.rootViewController?.children))")
+//            
+//            let navigationController = UINavigationController()
+//            let authCoordinator = diContainer.makeAuthCoordinator(
+//                navigationController: navigationController
+//            )
+//            
+//            // coordinator 시작 전에 인스턴스 저장
+//            self.authCoordinator = authCoordinator
+//            
+//            // coordinator 시작 (이 때 LoginViewController의 coordinator가 설정됨)
+//            authCoordinator.start()
+//            
+//            UIView.transition(with: window,
+//                              duration: 0.3,
+//                              options: .transitionCrossDissolve,
+//                              animations: {
+//                window.rootViewController = navigationController
+//            }) { completed in
+//                print("📱 New window hierarchy:")
+//                print("- Root VC: \(String(describing: window.rootViewController))")
+//                print("- Child VCs: \(String(describing: window.rootViewController?.children))")
+//            }
+//        }
+//    }
     
     private func setupTabs() {
         // Home Tab
-        let homeNavController = UINavigationController()
-        let homeCoordinator = diContainer.makeHomeCoordinator(navigationController: homeNavController)
+        let homeNC = UINavigationController()
+        let homeCoordinator = diContainer.makeHomeCoordinator(navigationController: homeNC)
         homeCoordinator.start()
-        homeNavController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
+        homeNC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
         
         // 나머지 탭 코드 유지
         let mapVC = diContainer.makeMapViewController(coordinator: self)
         mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map"), tag: 1)
         
-        let profileVC = diContainer.makeProfileViewController()
-        profileVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person"), tag: 2)
-        
         tabBarController.setViewControllers(
-            [homeNavController, mapVC, profileVC],
+            [homeNC, mapVC],
             animated: false
         )
     }
